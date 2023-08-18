@@ -11,7 +11,7 @@ class Profesionales  {
     private $prioridadProfesional;
     private $especialidadProfesional;
     private $nombrePersona;
-    private $dniPersona;
+    private $dniPersona; 
 
     // EL INICIO DE SESION TIENE QUE TENER LA VALIDACION DE PASSWORD ENCRIPTADA
     

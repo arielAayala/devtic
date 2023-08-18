@@ -14,11 +14,11 @@ switch ($_SERVER["REQUEST_METHOD"]) {
         if(isset($_COOKIE["token"])){
             $administrador = new Administradores();
         }else{
-            http_response_code(400);
+            http_response_code(400); 
             echo json_encode(["error" => "Token no existente"]);
-        }
+        } 
 
-        break;
+    break;
 
     case "GET":
         if(isset($_COOKIE["token"])){
