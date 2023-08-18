@@ -1,2 +1,37 @@
 .env
-vendor
+/vendor
+
+
+# dependencies
+/devtic-front/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/devtic-front/coverage
+
+# next.js
+/devtic-front/.next/
+/devtic-front/out/
+
+# production
+/devtic-front/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+/devtic-front/npm-debug.log*
+/devtic-front/yarn-debug.log*
+/devtic-front/yarn-error.log*
+
+# local env files
+/devtic-front/.env*.local
+
+# vercel
+/devtic-front/.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
