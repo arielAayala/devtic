@@ -15,9 +15,9 @@ class Profesionales  {
 
     // EL INICIO DE SESION TIENE QUE TENER LA VALIDACION DE PASSWORD ENCRIPTADA
     
-    public function iniciarSesion($correo, $contrasena):?array{
+    public function iniciarSesion($correo, $contrasena){
         $con = new Conexion();
-        $query = "SELECT p.idProfesional, p.prioridadProfesional, especialidades.nombreEspecialidad, personas.nombrePersona, personas.dniPersona FROM  profesionales p INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad INNER JOIN personas ON p.idPersona = personas.idPersona  WHERE '$correo' = p.correoProfesional AND '$contrasena' = p.contrasenaProfesional";
+        $query = "SELECT p.idProfesional, p.prioridadProfesional, especialidades.nombreEspecialidad, personas.nombrePersona, personas.dniPersona FROM  profesionales p INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad INNER JOIN personas ON p.idPersona = personas.idPersona  WHERE '$correo' = p.correoProfesional AND $contrasena  = p.contrasenaProfesional";
         $resultado = $con -> query($query);
         if ($resultado->num_rows > 0) {
             while ($row = $resultado->fetch_assoc()) {
@@ -36,6 +36,7 @@ class Profesionales  {
                 "msg" => "Se inició sesión correctamente"
             ];
         }
+        return False;
     }
 
     public function iniciarSesionConToken($token):?array{
