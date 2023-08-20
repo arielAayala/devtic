@@ -1,19 +1,26 @@
 import Loader from "@/components/loader/loader";
 import "./globals.css";
 import { AuthContextProvider } from "@/context/authContext";
-
+import { AlertContextProvider } from "@/context/alertContext";
+import Alert from "@/components/alert/alert";
 export const metadata = {
 	title: "Create Next App",
 	description: "Devtic",
 };
+import "flowbite";
 
 export default function RootLayout({ children }) {
 	return (
 		<html lang="en">
 			<body>
-				<AuthContextProvider>
-					<Loader>{children}</Loader>
-				</AuthContextProvider>
+				<AlertContextProvider>
+					<AuthContextProvider>
+						<Loader>
+							{children}
+							<Alert />
+						</Loader>
+					</AuthContextProvider>
+				</AlertContextProvider>
 			</body>
 		</html>
 	);

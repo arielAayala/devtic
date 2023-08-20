@@ -6,11 +6,15 @@ import React, {
 	useMemo,
 	useCallback,
 } from "react";
+import { useAlertContext } from "./alertContext";
 
 const authContext = createContext(null);
 
 function AuthContextProvider({ children }) {
+	const { crearAlert } = useAlertContext();
+
 	const [user, setUser] = useState(null);
+
 	console.log(user);
 
 	const iniciarSesion = useCallback((inputs) => {
@@ -23,7 +27,13 @@ function AuthContextProvider({ children }) {
 			body: JSON.stringify(inputs),
 		})
 			.then((res) => res.json())
-			.then((res) => setUser(res.data));
+			.then((res) => {
+				setUser(res.data);
+				crearAlert(res);
+			})
+			.catch((error) => {
+				setUser(null);
+			});
 	}, []);
 
 	const iniciarSesionConCookies = useCallback(() => {
@@ -35,7 +45,31 @@ function AuthContextProvider({ children }) {
 			credentials: "include",
 		})
 			.then((res) => res.json())
-			.then((res) => setUser(res.data));
+			.then((res) => {
+				setUser(res.data);
+				crearAlert(res);
+			})
+			.catch((error) => {
+				setUser(null);
+			});
+	}, []);
+
+	const cerrarSesion = useCallback(() => {
+		fetch("http://localhost/devtic/api/CerrarSesion.php", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		})
+			.then((res) => res.json())
+			.then((res) => {
+				setUser(null);
+				crearAlert(res);
+			})
+			.catch((error) => {
+				setUser(null);
+			});
 	}, []);
 
 	const values = useMemo(
@@ -43,8 +77,9 @@ function AuthContextProvider({ children }) {
 			user,
 			iniciarSesion,
 			iniciarSesionConCookies,
+			cerrarSesion,
 		}),
-		[user, iniciarSesion]
+		[user, iniciarSesion, iniciarSesionConCookies, cerrarSesion]
 	);
 
 	return <authContext.Provider value={values}>{children}</authContext.Provider>;

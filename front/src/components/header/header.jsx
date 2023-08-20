@@ -1,150 +1,140 @@
+import { useAuthContext } from "@/context/authContext";
+import React, { useState } from "react";
+import defaultUserPhoto from "../../../public/defaultUserPhoto.jpg";
+import { useRouter } from "next/navigation";
+
 function Header() {
+	const [userMenuOpen, setUserMenuOpen] = useState(false);
+	const { user, cerrarSesion } = useAuthContext();
+
+	const router = useRouter();
+
+	const toggleSidebar = () => {
+		const sidebar = document.getElementById("logo-sidebar");
+		if (sidebar) {
+			sidebar.classList.toggle("-translate-x-full");
+		}
+	};
+
+	const toggleUserMenu = () => {
+		setUserMenuOpen(!userMenuOpen);
+	};
+
+	const handleCerrarSesion = () => {
+		cerrarSesion();
+	};
+
+	const handleRedirectToPerfil = () => {
+		router.push("/perfil");
+	};
+
 	return (
-		<nav className="bg-white border-gray-200 dark:bg-gray-900">
-			<div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-				<a
-					href="https://flowbite.com/"
-					className="flex items-center"
-				>
-					<img
-						src="https://flowbite.com/docs/images/logo.svg"
-						className="h-8 mr-3"
-						alt="Flowbite Logo"
-					/>
-					<span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-						Flowbite
-					</span>
-				</a>
-				<div className="flex items-center md:order-2">
-					<button
-						type="button"
-						className="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-						id="user-menu-button"
-						aria-expanded="false"
-						data-dropdown-toggle="user-dropdown"
-						data-dropdown-placement="bottom"
-					>
-						<span className="sr-only">Open user menu</span>
-						<img
-							className="w-8 h-8 rounded-full"
-							alt="user photo"
-						/>
-					</button>
-					{/* <!-- Dropdown menu --> */}
-					<div
-						className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
-						id="user-dropdown"
-					>
-						<div className="px-4 py-3">
-							<span className="block text-sm text-gray-900 dark:text-white">
-								Bonnie Green
-							</span>
-							<span className="block text-sm  text-gray-500 truncate dark:text-gray-400">
-								name@flowbite.com
-							</span>
-						</div>
-						<ul
-							className="py-2"
-							aria-labelledby="user-menu-button"
+		<nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+			<div className="px-3 py-3 lg:px-5 lg:pl-3">
+				<div className="flex items-center justify-between">
+					<div className="flex items-center justify-start">
+						<button
+							onClick={toggleSidebar}
+							data-drawer-target="logo-sidebar"
+							data-drawer-toggle="logo-sidebar"
+							aria-controls="logo-sidebar"
+							type="button"
+							className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
 						>
-							<li>
-								<a
-									href="#"
-									className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-								>
-									Dashboard
-								</a>
-							</li>
-							<li>
-								<a
-									href="#"
-									className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-								>
-									Settings
-								</a>
-							</li>
-							<li>
-								<a
-									href="#"
-									className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-								>
-									Earnings
-								</a>
-							</li>
-							<li>
-								<a
-									href="#"
-									className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-								>
-									Sign out
-								</a>
-							</li>
-						</ul>
+							<span className="sr-only">Open sidebar</span>
+							<svg
+								className="w-6 h-6"
+								aria-hidden="true"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									clipRule="evenodd"
+									fillRule="evenodd"
+									d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
+								></path>
+							</svg>
+						</button>
+						<a
+							href=""
+							className="flex ml-2 md:mr-24"
+						>
+							<img
+								src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+								className="h-8 mr-3"
+								alt="Devtic Logo"
+							/>
+							<span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
+								DevTic
+							</span>
+						</a>
 					</div>
-					<button
-						data-collapse-toggle="navbar-user"
-						type="button"
-						className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-						aria-controls="navbar-user"
-						aria-expanded="false"
-					>
-						<span className="sr-only">Open main menu</span>
-						<svg
-							className="w-5 h-5 bg-black"
-							aria-hidden="true"
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 17 14"
-						></svg>
-					</button>
-				</div>
-				<div
-					className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
-					id="navbar-user"
-				>
-					<ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-						<li>
-							<a
-								href="#"
-								className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
-								aria-current="page"
+					<div className="flex items-center">
+						<div className="flex items-center ml-3">
+							<div>
+								<button
+									onClick={toggleUserMenu}
+									//...
+									className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+									aria-expanded={userMenuOpen}
+									data-dropdown-toggle="dropdown-user"
+								>
+									<span className="sr-only">Open user menu</span>
+									<img
+										className="w-8 h-8 rounded-full"
+										src={defaultUserPhoto}
+										alt="user photo"
+									/>
+								</button>
+							</div>
+							<div
+								className={`z-50 ${
+									userMenuOpen ? "" : "hidden"
+								} absolute right-2 top-10 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600`}
+								id="dropdown-user"
 							>
-								Home
-							</a>
-						</li>
-						<li>
-							<a
-								href="#"
-								className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-							>
-								About
-							</a>
-						</li>
-						<li>
-							<a
-								href="#"
-								className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-							>
-								Services
-							</a>
-						</li>
-						<li>
-							<a
-								href="#"
-								className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-							>
-								Pricing
-							</a>
-						</li>
-						<li>
-							<a
-								href="#"
-								className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-							>
-								Contact
-							</a>
-						</li>
-					</ul>
+								<div className="px-4 py-3">
+									<p className="text-sm text-gray-900 dark:text-white">
+										{user?.nombrePersona
+											.toLowerCase()
+											.replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
+												return letter.toUpperCase();
+											})}
+									</p>
+									<p className="text-sm font-medium text-gray-900 truncate dark:text-gray-300">
+										{user?.especialidadProfesional.charAt(0).toUpperCase() +
+											user?.especialidadProfesional.slice(1).toLowerCase()}
+									</p>
+								</div>
+								<ul
+									className="py-1"
+									role="none"
+								>
+									<li>
+										<a
+											href="#"
+											className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+											onClick={handleRedirectToPerfil}
+											role="menuitem"
+										>
+											Ver Perfil
+										</a>
+									</li>
+									<li>
+										<a
+											href="#"
+											onClick={handleCerrarSesion}
+											className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+											role="menuitem"
+										>
+											Cerrar Sesión
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</nav>

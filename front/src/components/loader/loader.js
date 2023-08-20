@@ -9,7 +9,7 @@ function Loader({ children }) {
 
 	const getData = async () => {
 		await iniciarSesionConCookies();
-		setTimeout(() => setLoader(false), 2000);
+		setTimeout(() => setLoader(false), 1000);
 	};
 
 	useEffect(() => {
