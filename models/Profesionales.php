@@ -17,24 +17,29 @@ class Profesionales  {
     
     public function iniciarSesion($correo, $contrasena){
         $con = new Conexion();
-        $query = "SELECT p.idProfesional, p.prioridadProfesional, especialidades.nombreEspecialidad, personas.nombrePersona, personas.dniPersona FROM  profesionales p INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad INNER JOIN personas ON p.idPersona = personas.idPersona  WHERE '$correo' = p.correoProfesional AND $contrasena  = p.contrasenaProfesional";
+        $query = "SELECT p.idProfesional, p.prioridadProfesional, p.contrasenaProfesional ,especialidades.nombreEspecialidad, personas.nombrePersona, personas.dniPersona FROM  profesionales p INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad INNER JOIN personas ON p.idPersona = personas.idPersona  WHERE '$correo' = p.correoProfesional ";
         $resultado = $con -> query($query);
+        $flag = false;
         if ($resultado->num_rows > 0) {
             while ($row = $resultado->fetch_assoc()) {
-                $this->setProfesional(
-                    $row["idProfesional"], 
-                    $row["prioridadProfesional"], 
-                    $row["nombreEspecialidad"], 
-                    $row["nombrePersona"], 
-                    $row["dniPersona"]
-                ); 
-            }
-
+                if ( password_verify($contrasena, $row["contrasenaProfesional"])){
+                    $flag = true;
+                    $this->setProfesional(
+                        $row["idProfesional"], 
+                        $row["prioridadProfesional"], 
+                        $row["nombreEspecialidad"], 
+                        $row["nombrePersona"], 
+                        $row["dniPersona"]
+                    );
+                }
+            }        
+        }
+        if($flag){
             $this ->crearCookies();
             return [
                 "data"=>$this-> getProfesional(),
                 "msg" => "Se inició sesión correctamente"
-            ];
+            ]; 
         }
         return False;
     }

@@ -13,9 +13,9 @@ switch ($_SERVER["REQUEST_METHOD"]) {
         $datos = json_decode(file_get_contents("php://input"));
         if ($datos){
             $profesional = new Profesionales();
-            if ($datos = $profesional -> iniciarSesion($datos->correo, $datos->contrasena)) {
+            if ($informacionUsuario = $profesional -> iniciarSesion($datos->correo, $datos->contrasena)) {
                 http_response_code(200);
-                echo json_encode($datos);
+                echo json_encode($informacionUsuario);
             } else {
                 http_response_code(404);
                 echo json_encode(["error" => "Usuario no encontrado"]);
@@ -34,6 +34,7 @@ switch ($_SERVER["REQUEST_METHOD"]) {
                 echo json_encode($datos);
             }else{
                 http_response_code(404);
+                echo json_encode(["error" => "Token no existente"]);
             }
         }else{
             http_response_code(400);

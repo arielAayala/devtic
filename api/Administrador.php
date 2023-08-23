@@ -12,17 +12,33 @@ switch ($_SERVER["REQUEST_METHOD"]) {
     /* Crear Profesional */
     case "POST":
         if(isset($_COOKIE["token"])){
-            $administrador = new Administradores();
+            $datos = json_decode(file_get_contents("php://input"));
+            if ($datos){
+                $administrador = new Administradores();
+                if($administrador->crearProfesional($_COOKIE["token"],$datos->nombrePersona,$datos->dniPersona,$datos->correoProfesional,$datos->especialidadProfesional,$datos->prioridadProfesional)){
+                    http_response_code(200);
+                    echo json_encode(["msg"=>"Profesional creado correctamente"]);
+                }else{
+                    http_response_code(401); 
+                    echo json_encode(["error" => "No autorizado"]);
+                }
+            }else{
+                http_response_code(400); 
+                echo json_encode(["error" => "Datos no existentes"]);
+            }
         }else{
             http_response_code(400); 
             echo json_encode(["error" => "Token no existente"]);
         } 
 
-    break;
+        break;
 
     case "GET":
         if(isset($_COOKIE["token"])){
-            
+            $administrador = new Administradores();
+            if ($profesionales=$administrador->obtenerProfesionales($_COOKIE["token"])) {
+                echo json_encode($profesionales);
+            }
         }else{
             http_response_code(400);
             echo json_encode(["error" => "Token no existente"]);

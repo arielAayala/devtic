@@ -1,6 +1,5 @@
 import { useAuthContext } from "@/context/authContext";
 import React, { useState } from "react";
-import defaultUserPhoto from "../../../public/defaultUserPhoto.jpg";
 import { useRouter } from "next/navigation";
 
 function Header() {
@@ -83,7 +82,7 @@ function Header() {
 									<span className="sr-only">Open user menu</span>
 									<img
 										className="w-8 h-8 rounded-full"
-										src={defaultUserPhoto}
+										src=""
 										alt="user photo"
 									/>
 								</button>
