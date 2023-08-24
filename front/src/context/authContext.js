@@ -15,8 +15,6 @@ function AuthContextProvider({ children }) {
 
 	const [user, setUser] = useState(null);
 
-	console.log(user);
-
 	const iniciarSesion = useCallback((inputs) => {
 		fetch("http://localhost/devtic/api/IniciarSesion.php", {
 			method: "POST",

@@ -3,7 +3,7 @@
 include_once "../models/Demandas.php";
 
 header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Methods: GET, POST, PUT");
+header("Access-Control-Allow-Methods: POST, GET ");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Credentials: true");
 
@@ -34,7 +34,17 @@ switch ($_SERVER["REQUEST_METHOD"]) {
 
         break;
 
-    
+    case "GET":
+        if ($_COOKIE["token"]) {
+            $demanda = new Demanda();
+            if ( ) {
+                
+        }else {
+            echo json_encode(["error"=> "token no existente"]);
+        }
+
+
+        break;
     
     default:
         # code...

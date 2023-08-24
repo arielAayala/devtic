@@ -19,11 +19,9 @@ class Demandas {
                     $queryDemandas = "DELETE  FROM demandas WHERE idDemanda = $idDemanda";
                     $con ->query($queryDemandas);
                 }
-            }else{
-                echo $con ->error;
             }
-            return false;
         }
+        return false;
     }
 
     public function actualizarDemanda(){
@@ -32,6 +30,10 @@ class Demandas {
 
     public function eliminarDemanda(){
 
+    }
+
+    public function obtenerTodasDemandas(){
+        
     }
 
     public function obtenerDemanda(){
