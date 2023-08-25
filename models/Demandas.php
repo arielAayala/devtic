@@ -32,8 +32,20 @@ class Demandas {
 
     }
 
-    public function obtenerTodasDemandas(){
-        
+    public function obtenerTodasDemandas($token){
+        if ($datos = Profesionales::validarToken($token)) {
+            $con = new Conexion();
+            $query = "SELECT * FROM demandas";
+            $datos =[];
+            $resultado = $con ->query($query);
+            if ($resultado->num_rows > 0) {
+                while ($row = $resultado->fetch_assoc()) {
+                    $datos[]=$row;
+                }
+            }
+            return $datos;
+        }
+        return false;
     }
 
     public function obtenerDemanda(){

@@ -11,12 +11,6 @@ function searchForm() {
 	return (
 		<form>
 			<div className="flex">
-				<label
-					htmlFor="search-dropdown"
-					className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-				>
-					Your Email
-				</label>
 				<button
 					id="dropdown-button"
 					data-dropdown-toggle="dropdown"
@@ -24,7 +18,7 @@ function searchForm() {
 					type="button"
 					onClick={toggleDropdown}
 				>
-					All categories{" "}
+					Todas{" "}
 					<svg
 						className="w-2.5 h-2.5 ml-2.5"
 						aria-hidden="true"
