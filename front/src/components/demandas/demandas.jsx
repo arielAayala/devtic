@@ -1,9 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import DemandasCard from "@/components/demandaCard/demandaCard";
+import DemandaCard from "@/components/demandaCard/demandaCard.jsx";
+import Skeleton from "../skeleton/skeleton";
 
 function Demandas() {
 	const [loader, setLoader] = useState(false);
+
+	const [demandas, setDemandas] = useState([]);
+
 	const obtenerDemandas = () => {
 		fetch("http://localhost/devtic/api/ObtenerTodasDemandas.php", {
 			method: "GET",
@@ -13,30 +17,43 @@ function Demandas() {
 			credentials: "include",
 		})
 			.then((rest) => {
-				rest.json();
+				return rest.json();
 			})
 			.then((rest) => {
-				setDemandas(rest ?? []);
-				setLoader(true);
+				setDemandas(rest);
+				setTimeout(() => setLoader(true), 1000);
 				console.log(rest);
 			});
 	};
-	const [demandas, setDemandas] = useState([]);
 
 	useEffect(() => {
-		console.log(demandas);
 		obtenerDemandas();
 	}, []);
 
 	if (!loader) {
-		return <div>Cargando</div>;
+		return <Skeleton />;
 	}
 
 	return (
-		<div>
-			{demandas.map((i, index) => {
-				<DemandasCard key={index}></DemandasCard>;
-			})}
+		<div
+			role="status"
+			className=" p-4 space-y-4 border w-full border-gray-200 divide-y divide-gray-200 rounded shadow  dark:divide-gray-700 md:p-6 dark:border-gray-700"
+		>
+			{demandas.length === 0 ? (
+				<div>No hay demandas</div>
+			) : (
+				demandas.map((i) => {
+					return (
+						<DemandaCard
+							tituloDemanda={i.tituloDemanda}
+							idDemanda={i.idDemanda}
+							motivoDemanda={i.motivoDemanda}
+							idEstado={i.idEstado}
+							key={i.idDemanda}
+						/>
+					);
+				})
+			)}
 		</div>
 	);
 }
