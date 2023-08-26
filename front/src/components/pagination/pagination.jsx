@@ -4,73 +4,57 @@ function Pagination() {
 	const currentPage = "1";
 
 	return (
-		<>
-			<nav aria-label="Page navigation example">
-				<ul className="inline-flex -space-x-px text-sm">
-					<li>
-						<a
-							href="#"
-							className={`flex items-center justify-center px-3 h-8 ${
-								currentPage === "anterior" ? "text-gray-500" : "text-blue-600"
-							} bg-white border border-gray-300 ${
-								currentPage === "anterior" ? "rounded-l-lg" : "rounded-r-lg"
-							} hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}
-						>
-							{currentPage === "anterior" ? "Anterior" : "Siguiente"}
-						</a>
-					</li>
-					<li>
-						<a
-							href="#"
-							className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-						>
-							1
-						</a>
-					</li>
-					<li>
-						<a
-							href="#"
-							className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-						>
-							2
-						</a>
-					</li>
-					<li>
-						<a
-							href="#"
-							aria-current="page"
-							className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-						>
-							3
-						</a>
-					</li>
-					<li>
-						<a
-							href="#"
-							className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-						>
-							4
-						</a>
-					</li>
-					<li>
-						<a
-							href="#"
-							className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-						>
-							5
-						</a>
-					</li>
-					<li>
-						<a
-							href="#"
-							className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-						>
-							Siguiente
-						</a>
-					</li>
-				</ul>
-			</nav>
-		</>
+		<div className="flex flex-col items-center">
+			<span className="text-sm text-gray-700 dark:text-gray-400">
+				Showing
+				<span className="font-semibold text-gray-900 dark:text-white">
+					1
+				</span>{" "}
+				to{" "}
+				<span className="font-semibold text-gray-900 dark:text-white">10</span>{" "}
+				of{" "}
+				<span className="font-semibold text-gray-900 dark:text-white">100</span>{" "}
+				Entries
+			</span>
+			<div className="inline-flex mt-2 xs:mt-0">
+				<button className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+					<svg
+						className="w-3.5 h-3.5 mr-2"
+						aria-hidden="true"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 14 10"
+					>
+						<path
+							stroke="currentColor"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
+							d="M13 5H1m0 0 4 4M1 5l4-4"
+						/>
+					</svg>
+					Prev
+				</button>
+				<button className="flex items-center justify-center px-4 h-10 text-base font-medium text-white bg-gray-800 border-0 border-l border-gray-700 rounded-r hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+					Next
+					<svg
+						className="w-3.5 h-3.5 ml-2"
+						aria-hidden="true"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 14 10"
+					>
+						<path
+							stroke="currentColor"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
+							d="M1 5h12m0 0L9 1m4 4L9 9"
+						/>
+					</svg>
+				</button>
+			</div>
+		</div>
 	);
 }
 export default Pagination;

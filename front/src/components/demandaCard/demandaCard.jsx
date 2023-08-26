@@ -1,13 +1,7 @@
 import React from "react";
 
 function DemandaCard(props) {
-	const {
-		motivoDemanda,
-		tituloDemanda,
-		nombreEstado,
-		fotoProfesional,
-		idDemanda,
-	} = props;
+	const { motivoDemanda, tituloDemanda, nombreEstado, fotoProfesional } = props;
 
 	return (
 		<li className="py-3 sm:py-4">
@@ -15,7 +9,7 @@ function DemandaCard(props) {
 				<div className="flex-shrink-0">
 					<img
 						className="w-8 h-8 rounded-full"
-						src="{fotoProfesional}"
+						src={fotoProfesional}
 						alt="photoProfesional"
 					/>
 				</div>

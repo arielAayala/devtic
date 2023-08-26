@@ -10,8 +10,10 @@ function Loader({ children }) {
 	const getData = async () => {
 		if (!user) {
 			await iniciarSesionConCookies();
+			setTimeout(() => setLoader(false), 1000);
+		} else {
+			setLoader(false);
 		}
-		setTimeout(() => setLoader(false), 1000);
 	};
 
 	useEffect(() => {
