@@ -35,7 +35,7 @@ class Demandas {
     public function obtenerTodasDemandas($token){
         if ($datos = Profesionales::validarToken($token)) {
             $con = new Conexion();
-            $query = "SELECT * FROM demandas";
+            $query = "SELECT d.idDemanda, d.tituloDemanda, d.motivoDemanda, e.nombreEstado,(SELECT p.fotoProfesional from profesionales p WHERE p.idProfesional = (SELECT idProfesional from grupos g where d.idDemanda = g.idDemanda AND g.creadorGrupo = true) )as fotoProfesional FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado";
             $datos =[];
             $resultado = $con ->query($query);
             if ($resultado->num_rows > 0) {

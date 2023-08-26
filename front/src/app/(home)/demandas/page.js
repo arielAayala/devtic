@@ -8,7 +8,6 @@ function DemandaPage() {
 	return (
 		<div className="space-y-4">
 			<SearchForm></SearchForm>
-			<Categories></Categories>
 			<Demandas></Demandas>
 			<Pagination></Pagination>
 		</div>
