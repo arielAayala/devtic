@@ -8,7 +8,7 @@ import Pagination from "@/components/pagination/pagination";
 function Demandas() {
 	const [demandas, setDemandas] = useState([]);
 	const [loader, setLoader] = useState(false);
-	const obtenerDemandas = () => {
+	const obtenerDemandas = (page) => {
 		fetch("http://localhost/devtic/api/ObtenerTodasDemandas.php", {
 			method: "POST",
 			headers: {
@@ -27,20 +27,19 @@ function Demandas() {
 			});
 	};
 
-	useEffect(() => {
-		console.log(demandas);
-		obtenerDemandas();
-	}, []);
-
 	const [page, setPage] = useState(1);
+	useEffect(() => {
+		console.log("peticion");
+		obtenerDemandas(page);
+	}, [page]);
 
 	return (
-		<main className="">
+		<main>
 			<SearchForm></SearchForm>
 			<div className="my-10">
 				{loader ? (
 					<ul className="max-w-full  divide-y divide-gray-200 dark:divide-gray-700">
-						{demandas.map((i) => {
+						{demandas.data.map((i) => {
 							return (
 								<DemandaCard
 									key={i.idDemanda}
@@ -57,6 +56,8 @@ function Demandas() {
 				)}
 			</div>
 			<Pagination
+				paginaNumero={demandas.paginaNumero}
+				total={demandas.demandasTotales}
 				page={page}
 				setPage={setPage}
 			></Pagination>
