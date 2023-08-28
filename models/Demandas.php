@@ -5,14 +5,17 @@ include_once "../conexion/Conexion.php";
 
 class Demandas {
 
-    public function crearDemanda($token, $idEstado, $idTipo, $idOrganizacion, $tituloDemanda, $motivoDemanda, $almacenDemanda){
+    public function crearDemanda($token,  $idTipo, $idOrganizacion, $tituloDemanda, $motivoDemanda, $almacenDemanda){
+        $idTipo = intval($idTipo);
+        $idOrganizacion = intval($idOrganizacion);
+
         if($datos=Profesionales::validarToken($token)) {
             $con = new Conexion();
             $query="INSERT INTO demandas(idEstado, idTipo, idOrganizacion, tituloDemanda, motivoDemanda, almacenDemanda, fechaIngresoDemanda) 
-            VALUES($idEstado,$idTipo, $idOrganizacion, '$tituloDemanda', '$motivoDemanda', '$almacenDemanda', CURDATE() )";
+            VALUES(1,$idTipo, $idOrganizacion, '$tituloDemanda', '$motivoDemanda', '$almacenDemanda', CURDATE() )";
             if ($con ->query($query)) {
                 $idDemanda = $con -> insert_id;
-                $queryGrupos = "INSERT INTO grupos(idDemanda, idProfesional, creadorGrupo) VALUES ($idDemanda, $datos->idProfesional, 1)";
+                $queryGrupos = "INSERT INTO grupos(idDemanda, idProfesional, creadorDemanda) VALUES ($idDemanda, $datos->idProfesional, 1)";
                 if ($con-> query($queryGrupos)) {
                     return true;
                 }else{
@@ -65,7 +68,7 @@ class Demandas {
     public function obtenerTodasDemandas($token, $pagina){
         if ($datos = Profesionales::validarToken($token)) {
             $con = new Conexion();
-            $query = "SELECT d.idDemanda, d.tituloDemanda, d.fechaIngresoDemanda, d.motivoDemanda, e.nombreEstado,  (SELECT p.fotoProfesional from profesionales p WHERE p.idProfesional = (SELECT idProfesional from grupos g where d.idDemanda = g.idDemanda AND g.creadorGrupo = true)) as fotoProfesional FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado ORDER BY d.fechaIngresoDemanda LIMIT 10 OFFSET ". (($pagina - 1)*10) ;
+            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.tituloDemanda, d.fechaIngresoDemanda, d.motivoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN grupos g ON g.idDemanda = d.idDemanda and g.creadorDemanda = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad ORDER BY d.fechaIngresoDemanda LIMIT 10 OFFSET ". (($pagina - 1)*10) ;
             $datos =[];
             $resultado = $con ->query($query);
             if ($resultado->num_rows > 0) {
@@ -84,7 +87,21 @@ class Demandas {
         return false;
     }
 
-    public function obtenerDemanda(){
-
+    public function obtenerDemanda($token, $id){
+        if ($datos = Profesionales::validarToken($token)) {
+            $con = new Conexion();
+            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.tituloDemanda, d.fechaIngresoDemanda, d.motivoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN grupos g ON g.idDemanda = d.idDemanda and g.creadorDemanda = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad WHERE d.idDemanda = $id";
+            $datos =[];
+            $resultado = $con ->query($query);
+            if ($resultado->num_rows > 0) {
+                while ($row = $resultado->fetch_assoc()) {
+                    $datos=$row;
+                }
+            }
+            
+            return $datos;
+        }
+        return false;
     }
+    
 }

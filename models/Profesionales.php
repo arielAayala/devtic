@@ -13,6 +13,8 @@ class Profesionales  {
     private $nombrePersona;
     private $dniPersona; 
 
+    private $fotoProfesional;
+
     // EL INICIO DE SESION TIENE QUE TENER LA VALIDACION DE PASSWORD ENCRIPTADA
     
     public function iniciarSesion($correo, $contrasena){
@@ -29,7 +31,8 @@ class Profesionales  {
                         $row["prioridadProfesional"], 
                         $row["nombreEspecialidad"], 
                         $row["nombrePersona"], 
-                        $row["dniPersona"]
+                        $row["dniPersona"],
+                        $row["fotoProfesional"]
                     );
                 }
             }        
@@ -47,7 +50,7 @@ class Profesionales  {
     public function iniciarSesionConToken($token):?array{
         if ($data = Profesionales::validarToken($token)) {
             $con = new Conexion();
-            $query = "SELECT p.idProfesional, p.prioridadProfesional, especialidades.nombreEspecialidad, personas.nombrePersona, personas.dniPersona FROM  profesionales p INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad INNER JOIN personas ON p.idPersona = personas.idPersona  WHERE ".$data->idProfesional." = p.idProfesional";
+            $query = "SELECT p.idProfesional, p.prioridadProfesional, p.fotoProfesional,especialidades.nombreEspecialidad, personas.nombrePersona, personas.dniPersona FROM  profesionales p INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad INNER JOIN personas ON p.idPersona = personas.idPersona  WHERE ".$data->idProfesional." = p.idProfesional";
             $resultado = $con -> query($query);
             if ($resultado->num_rows > 0) {
                 while ($row = $resultado->fetch_assoc()) {
@@ -56,7 +59,8 @@ class Profesionales  {
                         $row["prioridadProfesional"], 
                         $row["nombreEspecialidad"], 
                         $row["nombrePersona"], 
-                        $row["dniPersona"]
+                        $row["dniPersona"],
+                        $row["fotoProfesional"]
                     ); 
                 }
 
@@ -77,12 +81,13 @@ class Profesionales  {
     }
 
 
-    private function setProfesional($id, $prioridad, $especialidad, $nombre, $dni):void{
+    private function setProfesional($id, $prioridad, $especialidad, $nombre, $dni, $foto):void{
         $this -> idProfesional = $id;
         $this -> prioridadProfesional = $prioridad;
         $this -> especialidadProfesional = $especialidad;
         $this -> nombrePersona = $nombre;
         $this -> dniPersona = $dni;
+        $this -> fotoProfesional =$foto;
     }
 
     private function getProfesional():array{
@@ -91,7 +96,8 @@ class Profesionales  {
             "prioridadProfesional" =>$this -> prioridadProfesional,
             "especialidadProfesional" =>$this -> especialidadProfesional,
             "nombrePersona" =>$this -> nombrePersona,
-            "dniPersona" =>$this -> dniPersona
+            "dniPersona" =>$this -> dniPersona,
+            "fotoProfesional" =>$this->fotoProfesional,
         ];
     }
 

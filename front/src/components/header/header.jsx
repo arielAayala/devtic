@@ -6,8 +6,6 @@ function Header() {
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
 	const { user, cerrarSesion } = useAuthContext();
 
-	const router = useRouter();
-
 	const toggleSidebar = () => {
 		const sidebar = document.getElementById("logo-sidebar");
 		if (sidebar) {
@@ -23,6 +21,7 @@ function Header() {
 		cerrarSesion();
 	};
 
+	const router = useRouter();
 	const handleRedirectToPerfil = () => {
 		router.push("/perfil");
 	};
@@ -82,7 +81,7 @@ function Header() {
 									<span className="sr-only">Open user menu</span>
 									<img
 										className="w-8 h-8 rounded-full"
-										src=""
+										src={user?.fotoProfesional}
 										alt="user photo"
 									/>
 								</button>
@@ -102,8 +101,11 @@ function Header() {
 											})}
 									</p>
 									<p className="text-sm font-medium text-gray-900 truncate dark:text-gray-300">
-										{user?.especialidadProfesional.charAt(0).toUpperCase() +
-											user?.especialidadProfesional.slice(1).toLowerCase()}
+										{user?.especialidadProfesional
+											.toLowerCase()
+											.replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
+												return letter.toUpperCase();
+											})}
 									</p>
 								</div>
 								<ul

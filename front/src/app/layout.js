@@ -4,7 +4,7 @@ import { AuthContextProvider } from "@/context/authContext";
 import { AlertContextProvider } from "@/context/alertContext";
 import Alert from "@/components/alert/alert";
 export const metadata = {
-	title: "Create Next App",
+	title: "Devtic",
 	description: "Devtic",
 };
 import "flowbite";

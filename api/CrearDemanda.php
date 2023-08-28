@@ -16,7 +16,7 @@ switch ($_SERVER["REQUEST_METHOD"]) {
             $datos = json_decode(file_get_contents("php://input"));
             if ($datos){
                 $demanda = new Demandas();
-                if($demanda -> crearDemanda($_COOKIE["token"], $datos->idEstado,$datos->idTipo, $datos->idOrganizacion, $datos->tituloDemanda, $datos->motivoDemanda, $datos->almacenDemanda)){
+                if($demanda -> crearDemanda($_COOKIE["token"], $datos->idTipo, $datos->idOrganizacion, $datos->tituloDemanda, $datos->motivoDemanda, $datos->almacenDemanda)){
                     http_response_code(200); 
                     echo json_encode(["msg" => "Se creo la demanda correctamente"]);
                 }else{
