@@ -20,7 +20,7 @@ export default function LoginPage() {
 						alt="Your Company"
 					/>
 					<h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-						S.e.T.I.C
+						DevTic
 					</h2>
 				</div>
 
