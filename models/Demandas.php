@@ -27,14 +27,13 @@ class Demandas {
         return false;
     }
 
-    public function actualizarDemanda($token, $idDemanda,$idEstado, $idTipo, $idOrganizacion, $tituloDemanda, $motivoDemanda, $almacenDemanda){
+    public function actualizarDemanda($token, $idDemanda,$idTipo, $idOrganizacion, $tituloDemanda, $motivoDemanda, $almacenDemanda){
         if($datos=Profesionales::validarToken($token)) {
             $con = new Conexion();
             $query="SELECT COUNT(*) as cantidad FROM grupos where $datos->idProfesional = idProfesional AND $idDemanda = idDemanda";
             $resultado = $con ->query($query);
             if ($resultado->num_rows == 1 || $datos->prioridadProfesional==1) {
                 $queryActualizar = "UPDATE demandas SET
-                idEstado = $idEstado,
                 idTipo = $idTipo,
                 idOrganizacion = $idOrganizacion,
                 tituloDemanda = '$tituloDemanda',
@@ -90,7 +89,7 @@ class Demandas {
     public function obtenerDemanda($token, $id){
         if ($datos = Profesionales::validarToken($token)) {
             $con = new Conexion();
-            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.tituloDemanda, d.fechaIngresoDemanda, d.motivoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN grupos g ON g.idDemanda = d.idDemanda and g.creadorDemanda = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad WHERE d.idDemanda = $id";
+            $query = "SELECT d.idDemanda, d.almacenDemanda,p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.tituloDemanda, d.fechaIngresoDemanda, d.motivoDemanda, e.nombreEstado,e.idEstado, t.nombreTipo, t.idTipo, o.nombreOrganizacion, o.idOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN grupos g ON g.idDemanda = d.idDemanda and g.creadorDemanda = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad WHERE d.idDemanda = $id";
             $datos =[];
             $resultado = $con ->query($query);
             if ($resultado->num_rows > 0) {

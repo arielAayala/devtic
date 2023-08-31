@@ -1,6 +1,6 @@
-import React, { useState } from "react";
 import EstadoSpan from "@/components/estadoSpan/estadoSpan";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function DemandaModal(props) {
 	const router = useRouter();
@@ -18,13 +18,10 @@ function DemandaModal(props) {
 		nombreEspecialidad,
 	} = props;
 
-	const handleRedirectToVerMas = () => {
-		router.push(`/demandas/${idDemanda}`);
-	};
 	return (
 		<div>
-			<div className="flex justify-between mb-4 rounded-t sm:mb-5 ">
-				<div class="flex items-center space-x-4">
+			<div className="flex justify-between  mb-4 rounded-t sm:mb-5 ">
+				<div className="flex items-center space-x-4">
 					<img
 						className="w-10 h-10 rounded-full"
 						src={fotoProfesional}
@@ -46,12 +43,14 @@ function DemandaModal(props) {
 								})}
 						</p>
 					</div>
-					<EstadoSpan nombreEstado={nombreEstado}></EstadoSpan>
+					<div className=" flex-1 ">
+						<EstadoSpan nombreEstado={nombreEstado}></EstadoSpan>
+					</div>
 				</div>
 			</div>
 			<dl>
 				<dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">
-					{tituloDemanda}
+					#{idDemanda} - {tituloDemanda}
 				</dt>
 				<dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">
 					Motivo
@@ -61,7 +60,7 @@ function DemandaModal(props) {
 				</dd>
 				<dt className="flex mb-2 font-semibold leading-none text-gray-900 dark:text-white">
 					<svg
-						class="w-6 h-6 text-gray-800 dark:text-white"
+						className="w-6 h-6 text-gray-800 dark:text-white"
 						aria-hidden="true"
 						xmlns="http://www.w3.org/2000/svg"
 						fill="currentColor"
@@ -94,14 +93,14 @@ function DemandaModal(props) {
 
 			<div className="flex justify-between items-center">
 				<div className="flex items-center space-x-3 sm:space-x-4">
-					<div class="flex items-center space-x-3 sm:space-x-4">
-						<button
+					<div className="flex items-center space-x-3 sm:space-x-4">
+						<Link
 							type="button"
 							className="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-							onClick={handleRedirectToVerMas}
+							href={`/demandas/${idDemanda}`}
 						>
 							Ver mas
-						</button>
+						</Link>
 					</div>
 				</div>
 			</div>

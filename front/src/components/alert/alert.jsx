@@ -16,7 +16,7 @@ function Alert() {
 		return (
 			<div
 				className={
-					" bg-blue-400 opacity-85 flex flex-row  right-12 bottom-12 p-2 rounded-full fixed"
+					" bg-blue-400 opacity-85 flex flex-row  right-12 bottom-12 p-2 rounded-full fixed z-50"
 				}
 			>
 				<button

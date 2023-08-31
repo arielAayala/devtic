@@ -26,22 +26,7 @@ switch ($_SERVER["REQUEST_METHOD"]) {
         } 
         break;
 
-    case "GET":
-        if(isset($_COOKIE["token"])){
-            $profesional = new Profesionales();
-            if ($datos = $profesional->iniciarSesionConToken(($_COOKIE["token"]))) {
-                http_response_code(200);
-                echo json_encode($datos);
-            }else{
-                http_response_code(404);
-                echo json_encode(["error" => "Token no existente"]);
-            }
-        }else{
-            http_response_code(400);
-            echo json_encode(["error" => "Token no existente"]);
-        }
-
-        break;
+    
     
     default:
         # code...

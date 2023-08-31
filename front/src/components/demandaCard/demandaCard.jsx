@@ -69,7 +69,7 @@ function DemandaCard(props) {
 				</button>
 			</div>
 			{isModalOpen && (
-				<div className="fixed inset-0 flex items-center justify-center z-50">
+				<div className="sm:px-8 fixed inset-0 flex items-center justify-center z-50">
 					<div className="absolute inset-0 bg-gray-800 opacity-60"></div>
 					<div className="bg-white dark:bg-gray-800 p-4 rounded-lg z-10">
 						<button

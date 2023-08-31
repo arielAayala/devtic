@@ -1,4 +1,5 @@
 "use client";
+import DemandaModalUpdate from "@/components/demandaModalUpdate/demandaModalUpdate";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -23,13 +24,22 @@ function PageIdDemanda() {
 			.then((rest) => {
 				setDemanda(rest ?? {});
 				setTimeout(() => setLoader(true), 1500);
-				console.log(rest);
 			});
 	};
 
 	useEffect(() => {
 		obtenerDemanda();
 	}, []);
+
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const openModal = () => {
+		setIsModalOpen(true);
+	};
+
+	const closeModal = () => {
+		setIsModalOpen(false);
+	};
 
 	if (!loader) {
 		return (
@@ -69,70 +79,114 @@ function PageIdDemanda() {
 	}
 
 	return (
-		<div>
-			<section className="bg-white dark:bg-gray-900">
-				<div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
-					<h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-						{demanda.tituloDemanda}
-					</h1>
-					<p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400">
-						{demanda.nombreOrganizacion}
-					</p>
+		<>
+			{demanda == {} ? (
+				<h2>No existe estaDemanda</h2>
+			) : (
+				<div>
+					<section className="bg-white dark:bg-gray-900">
+						<div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
+							<h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+								{demanda.tituloDemanda}
+							</h1>
+							<p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400">
+								{demanda.nombreOrganizacion}
+							</p>
 
-					<p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
-						{demanda.nombreTipo}
-					</p>
-					<p class="text-gray-500 dark:text-gray-400">
-						{demanda.motivoDemanda}
-					</p>
-				</div>
-			</section>
-			<div className="flex items-center space-x-4">
-				<img
-					className="w-20 h-20 rounded-full"
-					src={demanda.fotoProfesional}
-					alt="Large avatar"
-				/>
-				<div className="font-medium flex-1 dark:text-white">
-					<div>
-						{demanda.nombrePersona
-							.toLowerCase()
-							.replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
-								return letter.toUpperCase();
-							})}
+							<p className="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
+								{demanda.nombreTipo}
+							</p>
+							<p className="text-gray-500 dark:text-gray-400">
+								{demanda.motivoDemanda}
+							</p>
+						</div>
+					</section>
+					<div className="flex items-center space-x-4">
+						<img
+							className="w-20 h-20 rounded-full"
+							src={demanda.fotoProfesional}
+							alt="Large avatar"
+						/>
+						<div className="font-medium flex-1 dark:text-white">
+							<div>
+								{demanda.nombrePersona
+									.toLowerCase()
+									.replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
+										return letter.toUpperCase();
+									})}
+							</div>
+							<div className="text-sm text-gray-500 dark:text-gray-400">
+								{demanda.nombreEspecialidad
+									.toLowerCase()
+									.replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
+										return letter.toUpperCase();
+									})}
+							</div>
+						</div>
+						<div className="flex items-center justify-end space-x-3 sm:space-x-4">
+							<button
+								type="button"
+								onClick={openModal}
+								className="text-white inline-flex items-center bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+							>
+								<svg
+									aria-hidden="true"
+									className="mr-1 -ml-1 w-5 h-5"
+									fill="currentColor"
+									viewBox="0 0 20 20"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path>
+									<path
+										fillRule="evenodd"
+										d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+										clipRule="evenodd"
+									></path>
+								</svg>
+								Editar
+							</button>
+						</div>
 					</div>
-					<div className="text-sm text-gray-500 dark:text-gray-400">
-						{demanda.nombreEspecialidad
-							.toLowerCase()
-							.replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
-								return letter.toUpperCase();
-							})}
-					</div>
+					{isModalOpen && (
+						<div className=" fixed inset-0 flex items-center justify-center z-50">
+							<div className="absolute inset-0 bg-gray-800 opacity-60"></div>
+							<div className="bg-white dark:bg-gray-800  p-4 px-10  rounded-lg z-10">
+								<button
+									type="button"
+									className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
+									data-modal-toggle="readProductModal"
+									onClick={closeModal}
+								>
+									<svg
+										aria-hidden="true"
+										className="w-5 h-5"
+										fill="currentColor"
+										viewBox="0 0 20 20"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path
+											fillRule="evenodd"
+											d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+											clipRule="evenodd"
+										></path>
+									</svg>
+									<span className="sr-only">Cerrar Demanda</span>
+								</button>
+								<DemandaModalUpdate
+									obtenerDemanda={obtenerDemanda}
+									motivoDemanda={demanda.motivoDemanda}
+									tituloDemanda={demanda.tituloDemanda}
+									idTipo={demanda.idTipo}
+									idOrganizacion={demanda.idOrganizacion}
+									idDemanda={demanda.idDemanda}
+									almacenDemanda={demanda.almacenDemanda}
+								></DemandaModalUpdate>
+							</div>
+						</div>
+					)}
 				</div>
-				<div className="flex items-center justify-end space-x-3 sm:space-x-4">
-					<button
-						type="button"
-						className="text-white inline-flex items-center bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-					>
-						<svg
-							aria-hidden="true"
-							className="mr-1 -ml-1 w-5 h-5"
-							fill="currentColor"
-							viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path>
-							<path
-								fillRule="evenodd"
-								d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-								clipRule="evenodd"
-							></path>
-						</svg>
-						Editar
-					</button>
-				</div>
-			</div>
-		</div>
+			)}
+		</>
 	);
 }
 

@@ -1,0 +1,356 @@
+SET FOREIGN_KEY_CHECKS=0;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+CREATE DATABASE IF NOT EXISTS `devtic` DEFAULT CHARACTER SET utf8 COLLATE utf8_spanish_ci;
+USE `devtic`;
+
+DROP TABLE IF EXISTS `anexosdemandas`;
+CREATE TABLE `anexosdemandas` (
+  `idAnexoDemanda` int(11) NOT NULL,
+  `idDemanda` int(11) NOT NULL,
+  `urlAnexoDemanda` varchar(255) NOT NULL,
+  `nombreAnexoDemanda` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `anexosnotas`;
+CREATE TABLE `anexosnotas` (
+  `idAnexoNota` int(11) NOT NULL,
+  `idNota` int(11) NOT NULL,
+  `urlAnexoNota` varchar(255) NOT NULL,
+  `nombreAnexoNota` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `correos`;
+CREATE TABLE `correos` (
+  `idCorreo` int(11) NOT NULL,
+  `idPersona` int(11) NOT NULL,
+  `direccionCorreo` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `demandas`;
+CREATE TABLE `demandas` (
+  `idDemanda` int(11) NOT NULL,
+  `idEstado` int(11) NOT NULL,
+  `idTipo` int(11) NOT NULL,
+  `idOrganizacion` int(11) NOT NULL,
+  `tituloDemanda` varchar(255) NOT NULL,
+  `motivoDemanda` text NOT NULL,
+  `fechaIngresoDemanda` date NOT NULL,
+  `fechaCierreDemanda` date DEFAULT NULL,
+  `almacenDemanda` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `domicilios`;
+CREATE TABLE `domicilios` (
+  `idDomicilio` int(11) NOT NULL,
+  `idPersona` int(11) NOT NULL,
+  `idLocalidad` int(11) NOT NULL,
+  `direccionDomicilio` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `especialidades`;
+CREATE TABLE `especialidades` (
+  `idEspecialidad` int(11) NOT NULL,
+  `nombreEspecialidad` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `estados`;
+CREATE TABLE `estados` (
+  `idEstado` int(11) NOT NULL,
+  `nombreEstado` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `grupos`;
+CREATE TABLE `grupos` (
+  `idProfesional` int(11) NOT NULL,
+  `idDemanda` int(11) NOT NULL,
+  `creadorDemanda` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `localidades`;
+CREATE TABLE `localidades` (
+  `idLocalidad` int(11) NOT NULL,
+  `nombreLocalidad` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `notas`;
+CREATE TABLE `notas` (
+  `idNota` int(11) NOT NULL,
+  `idDemanda` int(11) NOT NULL,
+  `idProfesionalCreador` int(11) NOT NULL,
+  `idTipoNota` int(11) NOT NULL,
+  `tituloNota` varchar(255) NOT NULL,
+  `fechaCreacionNota` date NOT NULL,
+  `descripcionNota` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `organizaciones`;
+CREATE TABLE `organizaciones` (
+  `idOrganizacion` int(11) NOT NULL,
+  `idPersonaResponsable` int(11) DEFAULT NULL,
+  `idLocalidad` int(11) NOT NULL,
+  `nombreOrganizacion` varchar(255) NOT NULL,
+  `direccionOrganizacion` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `parentesco`;
+CREATE TABLE `parentesco` (
+  `idParentesco` int(11) NOT NULL,
+  `nombreParentesco` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `personas`;
+CREATE TABLE `personas` (
+  `idPersona` int(11) NOT NULL,
+  `nombrePersona` varchar(200) NOT NULL,
+  `dniPersona` int(8) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `personasinvolucradas`;
+CREATE TABLE `personasinvolucradas` (
+  `idPersonaInvolucrada` int(11) NOT NULL,
+  `idPersona` int(11) NOT NULL,
+  `idDemanda` int(11) NOT NULL,
+  `idParentesco` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `profesionales`;
+CREATE TABLE `profesionales` (
+  `idProfesional` int(11) NOT NULL,
+  `idPersona` int(11) NOT NULL,
+  `idEspecialidad` int(11) NOT NULL,
+  `correoProfesional` varchar(100) NOT NULL,
+  `contrasenaProfesional` varchar(255) NOT NULL,
+  `fotoProfesional` varchar(255) DEFAULT NULL,
+  `prioridadProfesional` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `roles`;
+CREATE TABLE `roles` (
+  `idRol` int(11) NOT NULL,
+  `nombreRol` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `rolespersonas`;
+CREATE TABLE `rolespersonas` (
+  `idRol` int(11) NOT NULL,
+  `idPersonaInvolucrada` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `telefonos`;
+CREATE TABLE `telefonos` (
+  `idTelefono` int(11) NOT NULL,
+  `idPersona` int(11) NOT NULL,
+  `numeroTelefono` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `telefonosorganizacion`;
+CREATE TABLE `telefonosorganizacion` (
+  `idTelefonoOrganizacion` int(11) NOT NULL,
+  `idOrganizacion` int(11) NOT NULL,
+  `numeroTelefonoOrganizacion` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `tiponota`;
+CREATE TABLE `tiponota` (
+  `idTipoNota` int(11) NOT NULL,
+  `nombreTipoNota` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+DROP TABLE IF EXISTS `tipos`;
+CREATE TABLE `tipos` (
+  `idTipo` int(11) NOT NULL,
+  `nombreTipo` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+
+ALTER TABLE `anexosdemandas`
+  ADD PRIMARY KEY (`idAnexoDemanda`),
+  ADD KEY `idDemanda` (`idDemanda`);
+
+ALTER TABLE `anexosnotas`
+  ADD PRIMARY KEY (`idAnexoNota`),
+  ADD KEY `idNota` (`idNota`);
+
+ALTER TABLE `correos`
+  ADD PRIMARY KEY (`idCorreo`),
+  ADD KEY `idPersona` (`idPersona`);
+
+ALTER TABLE `demandas`
+  ADD PRIMARY KEY (`idDemanda`),
+  ADD KEY `idEstado` (`idEstado`),
+  ADD KEY `idTipo` (`idTipo`),
+  ADD KEY `idOrganizacion` (`idOrganizacion`);
+
+ALTER TABLE `domicilios`
+  ADD PRIMARY KEY (`idDomicilio`),
+  ADD KEY `idPersona` (`idPersona`),
+  ADD KEY `idLocalidad` (`idLocalidad`);
+
+ALTER TABLE `especialidades`
+  ADD PRIMARY KEY (`idEspecialidad`);
+
+ALTER TABLE `estados`
+  ADD PRIMARY KEY (`idEstado`);
+
+ALTER TABLE `grupos`
+  ADD KEY `idDemanda` (`idDemanda`),
+  ADD KEY `idProfesional` (`idProfesional`);
+
+ALTER TABLE `localidades`
+  ADD PRIMARY KEY (`idLocalidad`);
+
+ALTER TABLE `notas`
+  ADD PRIMARY KEY (`idNota`);
+
+ALTER TABLE `organizaciones`
+  ADD PRIMARY KEY (`idOrganizacion`),
+  ADD KEY `idLocalidad` (`idLocalidad`),
+  ADD KEY `idPersonaResponsable` (`idPersonaResponsable`);
+
+ALTER TABLE `parentesco`
+  ADD PRIMARY KEY (`idParentesco`);
+
+ALTER TABLE `personas`
+  ADD PRIMARY KEY (`idPersona`);
+
+ALTER TABLE `personasinvolucradas`
+  ADD PRIMARY KEY (`idPersonaInvolucrada`),
+  ADD KEY `idPersona` (`idPersona`),
+  ADD KEY `idDemanda` (`idDemanda`),
+  ADD KEY `idParentesco` (`idParentesco`);
+
+ALTER TABLE `profesionales`
+  ADD PRIMARY KEY (`idProfesional`),
+  ADD KEY `idPersona` (`idPersona`),
+  ADD KEY `idEspecialidad` (`idEspecialidad`);
+
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`idRol`);
+
+ALTER TABLE `rolespersonas`
+  ADD KEY `idRol` (`idRol`),
+  ADD KEY `idPersonaInvolucrada` (`idPersonaInvolucrada`);
+
+ALTER TABLE `telefonos`
+  ADD PRIMARY KEY (`idTelefono`),
+  ADD KEY `idPersona` (`idPersona`);
+
+ALTER TABLE `telefonosorganizacion`
+  ADD PRIMARY KEY (`idTelefonoOrganizacion`),
+  ADD KEY `idOrganizacion` (`idOrganizacion`);
+
+ALTER TABLE `tiponota`
+  ADD PRIMARY KEY (`idTipoNota`);
+
+ALTER TABLE `tipos`
+  ADD PRIMARY KEY (`idTipo`);
+
+
+ALTER TABLE `anexosdemandas`
+  MODIFY `idAnexoDemanda` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `anexosnotas`
+  MODIFY `idAnexoNota` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `correos`
+  MODIFY `idCorreo` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `demandas`
+  MODIFY `idDemanda` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `domicilios`
+  MODIFY `idDomicilio` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `especialidades`
+  MODIFY `idEspecialidad` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `estados`
+  MODIFY `idEstado` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `localidades`
+  MODIFY `idLocalidad` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `notas`
+  MODIFY `idNota` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `organizaciones`
+  MODIFY `idOrganizacion` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `parentesco`
+  MODIFY `idParentesco` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `personas`
+  MODIFY `idPersona` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `personasinvolucradas`
+  MODIFY `idPersonaInvolucrada` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `profesionales`
+  MODIFY `idProfesional` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `roles`
+  MODIFY `idRol` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `telefonos`
+  MODIFY `idTelefono` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `telefonosorganizacion`
+  MODIFY `idTelefonoOrganizacion` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `tiponota`
+  MODIFY `idTipoNota` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `tipos`
+  MODIFY `idTipo` int(11) NOT NULL AUTO_INCREMENT;
+
+
+ALTER TABLE `anexosdemandas`
+  ADD CONSTRAINT `anexosdemandas_ibfk_1` FOREIGN KEY (`idDemanda`) REFERENCES `demandas` (`idDemanda`);
+
+ALTER TABLE `anexosnotas`
+  ADD CONSTRAINT `anexosnotas_ibfk_1` FOREIGN KEY (`idNota`) REFERENCES `notas` (`idNota`);
+
+ALTER TABLE `correos`
+  ADD CONSTRAINT `correos_ibfk_1` FOREIGN KEY (`idPersona`) REFERENCES `personas` (`idPersona`);
+
+ALTER TABLE `demandas`
+  ADD CONSTRAINT `demandas_ibfk_1` FOREIGN KEY (`idEstado`) REFERENCES `estados` (`idEstado`),
+  ADD CONSTRAINT `demandas_ibfk_2` FOREIGN KEY (`idTipo`) REFERENCES `tipos` (`idTipo`),
+  ADD CONSTRAINT `demandas_ibfk_3` FOREIGN KEY (`idOrganizacion`) REFERENCES `organizaciones` (`idOrganizacion`);
+
+ALTER TABLE `domicilios`
+  ADD CONSTRAINT `domicilios_ibfk_1` FOREIGN KEY (`idPersona`) REFERENCES `personas` (`idPersona`),
+  ADD CONSTRAINT `domicilios_ibfk_2` FOREIGN KEY (`idLocalidad`) REFERENCES `localidades` (`idLocalidad`);
+
+ALTER TABLE `grupos`
+  ADD CONSTRAINT `grupos_ibfk_1` FOREIGN KEY (`idDemanda`) REFERENCES `demandas` (`idDemanda`),
+  ADD CONSTRAINT `grupos_ibfk_2` FOREIGN KEY (`idDemanda`) REFERENCES `demandas` (`idDemanda`),
+  ADD CONSTRAINT `grupos_ibfk_3` FOREIGN KEY (`idProfesional`) REFERENCES `profesionales` (`idProfesional`);
+
+ALTER TABLE `organizaciones`
+  ADD CONSTRAINT `organizaciones_ibfk_1` FOREIGN KEY (`idPersonaResponsable`) REFERENCES `personas` (`idPersona`),
+  ADD CONSTRAINT `organizaciones_ibfk_2` FOREIGN KEY (`idLocalidad`) REFERENCES `localidades` (`idLocalidad`),
+  ADD CONSTRAINT `organizaciones_ibfk_3` FOREIGN KEY (`idPersonaResponsable`) REFERENCES `personas` (`idPersona`);
+
+ALTER TABLE `personasinvolucradas`
+  ADD CONSTRAINT `personasinvolucradas_ibfk_1` FOREIGN KEY (`idPersona`) REFERENCES `personas` (`idPersona`),
+  ADD CONSTRAINT `personasinvolucradas_ibfk_2` FOREIGN KEY (`idDemanda`) REFERENCES `demandas` (`idDemanda`),
+  ADD CONSTRAINT `personasinvolucradas_ibfk_3` FOREIGN KEY (`idParentesco`) REFERENCES `parentesco` (`idParentesco`);
+
+ALTER TABLE `profesionales`
+  ADD CONSTRAINT `profesionales_ibfk_1` FOREIGN KEY (`idPersona`) REFERENCES `personas` (`idPersona`),
+  ADD CONSTRAINT `profesionales_ibfk_2` FOREIGN KEY (`idEspecialidad`) REFERENCES `especialidades` (`idEspecialidad`);
+
+ALTER TABLE `rolespersonas`
+  ADD CONSTRAINT `rolespersonas_ibfk_1` FOREIGN KEY (`idRol`) REFERENCES `roles` (`idRol`),
+  ADD CONSTRAINT `rolespersonas_ibfk_2` FOREIGN KEY (`idPersonaInvolucrada`) REFERENCES `personasinvolucradas` (`idPersonaInvolucrada`);
+
+ALTER TABLE `telefonos`
+  ADD CONSTRAINT `telefonos_ibfk_1` FOREIGN KEY (`idPersona`) REFERENCES `personas` (`idPersona`);
+
+ALTER TABLE `telefonosorganizacion`
+  ADD CONSTRAINT `telefonosorganizacion_ibfk_1` FOREIGN KEY (`idOrganizacion`) REFERENCES `organizaciones` (`idOrganizacion`);
+SET FOREIGN_KEY_CHECKS=1;
+COMMIT;
