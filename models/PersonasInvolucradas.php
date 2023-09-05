@@ -1,7 +1,6 @@
 <?php
 
 include_once "../conexion/Conexion.php";
-include_once "Profesional.php";
 
 class PersonasInvolucradas {
     
@@ -10,13 +9,12 @@ class PersonasInvolucradas {
     private $idPersonaInvolucrada;
 
 
-    public function crearPersonaInvolucrada($token ,$idDemanda, $nombre, $dni, $demandante = false){
-        if (Profesionales::validarToken($token)) {
+    public function crearPersonaInvolucrada($idDemanda, $nombre, $dni, $roles, $idParentesco):bool{
             $con = new Conexion();
             $queryPersona = "SELECT  idPersona FROM personas WHERE dniPersona = $dni";
             $resultado = $con ->query($queryPersona);
             if ($resultado -> num_rows == 0  ){
-                $query = "INSERT INTO personas(nombrePersona, dniPersona) VALUES ($nombre, $dni)";
+                $query = "INSERT INTO personas(nombrePersona, dniPersona) VALUES ('$nombre', $dni)";
                 if ($con -> query($query)) {
                     $this -> idPersona = $con ->insert_id;
                     }    
@@ -25,20 +23,19 @@ class PersonasInvolucradas {
                     $this->idPersona =  $row["idPersona"];
                 }
             }
-
-            $queryCrearPersonaInvolucrada = "INSERT INTO personasinvolucradas(idDemanda, idPersona, idParentesco) VALUES ($idDemanda, $this->idPersona, null)";
+            $idParentescoValue = $idParentesco ? $idParentesco : "NULL";
+            $queryCrearPersonaInvolucrada = "INSERT INTO personasinvolucradas(idDemanda, idPersona, idParentesco) VALUES ($idDemanda, $this->idPersona, $idParentescoValue)";
             if ($con->query($queryCrearPersonaInvolucrada)) {
-                $this -> idPersonaInvolucrada;
-                if($demandante){
-                    $queryPersonaRol = "INSERT INTO rolespersonas(idPersonaInvolucrada, idRol ) VALUES ($this->idPersonaInvolucrada, 1)";
-                    if($con -> query($queryPersonaRol)){
-                        return true;
+                $this->idPersonaInvolucrada = $con->insert_id;
+                if($roles){
+                    foreach ($roles as  $rol) {
+                        $queryPersonaRol = "INSERT INTO rolespersonas(idPersonaInvolucrada, idRol ) VALUES ($this->idPersonaInvolucrada, $rol->idRol)";
+                        $con -> query($queryPersonaRol);
                     }
                 }
                 return true;
             }
-            
-        }
+            echo $con -> error;
         return false;
     }
 }
