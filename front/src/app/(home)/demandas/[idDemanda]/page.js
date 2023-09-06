@@ -23,6 +23,7 @@ function PageIdDemanda() {
 			})
 			.then((rest) => {
 				setDemanda(rest ?? {});
+				console.log(rest);
 				setTimeout(() => setLoader(true), 1500);
 			});
 	};
@@ -87,36 +88,57 @@ function PageIdDemanda() {
 					<section className="bg-white dark:bg-gray-900">
 						<div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
 							<h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-								{demanda.tituloDemanda}
+								{demanda.data.tituloDemanda}
 							</h1>
 							<p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400">
-								{demanda.nombreOrganizacion}
+								{demanda.data.nombreOrganizacion}
 							</p>
 
 							<p className="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
-								{demanda.nombreTipo}
+								{demanda.data.nombreTipo}
 							</p>
 							<p className="text-gray-500 dark:text-gray-400">
-								{demanda.motivoDemanda}
+								{demanda.data.motivoDemanda}
 							</p>
+						</div>
+						<div>
+							Grupo:
+							{demanda.grupo.map((i) => (
+								<div key={i.idProfesional}>
+									{i.nombrePersona} - {i.nombreEspecialidad}
+								</div>
+							))}
+						</div>
+						<div>
+							Personas Involucradas:
+							{demanda.personasInvolucradas.map((i) => (
+								<div key={i.idPersonaInvolucrada}>
+									{i.nombrePersona} - roles:
+									{i.rolesPersona.map((j) => (
+										<div key={`${j.idRol}${i.idPersonaInvolucrada}`}>
+											{j.nombreRol}
+										</div>
+									))}
+								</div>
+							))}
 						</div>
 					</section>
 					<div className="flex items-center space-x-4">
 						<img
 							className="w-20 h-20 rounded-full"
-							src={demanda.fotoProfesional}
+							src={demanda.data.fotoProfesional}
 							alt="Large avatar"
 						/>
 						<div className="font-medium flex-1 dark:text-white">
 							<div>
-								{demanda.nombrePersona
+								{demanda.data.nombrePersona
 									.toLowerCase()
 									.replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
 										return letter.toUpperCase();
 									})}
 							</div>
 							<div className="text-sm text-gray-500 dark:text-gray-400">
-								{demanda.nombreEspecialidad
+								{demanda.data.nombreEspecialidad
 									.toLowerCase()
 									.replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
 										return letter.toUpperCase();
@@ -174,12 +196,12 @@ function PageIdDemanda() {
 								</button>
 								<DemandaModalUpdate
 									obtenerDemanda={obtenerDemanda}
-									motivoDemanda={demanda.motivoDemanda}
-									tituloDemanda={demanda.tituloDemanda}
-									idTipo={demanda.idTipo}
-									idOrganizacion={demanda.idOrganizacion}
-									idDemanda={demanda.idDemanda}
-									almacenDemanda={demanda.almacenDemanda}
+									motivoDemanda={demanda.data.motivoDemanda}
+									tituloDemanda={demanda.data.tituloDemanda}
+									idTipo={demanda.data.idTipo}
+									idOrganizacion={demanda.data.idOrganizacion}
+									idDemanda={demanda.data.idDemanda}
+									almacenDemanda={demanda.data.almacenDemanda}
 								></DemandaModalUpdate>
 							</div>
 						</div>

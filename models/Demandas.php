@@ -3,6 +3,8 @@
 include_once "Profesionales.php";
 include_once "../conexion/Conexion.php";
 include_once "PersonasInvolucradas.php";
+include_once "Grupos.php";
+include_once "PersonasInvolucradas.php";
 
 class Demandas {
 
@@ -86,8 +88,13 @@ class Demandas {
                     $datos[]=$row;
                 }
             }
-            
-            return ["data"=>$datos, "demandasTotales"=>count($datos), "paginaNumero"=> $pagina];
+            $queryTotal = "SELECT COUNT(idDemanda) AS demandasTotales FROM demandas";
+            if ($resultadoTotal = $con -> query($queryTotal)) {
+                while ($row = $resultadoTotal->fetch_assoc()) {
+                    $total = $row["demandasTotales"];
+                }
+            }
+            return ["data"=>$datos, "demandasTotales"=>intval($total), "paginaNumero"=> $pagina];
         }
         return false;
     }
@@ -103,8 +110,9 @@ class Demandas {
                     $datos=$row;
                 }
             }
-            
-            return $datos;
+            $grupo = new Grupos();
+            $personasInvolucradas = new PersonasInvolucradas();
+            return ["data"=>$datos , "grupo"=> $grupo->obtenerGrupo($id), "personasInvolucradas"=> $personasInvolucradas->obtenerPersonasInvolucradas($id)];
         }
         return false;
     }
@@ -118,15 +126,19 @@ class Demandas {
             $resultado = $con ->query($query);
             if ($resultado->num_rows > 0) {
                 while ($row = $resultado->fetch_assoc()) {
-
-                        $datos[]=$row;
-                    
+                        $datos[]=$row;                
                 }
             }
-            
-            return ["data"=>$datos, "demandasTotales"=>count($datos), "paginaNumero"=> $pagina];
-
+            $queryTotal = "SELECT COUNT(idDemanda) AS demandasTotales FROM demandas WHERE motivoDemanda LIKE '%$motivo%'";
+            if ($resultadoTotal = $con -> query($queryTotal)) {
+                while ($row = $resultadoTotal->fetch_assoc()) {
+                    $total = $row["demandasTotales"];
+                }
+            }
+            return ["data"=>$datos, "demandasTotales"=>intval($total), "paginaNumero"=> $pagina];
         }
+
+        
         return false;
     }
 

@@ -38,4 +38,35 @@ class PersonasInvolucradas {
             echo $con -> error;
         return false;
     }
+
+    public function obtenerPersonasInvolucradas($idDemanda){
+        $con = new Conexion();
+        $query = "SELECT p.nombrePersona, parentesco.nombreParentesco, personasinvolucradas.idPersonaInvolucrada, CONCAT(
+            '[', 
+            GROUP_CONCAT(
+                CONCAT(
+                '{\"idRol\":', roles.idRol, ',',
+                '\"nombreRol\":\"', roles.nombreRol, '\"}'
+            )
+            ),
+            ']'
+        ) as rolesPersona 
+        FROM personasinvolucradas 
+        INNER JOIN personas p ON p.idPersona = personasinvolucradas.idPersona 
+        INNER JOIN rolespersonas ON rolespersonas.idPersonaInvolucrada = personasinvolucradas.idPersonaInvolucrada 
+        INNER JOIN roles ON roles.idRol = rolespersonas.idRol 
+        LEFT JOIN parentesco ON parentesco.idParentesco = personasinvolucradas.idParentesco 
+        WHERE personasinvolucradas.idDemanda = $idDemanda GROUP BY p.nombrePersona, parentesco.nombreParentesco";
+        $resultado = $con ->query($query);
+        $datos=[];
+        if ($resultado ->num_rows > 0) {
+            while ($row = $resultado ->fetch_assoc()) {
+                $row['rolesPersona'] = json_decode($row['rolesPersona'], true);
+                $datos[]=$row; 
+            }
+        }
+        return  $datos;
+    }
+
+
 }

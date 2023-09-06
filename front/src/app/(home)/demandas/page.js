@@ -9,7 +9,17 @@ import Link from "next/link";
 function Demandas() {
 	const [demandas, setDemandas] = useState([]);
 	const [loader, setLoader] = useState(false);
-	const obtenerDemandas = (page) => {
+	const [flags, setFlags] = useState(0);
+	const [page, setPage] = useState(1);
+	const [motivo, setMotivo] = useState("");
+	const [motivoViejo, setMotivoViejo] = useState("");
+
+	const onChangeMotivo = (e) => {
+		setMotivo(e.target.value);
+	};
+
+	const obtenerDemandas = () => {
+		setFlags(0);
 		fetch("http://localhost/devtic/api/ObtenerTodasDemandas.php", {
 			method: "POST",
 			headers: {
@@ -27,14 +37,47 @@ function Demandas() {
 			});
 	};
 
-	const [page, setPage] = useState(1);
+	const obtenerPorMotivo = () => {
+		if (motivoViejo != motivo) {
+			setMotivoViejo(motivo);
+			setPage(1);
+		}
+
+		setFlags(1);
+		fetch("http://localhost/devtic/api/ObtenerDemandasPorMotivo.php", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+			body: JSON.stringify({
+				pagina: page,
+				motivoDemanda: motivo,
+			}),
+		})
+			.then((rest) => {
+				return rest.json();
+			})
+			.then((rest) => {
+				setDemandas(rest ?? []);
+				setTimeout(() => setLoader(true), 1500);
+			});
+	};
+
 	useEffect(() => {
-		obtenerDemandas(page);
+		if (flags == 0) {
+			obtenerDemandas();
+		} else if (flags == 1) {
+			obtenerPorMotivo();
+		}
 	}, [page]);
 
 	return (
 		<main>
-			<SearchForm></SearchForm>
+			<SearchForm
+				onChangeMotivo={onChangeMotivo}
+				submitMotivo={obtenerPorMotivo}
+			></SearchForm>
 
 			<div className="border-b border-gray-200 dark:border-gray-700">
 				<ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
