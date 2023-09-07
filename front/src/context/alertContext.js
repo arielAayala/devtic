@@ -5,7 +5,6 @@ import React, {
 	useState,
 	useCallback,
 	useMemo,
-	useEffect,
 } from "react";
 
 const alertContext = createContext(null);

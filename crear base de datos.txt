@@ -2,10 +2,9 @@ SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-CREATE DATABASE IF NOT EXISTS `devtic` DEFAULT CHARACTER SET utf8 COLLATE utf8_spanish_ci;
+CREATE DATABASE IF NOT EXISTS `devtic` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci;
 USE `devtic`;
 
-DROP TABLE IF EXISTS `anexosdemandas`;
 CREATE TABLE IF NOT EXISTS `anexosdemandas` (
   `idAnexoDemanda` int(11) NOT NULL AUTO_INCREMENT,
   `idDemanda` int(11) NOT NULL,
@@ -15,7 +14,6 @@ CREATE TABLE IF NOT EXISTS `anexosdemandas` (
   KEY `idDemanda` (`idDemanda`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `anexosnotas`;
 CREATE TABLE IF NOT EXISTS `anexosnotas` (
   `idAnexoNota` int(11) NOT NULL AUTO_INCREMENT,
   `idNota` int(11) NOT NULL,
@@ -25,7 +23,6 @@ CREATE TABLE IF NOT EXISTS `anexosnotas` (
   KEY `idNota` (`idNota`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `correos`;
 CREATE TABLE IF NOT EXISTS `correos` (
   `idCorreo` int(11) NOT NULL AUTO_INCREMENT,
   `idPersona` int(11) NOT NULL,
@@ -34,7 +31,6 @@ CREATE TABLE IF NOT EXISTS `correos` (
   KEY `idPersona` (`idPersona`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `demandas`;
 CREATE TABLE IF NOT EXISTS `demandas` (
   `idDemanda` int(11) NOT NULL AUTO_INCREMENT,
   `idEstado` int(11) NOT NULL,
@@ -51,7 +47,6 @@ CREATE TABLE IF NOT EXISTS `demandas` (
   KEY `idOrganizacion` (`idOrganizacion`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `domicilios`;
 CREATE TABLE IF NOT EXISTS `domicilios` (
   `idDomicilio` int(11) NOT NULL AUTO_INCREMENT,
   `idPersona` int(11) NOT NULL,
@@ -62,21 +57,18 @@ CREATE TABLE IF NOT EXISTS `domicilios` (
   KEY `idLocalidad` (`idLocalidad`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `especialidades`;
 CREATE TABLE IF NOT EXISTS `especialidades` (
   `idEspecialidad` int(11) NOT NULL AUTO_INCREMENT,
   `nombreEspecialidad` varchar(100) NOT NULL,
   PRIMARY KEY (`idEspecialidad`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `estados`;
 CREATE TABLE IF NOT EXISTS `estados` (
   `idEstado` int(11) NOT NULL AUTO_INCREMENT,
   `nombreEstado` varchar(100) NOT NULL,
   PRIMARY KEY (`idEstado`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `grupos`;
 CREATE TABLE IF NOT EXISTS `grupos` (
   `idProfesional` int(11) NOT NULL,
   `idDemanda` int(11) NOT NULL,
@@ -85,14 +77,12 @@ CREATE TABLE IF NOT EXISTS `grupos` (
   KEY `idProfesional` (`idProfesional`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `localidades`;
 CREATE TABLE IF NOT EXISTS `localidades` (
   `idLocalidad` int(11) NOT NULL AUTO_INCREMENT,
   `nombreLocalidad` varchar(50) NOT NULL,
   PRIMARY KEY (`idLocalidad`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `notas`;
 CREATE TABLE IF NOT EXISTS `notas` (
   `idNota` int(11) NOT NULL AUTO_INCREMENT,
   `idDemanda` int(11) NOT NULL,
@@ -104,7 +94,6 @@ CREATE TABLE IF NOT EXISTS `notas` (
   PRIMARY KEY (`idNota`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `organizaciones`;
 CREATE TABLE IF NOT EXISTS `organizaciones` (
   `idOrganizacion` int(11) NOT NULL AUTO_INCREMENT,
   `idPersonaResponsable` int(11) DEFAULT NULL,
@@ -116,14 +105,12 @@ CREATE TABLE IF NOT EXISTS `organizaciones` (
   KEY `idPersonaResponsable` (`idPersonaResponsable`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `parentesco`;
 CREATE TABLE IF NOT EXISTS `parentesco` (
   `idParentesco` int(11) NOT NULL AUTO_INCREMENT,
   `nombreParentesco` varchar(255) NOT NULL,
   PRIMARY KEY (`idParentesco`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `personas`;
 CREATE TABLE IF NOT EXISTS `personas` (
   `idPersona` int(11) NOT NULL AUTO_INCREMENT,
   `nombrePersona` varchar(200) NOT NULL,
@@ -131,19 +118,18 @@ CREATE TABLE IF NOT EXISTS `personas` (
   PRIMARY KEY (`idPersona`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `personasinvolucradas`;
 CREATE TABLE IF NOT EXISTS `personasinvolucradas` (
   `idPersonaInvolucrada` int(11) NOT NULL AUTO_INCREMENT,
   `idPersona` int(11) NOT NULL,
   `idDemanda` int(11) NOT NULL,
   `idParentesco` int(11) DEFAULT NULL,
+  `demandante` tinyint(1) NOT NULL,
   PRIMARY KEY (`idPersonaInvolucrada`),
   KEY `idPersona` (`idPersona`),
   KEY `idDemanda` (`idDemanda`),
   KEY `idParentesco` (`idParentesco`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `profesionales`;
 CREATE TABLE IF NOT EXISTS `profesionales` (
   `idProfesional` int(11) NOT NULL AUTO_INCREMENT,
   `idPersona` int(11) NOT NULL,
@@ -157,14 +143,12 @@ CREATE TABLE IF NOT EXISTS `profesionales` (
   KEY `idEspecialidad` (`idEspecialidad`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `roles`;
 CREATE TABLE IF NOT EXISTS `roles` (
   `idRol` int(11) NOT NULL AUTO_INCREMENT,
   `nombreRol` varchar(255) NOT NULL,
   PRIMARY KEY (`idRol`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `rolespersonas`;
 CREATE TABLE IF NOT EXISTS `rolespersonas` (
   `idRol` int(11) NOT NULL,
   `idPersonaInvolucrada` int(11) NOT NULL,
@@ -172,7 +156,6 @@ CREATE TABLE IF NOT EXISTS `rolespersonas` (
   KEY `idPersonaInvolucrada` (`idPersonaInvolucrada`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `telefonos`;
 CREATE TABLE IF NOT EXISTS `telefonos` (
   `idTelefono` int(11) NOT NULL AUTO_INCREMENT,
   `idPersona` int(11) NOT NULL,
@@ -181,7 +164,6 @@ CREATE TABLE IF NOT EXISTS `telefonos` (
   KEY `idPersona` (`idPersona`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `telefonosorganizacion`;
 CREATE TABLE IF NOT EXISTS `telefonosorganizacion` (
   `idTelefonoOrganizacion` int(11) NOT NULL AUTO_INCREMENT,
   `idOrganizacion` int(11) NOT NULL,
@@ -190,14 +172,12 @@ CREATE TABLE IF NOT EXISTS `telefonosorganizacion` (
   KEY `idOrganizacion` (`idOrganizacion`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `tiponota`;
 CREATE TABLE IF NOT EXISTS `tiponota` (
   `idTipoNota` int(11) NOT NULL AUTO_INCREMENT,
   `nombreTipoNota` varchar(255) NOT NULL,
   PRIMARY KEY (`idTipoNota`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-DROP TABLE IF EXISTS `tipos`;
 CREATE TABLE IF NOT EXISTS `tipos` (
   `idTipo` int(11) NOT NULL AUTO_INCREMENT,
   `nombreTipo` varchar(100) NOT NULL,

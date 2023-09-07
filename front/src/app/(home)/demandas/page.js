@@ -5,6 +5,7 @@ import Skeleton from "@/components/skeleton/skeleton";
 import SearchForm from "@/components/searchForm/searchForm";
 import Pagination from "@/components/pagination/pagination";
 import Link from "next/link";
+import DemandaFilter from "@/components/demandaFilter/demandaFilter";
 
 function Demandas() {
 	const [demandas, setDemandas] = useState([]);
@@ -78,7 +79,7 @@ function Demandas() {
 				onChangeMotivo={onChangeMotivo}
 				submitMotivo={obtenerPorMotivo}
 			></SearchForm>
-
+			<DemandaFilter></DemandaFilter>
 			<div className="border-b border-gray-200 dark:border-gray-700">
 				<ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
 					<li className="mr-1">

@@ -9,7 +9,7 @@ class PersonasInvolucradas {
     private $idPersonaInvolucrada;
 
 
-    public function crearPersonaInvolucrada($idDemanda, $nombre, $dni, $roles, $idParentesco):bool{
+    public function crearPersonaInvolucrada($idDemanda, $nombre, $dni, $roles, $idParentesco ,$demandante,$telefono, $domicilio, $correo):bool{
             $con = new Conexion();
             $queryPersona = "SELECT  idPersona FROM personas WHERE dniPersona = $dni";
             $resultado = $con ->query($queryPersona);
@@ -17,14 +17,18 @@ class PersonasInvolucradas {
                 $query = "INSERT INTO personas(nombrePersona, dniPersona) VALUES ('$nombre', $dni)";
                 if ($con -> query($query)) {
                     $this -> idPersona = $con ->insert_id;
-                    }    
+                    $con->query( "INSERT INTO telefonos (idPersona, numeroTelefono) VALUES ($this->idPersona,$telefono)");
+                    $con->query("INSERT INTO telefonos (idPersona, numeroTelefono) VALUES ($this->idPersona,$domicilio)");
+                    $con->query( "INSERT INTO telefonos (idPersona, numeroTelefono) VALUES ($this->idPersona,$correo)");
+                }
             }else {
                 while ($row = $resultado->fetch_assoc()) {
                     $this->idPersona =  $row["idPersona"];
                 }
             }
+
             $idParentescoValue = $idParentesco ? $idParentesco : "NULL";
-            $queryCrearPersonaInvolucrada = "INSERT INTO personasinvolucradas(idDemanda, idPersona, idParentesco) VALUES ($idDemanda, $this->idPersona, $idParentescoValue)";
+            $queryCrearPersonaInvolucrada = "INSERT INTO personasinvolucradas(idDemanda, idPersona, idParentesco,demandante) VALUES ($idDemanda, $this->idPersona, $idParentescoValue, $demandante)";
             if ($con->query($queryCrearPersonaInvolucrada)) {
                 $this->idPersonaInvolucrada = $con->insert_id;
                 if($roles){
@@ -41,7 +45,7 @@ class PersonasInvolucradas {
 
     public function obtenerPersonasInvolucradas($idDemanda){
         $con = new Conexion();
-        $query = "SELECT p.nombrePersona, parentesco.nombreParentesco, personasinvolucradas.idPersonaInvolucrada, CONCAT(
+        $query = "SELECT p.nombrePersona, parentesco.nombreParentesco, personasinvolucradas.idPersonaInvolucrada, personasinvolucradas.demandante ,CONCAT(
             '[', 
             GROUP_CONCAT(
                 CONCAT(

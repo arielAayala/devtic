@@ -9,8 +9,9 @@ function Alert() {
 	useEffect(() => {
 		setTimeout(() => {
 			cerrarAlert();
-		}, 3500);
-	}, []);
+		}, 4000);
+		console.log("cerrando alert");
+	}, [alert]);
 
 	if (alert) {
 		return (

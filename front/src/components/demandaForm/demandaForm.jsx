@@ -12,7 +12,9 @@ function DemandaForm() {
 		idTipo: "",
 		idOrganizacion: "",
 		almacenDemanda: "",
+		personasInvolucradas: personasInvolucradas,
 	});
+	const [personasInvolucradas, setPersonasInvolucradas] = useState([]);
 
 	const textbox = useRef(null);
 
@@ -36,9 +38,7 @@ function DemandaForm() {
 			},
 			credentials: "include",
 		})
-			.then((res) => {
-				return res.json();
-			})
+			.then((res) => res.json())
 			.then((res) => {
 				setOrganizaciones(res);
 				setTimeout(() => setLoader(true), 1500);
@@ -58,9 +58,7 @@ function DemandaForm() {
 			credentials: "include",
 			body: JSON.stringify(input),
 		})
-			.then((res) => {
-				return res.json();
-			})
+			.then((res) => res.json())
 			.then((res) => {
 				crearAlert(res);
 				document.getElementById("formDemanda").reset();
@@ -84,222 +82,155 @@ function DemandaForm() {
 			id="formDemanda"
 			onSubmit={handleSubmit}
 		>
-			<h3 className="mb-4">Detalles de Demanda</h3>
-			{/* INGRESAR UN TITULO PARA LA DEMANDA */}
-			<div className="relative z-0 w-full mb-6 group">
-				<input
-					onChange={handleChange}
-					type="text"
-					name="tituloDemanda"
-					id="tituloDemanda"
-					className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-					placeholder=" "
-					required=""
-				/>
-				<label
-					htmlFor="tituloDemanda"
-					className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-				>
-					Titulo
-				</label>
+			<div className="space-y-12">
+				<div className="border-b border-gray-900/10 pb-12">
+					<h2 className="text-base font-semibold leading-7 text-gray-900">
+						Detalles de Demanda
+					</h2>
+					<p className="mt-1 text-sm leading-6 text-gray-600">
+						Aqui se detallan todos los aspectos de la demanda.
+					</p>
+
+					<div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+						<div className="sm:col-span-4">
+							<label
+								htmlFor="tituloDemanda"
+								className="block text-sm font-medium leading-6 text-gray-900"
+							>
+								Titulo
+							</label>
+							<div className="mt-2">
+								<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+									<span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">
+										/
+									</span>
+									<input
+										onChange={handleChange}
+										type="text"
+										name="tituloDemanda"
+										id="tituloDemanda"
+										autoComplete="username"
+										className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+										placeholder="Ingrese un titulo aqui"
+									/>
+								</div>
+							</div>
+						</div>
+
+						<div className="col-span-full">
+							<label
+								htmlFor="motivoDemanda"
+								className="block text-sm font-medium leading-6 text-gray-900"
+							>
+								Motivo
+							</label>
+							<div className="mt-2">
+								<textarea
+									onChange={handleKeyDown}
+									ref={textbox}
+									name="motivoDemanda"
+									id="motivoDemanda"
+									rows="3"
+									autoComplete="about"
+									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								></textarea>
+							</div>
+							<p className="mt-3 text-sm leading-6 text-gray-600">
+								Describa brevemente el motivo de la demanda.
+							</p>
+						</div>
+
+						<div className="col-span-full">
+							<label
+								htmlFor="idOrganizacion"
+								className="block text-sm font-medium leading-6 text-gray-900"
+							>
+								Organización
+							</label>
+							<div className="mt-2">
+								<select
+									onChange={handleChange}
+									type="search"
+									name="idOrganizacion"
+									id="idOrganizacion"
+									className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									autoComplete="organization"
+								>
+									<option value={0}>Seleccione una opción</option>
+									{loader ? (
+										organizaciones.map((i) => (
+											<option
+												key={i.idOrganizacion}
+												value={i.idOrganizacion}
+											>
+												{i.nombreOrganizacion}
+											</option>
+										))
+									) : (
+										<option>Cargando organizaciones</option>
+									)}
+								</select>
+							</div>
+						</div>
+
+						<div className="col-span-full">
+							<label
+								htmlFor="idTipo"
+								className="block text-sm font-medium leading-6 text-gray-900"
+							>
+								Tipo
+							</label>
+							<div className="mt-2">
+								<select
+									onChange={handleChange}
+									name="idTipo"
+									id="idTipo"
+									className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								>
+									<option value={0}>Seleccione una opción</option>
+									<option value={1}>Invitación</option>
+									<option value={2}>Solicitud</option>
+									<option value={3}>Expediente</option>
+								</select>
+							</div>
+						</div>
+
+						<div className="col-span-full">
+							<label
+								htmlFor="almacenDemanda"
+								className="block text-sm font-medium leading-6 text-gray-900"
+							>
+								Lugar de almacenamiento
+							</label>
+							<div className="mt-2">
+								<textarea
+									onChange={handleChange}
+									type="text"
+									name="almacenDemanda"
+									id="almacenDemanda"
+									autoComplete="organization"
+									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 
-			{/* ESCRIBIR EL MOTIVO DE LA DEMANDA */}
-			<div className="relative z-0 w-full mb-6 group">
-				<textarea
-					onChange={handleKeyDown}
-					ref={textbox}
-					type="text"
-					name="motivoDemanda"
-					id="motivoDemanda"
-					className="block  py-4 resize-none h-min overflow-y-hidden px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-					required=""
-				/>
-				<label
-					htmlFor="motivoDemanda"
-					className="absolute font-medium text-lg  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+			<div className="mt-6 flex items-center justify-end gap-x-6">
+				<button
+					type="button"
+					className="text-sm font-semibold leading-6 text-gray-900"
 				>
-					Motivo
-				</label>
+					Cancelar
+				</button>
+				<button
+					type="submit"
+					className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+				>
+					Guardar
+				</button>
 			</div>
-			{/* BUSCAR INSTITUCIONES */}
-			<div className="relative z-0 w-full mb-6 group">
-				<select
-					onChange={handleChange}
-					type="search"
-					name="idOrganizacion"
-					id="idOrganizacion"
-					className="block  px-0 w-full pt-4 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-					placeholder=" "
-					required=""
-				>
-					<option
-						className=" text-xs"
-						value={0}
-					>
-						Seleccione una opcion
-					</option>
-					{loader ? (
-						organizaciones.map((i) => {
-							return (
-								<option
-									className=" text-xs"
-									key={i.idOrganizacion}
-									value={i.idOrganizacion}
-								>
-									{i.nombreOrganizacion}
-								</option>
-							);
-						})
-					) : (
-						<option className=" text-xs">Cargando organizaciones</option>
-					)}
-				</select>
-				<label
-					htmlFor="idOrganizacion"
-					className="font-medium absolute text-lg  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-				>
-					Organización
-				</label>
-			</div>
-			{/* Tipo de demanda */}
-			<div className="relative z-0 w-full mb-6 group">
-				<select
-					onChange={handleChange}
-					type="search"
-					name="idTipo"
-					id="idTipo"
-					className="block  px-0 w-full pt-4 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-					placeholder=" "
-					required=""
-				>
-					<option
-						className=" text-xs"
-						value={0}
-					>
-						Seleccione una opcion
-					</option>
-					<option
-						className=" text-xs"
-						value={1}
-					>
-						Invitacion
-					</option>
-					<option
-						className=" text-xs"
-						value={2}
-					>
-						Solicitud
-					</option>
-					<option
-						className=" text-xs"
-						value={3}
-					>
-						Expediente
-					</option>
-				</select>
-				<label
-					htmlFor="idTipo"
-					className="font-medium absolute text-lg  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-				>
-					Tipo
-				</label>
-			</div>
-			{/* INGRESAR UN almacen PARA LA DEMANDA */}
-			<div className="relative z-0 w-full mb-6 group">
-				<input
-					onChange={handleChange}
-					type="text"
-					name="almacenDemanda"
-					id="almacenDemanda"
-					className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-					placeholder=" "
-					required=""
-				/>
-				<label
-					htmlFor="almacenDemanda"
-					className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-				>
-					Demanda almacenada en
-				</label>
-			</div>
-			{/* <h3 className="mb-4">Datos del demandate</h3>
-			<div className="grid md:grid-cols-2 md:gap-6">
-				
-				<div className="relative z-0 w-full mb-6 group">
-					<input
-						type="text"
-						name="nombre"
-						id="nombre"
-						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-						placeholder=" "
-						required=""
-					/>
-					<label
-						htmlFor="nombre"
-						className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-					>
-						Nombre completo
-					</label>
-				</div>
-				<div className="relative z-0 w-full mb-6 group">
-					<input
-						type="text"
-						name="documento"
-						id="documento"
-						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-						placeholder=" "
-						required=""
-					/>
-					<label
-						htmlFor="documento"
-						className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-					>
-						Documento
-					</label>
-				</div>
-			</div>
-			 <div className="grid md:grid-cols-2 md:gap-6">
-				<div className="relative z-0 w-full mb-6 group">
-					<input
-						type="tel"
-						pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-						name="telefono"
-						id="telefono"
-						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-						placeholder=" "
-						required=""
-					/>
-					<label
-						htmlFor="telefono"
-						className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-					>
-						Numero telefónico
-					</label>
-				</div>
-				<div className="relative z-0 w-full mb-6 group">
-					<input
-						type="text"
-						name="domicilio"
-						id="domicilio"
-						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-						placeholder=" "
-						required=""
-					/>
-					<label
-						htmlFor="domicilio"
-						className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-					>
-						Domicilio
-					</label>
-				</div>
-			</div>  */}
-			<button
-				type="submit"
-				className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-			>
-				Agregar
-			</button>
 		</form>
 	);
 }

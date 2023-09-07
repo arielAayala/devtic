@@ -58,9 +58,9 @@ function DemandaModal(props) {
 				<dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">
 					{motivoDemanda}
 				</dd>
-				<dt className="flex mb-2 font-semibold leading-none text-gray-900 dark:text-white">
+				<dt className="flex inset-0 mb-2 font-semibold leading-none text-gray-900 dark:text-white mt-4">
 					<svg
-						className="w-6 h-6 text-gray-800 dark:text-white"
+						className="w-4 h-4 text-gray-800 dark:text-white"
 						aria-hidden="true"
 						xmlns="http://www.w3.org/2000/svg"
 						fill="currentColor"
@@ -69,15 +69,15 @@ function DemandaModal(props) {
 						<path d="M19.728 10.686c-2.38 2.256-6.153 3.381-9.875 3.381-3.722 0-7.4-1.126-9.571-3.371L0 10.437V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-7.6l-.272.286Z" />
 						<path d="m.135 7.847 1.542 1.417c3.6 3.712 12.747 3.7 16.635.01L19.605 7.9A.98.98 0 0 1 20 7.652V6a2 2 0 0 0-2-2h-3V3a3 3 0 0 0-3-3H8a3 3 0 0 0-3 3v1H2a2 2 0 0 0-2 2v1.765c.047.024.092.051.135.082ZM10 10.25a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5ZM7 3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1H7V3Z" />
 					</svg>
-					Institucion
+					- Institucion
 				</dt>
 				<dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">
 					{nombreOrganizacion}
 				</dd>
 			</dl>
-			<dt className="flex mb-2 font-semibold leading-none text-gray-900 dark:text-white">
+			<dt className="flex mb-2 font-semibold leading-none text-gray-900 dark:text-white mt-4">
 				<svg
-					className="w-6 h-6 text-gray-800 dark:text-white"
+					className="w-4 h-4 text-gray-800 dark:text-white"
 					aria-hidden="true"
 					xmlns="http://www.w3.org/2000/svg"
 					fill="currentColor"
@@ -85,7 +85,7 @@ function DemandaModal(props) {
 				>
 					<path d="M0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm14-7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm-5-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm-5-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4Z" />
 				</svg>
-				Fecha Ingreso
+				- Fecha Ingreso
 			</dt>
 			<dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">
 				{fechaIngresoDemanda}
