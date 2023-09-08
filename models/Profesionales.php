@@ -114,6 +114,22 @@ class Profesionales  {
         setcookie('token', "" , $cookiesConfiguration);
     } 
 
+    public static function listarProfesionales($token){
+        if (Profesionales::validarToken($token)) {
+            $con = new Conexion();
+            $query = "SELECT p.idProfesional, e.nombreEspecialidad, personas.nombrePersona FROM profesionales p INNER JOIN especialidades e ON e.idEspecialidad = p.idEspecialidad INNER JOIN personas ON personas.idPersona = p.idPersona";
+            $resultado = $con->query($query);
+            $datos = [];
+            if ($resultado ->num_rows >0) {
+                while($row = $resultado->fetch_assoc()){
+                    $datos[]=$row;
+                }
+            }
+            return $datos;
+        }
+        return false;
+    }
+
     static public function validarToken($token):?object{
         try {
             $payload = JWT::decode($token, new Key($_ENV["SECRET_JWT"], "HS256"));
@@ -122,7 +138,7 @@ class Profesionales  {
             echo json_encode(["Error" => "Error al validar el token"]);
         } 
     }   
-
+    
 
     
 
