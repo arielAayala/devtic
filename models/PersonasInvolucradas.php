@@ -5,67 +5,57 @@ include_once "../conexion/Conexion.php";
 class PersonasInvolucradas {
     
     private $idPersona;
-    private $idParentesco;
-    private $idPersonaInvolucrada;
 
-
-    public function crearPersonaInvolucrada($idDemanda, $nombre, $dni, $roles, $idParentesco ,$demandante,$telefono, $domicilio, $correo):bool{
-            $con = new Conexion();
-            $queryPersona = "SELECT  idPersona FROM personas WHERE dniPersona = $dni";
-            $resultado = $con ->query($queryPersona);
-            if ($resultado -> num_rows == 0  ){
-                $query = "INSERT INTO personas(nombrePersona, dniPersona) VALUES ('$nombre', $dni)";
-                if ($con -> query($query)) {
-                    $this -> idPersona = $con ->insert_id;
-                    $con->query( "INSERT INTO telefonos (idPersona, numeroTelefono) VALUES ($this->idPersona,$telefono)");
-                    $con->query("INSERT INTO telefonos (idPersona, numeroTelefono) VALUES ($this->idPersona,$domicilio)");
-                    $con->query( "INSERT INTO telefonos (idPersona, numeroTelefono) VALUES ($this->idPersona,$correo)");
-                }
-            }else {
-                while ($row = $resultado->fetch_assoc()) {
-                    $this->idPersona =  $row["idPersona"];
-                }
+    public function crearPersonaInvolucrada($idDemanda, $nombre, $dni,$demandante ,$alumno,   $idParentesco=null ,$telefono=null, $domicilio=null,$idLocalidad=null ,$correo=null ):bool{
+        $con = new Conexion();
+        $query = "INSERT INTO personas(nombrePersona, dniPersona) VALUES (?, ?)";
+        $prepare = $con ->prepare($query);
+        $prepare-> bind_param("si",$nombre, $dni);
+        if ($prepare -> execute()) {
+            $this -> idPersona = $con ->insert_id;
+            $patternPhone = "/^((\(?\d{3}\)?[-. ]?\d{4})|(\(?\d{4}\)?[-. ]?\d{3})|(\(?\d{5}\)?[-. ]?\d{2}))[-. ]?\d{4}$/";
+            if ($telefono & preg_match_all($patternPhone,$telefono)) {
+                $preparePhone = $con->prepare("INSERT INTO telefonos (idPersona, numeroTelefono) VALUES (?,?)");      
+                $preparePhone->bind_param("is",$this->idPersona,$telefono);
+                $preparePhone->execute();
             }
+            $patternEmail ='/@devtic\.com$/';
+            if ($correo && preg_match($patternEmail,$correo)) {
+                $prepareEmail = $con->prepare("INSERT INTO correos (idPersona, direccionCorreo) VALUES (?,?)");      
+                $prepareEmail->bind_param("is",$this->idPersona,$correo);
+                $prepareEmail->execute();
 
-            $idParentescoValue = $idParentesco ? $idParentesco : "NULL";
-            $queryCrearPersonaInvolucrada = "INSERT INTO personasinvolucradas(idDemanda, idPersona, idParentesco,demandante) VALUES ($idDemanda, $this->idPersona, $idParentescoValue, $demandante)";
-            if ($con->query($queryCrearPersonaInvolucrada)) {
-                $this->idPersonaInvolucrada = $con->insert_id;
-                if($roles){
-                    foreach ($roles as  $rol) {
-                        $queryPersonaRol = "INSERT INTO rolespersonas(idPersonaInvolucrada, idRol ) VALUES ($this->idPersonaInvolucrada, $rol->idRol)";
-                        $con -> query($queryPersonaRol);
-                    }
-                }
+            }
+            if ($domicilio & $idLocalidad) {
+                $prepareAddress = $con->prepare( "INSERT INTO domicilios (idPersona, direccionDomicilio, idLocalidad) VALUES (?,?,?)");
+                $prepareAddress->bind_param("isi",$this->idPersona, $domicilio, $idLocalidad);
+                $prepareAddress->execute();
+            }
+            
+            $preparePersonaInvolucrada = $con->prepare( "INSERT INTO personasinvolucradas(idDemanda, idPersona, idParentesco, demandante, alumno) VALUES (?, ?, ?, ?, ?)");
+            $preparePersonaInvolucrada-> bind_param("iiiii",$idDemanda,$this->idPersona, $idParentesco, $demandante,$alumno);
+            if ($preparePersonaInvolucrada->execute()) {
+                $con-> close();
                 return true;
-            }
-            echo $con -> error;
+            } 
+        }
+        $preparePersonaInvolucrada->close();
         return false;
     }
 
     public function obtenerPersonasInvolucradas($idDemanda){
         $con = new Conexion();
-        $query = "SELECT p.nombrePersona, parentesco.nombreParentesco, personasinvolucradas.idPersonaInvolucrada, personasinvolucradas.demandante ,CONCAT(
-            '[', 
-            GROUP_CONCAT(
-                CONCAT(
-                '{\"idRol\":', roles.idRol, ',',
-                '\"nombreRol\":\"', roles.nombreRol, '\"}'
-            )
-            ),
-            ']'
-        ) as rolesPersona 
+        $preparePersonasInvolucradas = $con->prepare("SELECT p.nombrePersona,p.dniPersona ,parentesco.nombreParentesco, personasinvolucradas.idPersonaInvolucrada, personasinvolucradas.demandante,  personasinvolucradas.alumno 
         FROM personasinvolucradas 
         INNER JOIN personas p ON p.idPersona = personasinvolucradas.idPersona 
-        INNER JOIN rolespersonas ON rolespersonas.idPersonaInvolucrada = personasinvolucradas.idPersonaInvolucrada 
-        INNER JOIN roles ON roles.idRol = rolespersonas.idRol 
         LEFT JOIN parentesco ON parentesco.idParentesco = personasinvolucradas.idParentesco 
-        WHERE personasinvolucradas.idDemanda = $idDemanda GROUP BY p.nombrePersona, parentesco.nombreParentesco";
-        $resultado = $con ->query($query);
+        WHERE personasinvolucradas.idDemanda = ? ");
+        $preparePersonasInvolucradas ->bind_param("i", $idDemanda);
+        $preparePersonasInvolucradas->execute();
         $datos=[];
-        if ($resultado ->num_rows > 0) {
+        if ($preparePersonasInvolucradas-> num_rows() > 0) {
+            $resultado = $preparePersonasInvolucradas->get_result();
             while ($row = $resultado ->fetch_assoc()) {
-                $row['rolesPersona'] = json_decode($row['rolesPersona'], true);
                 $datos[]=$row; 
             }
         }

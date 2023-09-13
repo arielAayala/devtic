@@ -9,20 +9,18 @@ include_once "PersonasInvolucradas.php";
 class Demandas {
 
     public function crearDemanda($token,  $idTipo, $idOrganizacion, $tituloDemanda, $motivoDemanda, $almacenDemanda, $personasInvolucradas){
-        $idTipo = intval($idTipo);
-        $idOrganizacion = intval($idOrganizacion);
-
-        if($datos=Profesionales::validarToken($token)) {
+        if($datosProfesional=Profesionales::validarToken($token)) {
             $con = new Conexion();
-            $query="INSERT INTO demandas(idEstado, idTipo, idOrganizacion, tituloDemanda, motivoDemanda, almacenDemanda, fechaIngresoDemanda) 
-            VALUES(1,$idTipo, $idOrganizacion, '$tituloDemanda', '$motivoDemanda', '$almacenDemanda', CURDATE() )";
-            if ($con ->query($query)) {
+            $prepareDemanda=$con->prepare("INSERT INTO demandas(idEstado, idTipo, idOrganizacion, tituloDemanda, motivoDemanda, almacenDemanda, fechaIngresoDemanda) 
+            VALUES(1,?,?,?,?,?,CURDATE())");
+            $prepareDemanda->bind_param("iisss",$tipo,$idOrganizacion,$tituloDemanda,$motivoDemanda,$almacenDemanda);
+            if ($prepareDemanda->execute()) {
                 $idDemanda = $con -> insert_id;
-                $queryGrupos = "INSERT INTO grupos(idDemanda, idProfesional, creadorDemanda) VALUES ($idDemanda, $datos->idProfesional, 1)";
+                $queryGrupos = "INSERT INTO grupos(idDemanda, idProfesional, creadorDemanda) VALUES ($idDemanda, $datosProfesional->idProfesional, 1)";
                 if ($con-> query($queryGrupos)) {
                     foreach ($personasInvolucradas as  $i) {
                         $personasInvolucradas = new PersonasInvolucradas();
-                        if (!($personasInvolucradas->crearPersonaInvolucrada($idDemanda,$i->nombrePersona,$i->dniPersona,$i->rolesPersona, $i->idParentesco ?? null,$i->demandante, $i->telefono, $i->domicilio, $i->correo))) {
+                        if (!($personasInvolucradas->crearPersonaInvolucrada($idDemanda,$i->nombrePersona,$i->dniPersona,$i->demandante, $i->alumno,$i->idParentesco , $i->telefono, $i->domicilio, $i->idLocalidad,$i->correo))) {
                             return false;
                         }
                     }

@@ -1,11 +1,14 @@
 "use client";
 import { useAlertContext } from "@/context/alertContext";
 import React, { useRef, useLayoutEffect, useEffect, useState } from "react";
+import PersonaInvolucradaForm from "../personaInvolucradaForm/personaInvolucradaForm";
 
 function DemandaForm() {
 	const { crearAlert } = useAlertContext();
 	const [organizaciones, setOrganizaciones] = useState([]);
 	const [loader, setLoader] = useState(false);
+	const [personasInvolucradas, setPersonasInvolucradas] = useState([]);
+
 	const [input, setInput] = useState({
 		tituloDemanda: "",
 		motivoDemanda: "",
@@ -14,7 +17,6 @@ function DemandaForm() {
 		almacenDemanda: "",
 		personasInvolucradas: personasInvolucradas,
 	});
-	const [personasInvolucradas, setPersonasInvolucradas] = useState([]);
 
 	const textbox = useRef(null);
 
@@ -216,6 +218,7 @@ function DemandaForm() {
 					</div>
 				</div>
 			</div>
+			<PersonaInvolucradaForm />
 
 			<div className="mt-6 flex items-center justify-end gap-x-6">
 				<button

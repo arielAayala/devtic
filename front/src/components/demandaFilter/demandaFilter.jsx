@@ -1,12 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function DemandaFilter() {
 	const [hide, setHide] = useState(true);
+	const [loader, setLoader] = useState(false);
+	const [organizaciones, setOrganizaciones] = useState([]);
 
 	const handleHide = () => {
 		setHide(!hide);
 	};
 
+	const listarOrganizaciones = () => {
+		fetch("http://localhost/devtic/api/ListarOrganizaciones.php", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		})
+			.then((res) => res.json())
+			.then((res) => {
+				setOrganizaciones(res);
+				setTimeout(() => setLoader(true), 1500);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+	useEffect(() => {
+		listarOrganizaciones();
+	}, []);
 	return (
 		<div className="flex flex-col justify-between">
 			<button></button>
@@ -31,8 +53,19 @@ function DemandaFilter() {
 						id="organizacion"
 						className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-8px p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 					>
-						<option selected>Seleccione una organizacion</option>
-						<option value="1">Instituto Privado General San Martin</option>
+						<option value={0}>Seleccione una organizacion</option>
+						{loader ? (
+							organizaciones.map((i) => (
+								<option
+									key={i.idOrganizacion}
+									value={i.idOrganizacion}
+								>
+									{i.nombreOrganizacion}
+								</option>
+							))
+						) : (
+							<option>Cargando organizaciones</option>
+						)}
 					</select>
 
 					<select

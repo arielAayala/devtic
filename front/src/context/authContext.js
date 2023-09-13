@@ -25,6 +25,7 @@ function AuthContextProvider({ children }) {
 			body: JSON.stringify(inputs),
 		})
 			.then((res) => {
+				console.log(res);
 				return res.json();
 			})
 			.then((res) => {
@@ -32,8 +33,24 @@ function AuthContextProvider({ children }) {
 				setUser(res.data);
 			})
 			.catch((error) => {
-				crearAlert(error);
+				crearAlert({ error: "error" });
 				setUser(null);
+			});
+	}, []);
+
+	const iniciarSesionConCookies = useCallback(() => {
+		fetch("http://localhost/devtic/api/IniciarSesion.php", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		})
+			.then((res) => {
+				return res.json();
+			})
+			.then((res) => {
+				setUser(res.data);
 			});
 	}, []);
 
@@ -60,8 +77,9 @@ function AuthContextProvider({ children }) {
 			user,
 			iniciarSesion,
 			cerrarSesion,
+			iniciarSesionConCookies,
 		}),
-		[user, iniciarSesion, cerrarSesion]
+		[user, iniciarSesion, cerrarSesion, iniciarSesionConCookies]
 	);
 
 	return <authContext.Provider value={values}>{children}</authContext.Provider>;

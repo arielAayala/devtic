@@ -5,14 +5,11 @@ import React, { useState, useEffect } from "react";
 function Loader({ children }) {
 	const [loader, setLoader] = useState(true);
 
-	const { user } = useAuthContext();
+	const { iniciarSesionConCookies } = useAuthContext();
 
-	const getData = () => {
-		if (!user) {
-			setTimeout(() => setLoader(false), 1000);
-		} else {
-			setLoader(false);
-		}
+	const getData = async () => {
+		await iniciarSesionConCookies();
+		setTimeout(() => setLoader(false), 2000);
 	};
 
 	useEffect(() => {

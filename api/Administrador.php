@@ -19,34 +19,18 @@ switch ($_SERVER["REQUEST_METHOD"]) {
                     http_response_code(200);
                     echo json_encode(["msg"=>"Profesional creado correctamente"]);
                 }else{
-                    http_response_code(401); 
-                    echo json_encode(["error" => "No autorizado"]);
+                    http_response_code(400); 
+                    echo json_encode(["error" => "Ocurrio un error"]);
                 }
             }else{
                 http_response_code(400); 
                 echo json_encode(["error" => "Datos no existentes"]);
             }
         }else{
-            http_response_code(400); 
-            echo json_encode(["error" => "Token no existente"]);
+            http_response_code(401); 
+            echo json_encode(["error" => "No autorizado"]);
         } 
 
         break;
 
-    case "GET":
-        if(isset($_COOKIE["token"])){
-            $administrador = new Administradores();
-            if ($profesionales=$administrador->obtenerProfesionales($_COOKIE["token"])) {
-                echo json_encode($profesionales);
-            }
-        }else{
-            http_response_code(400);
-            echo json_encode(["error" => "Token no existente"]);
-        }
-
-        break;
-    
-    default:
-        # code...
-        break;
 }

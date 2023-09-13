@@ -113,6 +113,30 @@ class Profesionales  {
 
         setcookie('token', "" , $cookiesConfiguration);
     } 
+    public function iniciarSesionConToken($token):?array{
+        if ($data = Profesionales::validarToken($token)) {
+            $con = new Conexion();
+            $query = "SELECT p.idProfesional, p.fotoProfesional,p.prioridadProfesional, p.contrasenaProfesional ,especialidades.nombreEspecialidad, personas.nombrePersona, personas.dniPersona FROM  profesionales p INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad INNER JOIN personas ON p.idPersona = personas.idPersona  WHERE ".$data->idProfesional." = p.idProfesional";
+            $resultado = $con -> query($query);
+            if ($resultado->num_rows > 0) {
+                while ($row = $resultado->fetch_assoc()) {
+                    $this->setProfesional(
+                        $row["idProfesional"], 
+                        $row["prioridadProfesional"], 
+                        $row["nombreEspecialidad"], 
+                        $row["nombrePersona"], 
+                        $row["dniPersona"],
+                        $row["fotoProfesional"]
+                    );
+                }
+                $this ->crearCookies();
+                return [
+                    "data"=>$this-> getProfesional(),
+                    "msg" => "Se inició sesión correctamente"
+                ];
+            }
+        }
+    }
 
     public static function listarProfesionales($token){
         if (Profesionales::validarToken($token)) {
