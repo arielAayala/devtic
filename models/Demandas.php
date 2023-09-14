@@ -16,13 +16,13 @@ class Demandas {
             $prepareDemanda->bind_param("iisss",$idTipo,$idOrganizacion,$motivoDemanda,$relatoDemanda,$almacenDemanda);
             if ($prepareDemanda->execute()) {
                 $idDemanda = $con -> insert_id;
-                $queryGrupos = "INSERT INTO grupos(idDemanda, idProfesional, creadorDemanda) VALUES ($idDemanda, $datosProfesional->idProfesional, 1)";
+                $queryGrupos = "INSERT INTO profesionalesgrupos(idDemanda, idProfesional, creadorGrupo) VALUES ($idDemanda, $datosProfesional->idProfesional, 1)";
 
                 if ($con-> query($queryGrupos)) {
                     foreach ($personasInvolucradas as  $i) {
                         echo("grupos");
                         $personas = new PersonasInvolucradas();
-                        $personas->crearPersonaInvolucrada($idDemanda,$i->nombrePersona,$i->dniPersona,$i->demandante, $i->alumno,$i->idParentesco , $i->telefono, $i->domicilio, $i->idLocalidad,$i->correo, $i->grado, $i->turno, $i->docente);
+                        $personas->crearPersonaInvolucrada($idDemanda,$i->nombrePersona,$i->dniPersona,$i->demandante, $i->alumno,$i->idParentesco , $i->telefono, $i->domicilio, $i->idLocalidad, $i->grado, $i->turno, $i->docente);
                     }
                     echo($con->error);
                     $con -> close();
@@ -38,20 +38,26 @@ class Demandas {
     public function actualizarDemanda($token, $idDemanda,$idTipo, $idOrganizacion, $motivoDemanda, $relatoDemanda, $almacenDemanda){
         if($datos=Profesionales::validarToken($token)) {
             $con = new Conexion();
-            $query="SELECT COUNT(*) as cantidad FROM grupos where $datos->idProfesional = idProfesional AND $idDemanda = idDemanda";
-            $resultado = $con ->query($query);
-            if ($resultado->num_rows == 1 || $datos->prioridadProfesional==1) {
+            $query="SELECT COUNT(*) as cantidad FROM grupos where ? = idProfesional AND ? = idDemanda";
+            $prepareGrupos = $con ->prepare($query);
+            $prepareGrupos->bind_param("ii", $datos->idProfesional, $idDemanda);
+            $prepareGrupos->execute();
+            if ($prepareGrupos->num_rows == 1 || $datos->prioridadProfesional==1) {
                 $queryActualizar = "UPDATE demandas SET
-                idTipo = $idTipo,
-                idOrganizacion = $idOrganizacion,
-                motivoDemanda = '$motivoDemanda',
-                relatoDemanda = '$relatoDemanda',
-                almacenDemanda = '$almacenDemanda' WHERE idDemanda = $idDemanda";
-                if ($con ->query($queryActualizar)) {
+                idTipo = ?,
+                idOrganizacion = ?,
+                motivoDemanda = ?,
+                relatoDemanda = ?,
+                almacenDemanda = ? WHERE idDemanda = ?";
+                $prepareActualizar = $con -> prepare($queryActualizar);
+                $prepareActualizar->bind_param("iisssi",$idTipo,$idOrganizacion,$motivoDemanda,$relatoDemanda,$almacenDemanda,$idDemanda);
+                if ($prepareActualizar->execute()) {
+                    $con-> close();
                     return true;
                 }
             }
         }
+        $con->close();
         return false;
     }
 
@@ -59,13 +65,16 @@ class Demandas {
         if ($datos = Profesionales::validarToken($token)) {
             if($datos-> prioridadProfesional == 1){
                 $con = new Conexion;
-                $query = "DELETE FROM grupos WHERE idDemanda = $idDemanda" ;
-                if ($con->query($query)) {
+                $queryGrupo = "DELETE FROM grupos WHERE idDemanda = ?" ;
+                $prepareGrupo = $con->prepare($queryGrupos);
+                $prepareGrupo->bind_param("i", $idDemanda);
+                $prepareGrupo->execute();
+                $preparePersonasInvolucradas ->prepare();
                     $queryDemanda = "DELETE FROM demandas where idDemanda = $idDemanda";
                     if ($con->query($queryDemanda)) {
                         return true;
                     }
-                }
+                
             }
         }
         echo $con ->error;
@@ -75,7 +84,7 @@ class Demandas {
     public function obtenerTodasDemandas($token, $pagina){
         if ($datos = Profesionales::validarToken($token)) {
             $con = new Conexion();
-            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN grupos g ON g.idDemanda = d.idDemanda and g.creadorDemanda = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad ORDER BY d.fechaIngresoDemanda LIMIT 10 OFFSET ". (($pagina - 1)*10) ;
+            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN grupos g ON g.idDemanda = d.idDemanda and g.creadorDemanda = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad ORDER BY d.fechaIngresoDemanda DESC LIMIT 10 OFFSET ". (($pagina - 1)*10) ;
             $datos =[];
             $resultado = $con ->query($query);
             if ($resultado->num_rows > 0) {

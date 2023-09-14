@@ -18,4 +18,7 @@ class Grupos{
         
     }
 
+    public function agregarProfesionalAlGrupo(){
+        
+    }
 }
