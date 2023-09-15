@@ -6,7 +6,7 @@ function DemandaModalUpdate(props) {
 	const {
 		obtenerDemanda,
 		idDemanda,
-		tituloDemanda,
+		relatoDemanda,
 		motivoDemanda,
 		idTipo,
 		idOrganizacion,
@@ -18,7 +18,7 @@ function DemandaModalUpdate(props) {
 	const [loader, setLoader] = useState(false);
 	const [input, setInput] = useState({
 		idDemanda: idDemanda,
-		tituloDemanda: tituloDemanda,
+		relatoDemanda: relatoDemanda,
 		motivoDemanda: motivoDemanda,
 		idTipo: idTipo,
 		idOrganizacion: idOrganizacion,
@@ -73,11 +73,12 @@ function DemandaModalUpdate(props) {
 				return res.json();
 			})
 			.then((res) => {
-				crearAlert(res);
+				crearAlert({ msg: res.msg });
 				obtenerDemanda();
 			})
 			.catch((error) => {
 				crearAlert(error);
+				console.log(error);
 			});
 	};
 
@@ -100,18 +101,18 @@ function DemandaModalUpdate(props) {
 				<input
 					onChange={handleChange}
 					type="text"
-					name="tituloDemanda"
-					id="tituloDemanda"
+					name="motivoDemanda"
+					id="motivoDemanda"
 					className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 					placeholder=" "
 					required=""
-					defaultValue={tituloDemanda}
+					defaultValue={motivoDemanda}
 				/>
 				<label
-					htmlFor="tituloDemanda"
+					htmlFor="motivoDemanda"
 					className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 				>
-					Titulo
+					Motivo
 				</label>
 			</div>
 
@@ -121,17 +122,17 @@ function DemandaModalUpdate(props) {
 					onChange={handleKeyDown}
 					ref={textbox}
 					type="text"
-					name="motivoDemanda"
-					id="motivoDemanda"
+					name="relatoDemanda"
+					id="relatoDemanda"
 					className="block  py-4 resize-none h-min overflow-y-hidden px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 					required=""
-					defaultValue={motivoDemanda}
+					defaultValue={relatoDemanda}
 				/>
 				<label
-					htmlFor="motivoDemanda"
+					htmlFor="relatoDemanda"
 					className="absolute font-medium text-lg  text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 				>
-					Motivo
+					Relato
 				</label>
 			</div>
 			{/* BUSCAR INSTITUCIONES */}

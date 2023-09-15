@@ -10,7 +10,6 @@ function Alert() {
 		setTimeout(() => {
 			cerrarAlert();
 		}, 4000);
-		console.log("cerrando alert");
 	}, [alert]);
 
 	if (alert) {

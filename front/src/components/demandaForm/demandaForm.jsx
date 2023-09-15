@@ -7,6 +7,7 @@ function DemandaForm() {
 	const { crearAlert } = useAlertContext();
 	const [organizaciones, setOrganizaciones] = useState([]);
 	const [loader, setLoader] = useState(false);
+
 	const [personasInvolucradas, setPersonasInvolucradas] = useState([]);
 
 	const [input, setInput] = useState({
@@ -93,7 +94,7 @@ function DemandaForm() {
 						<p className="mt-1 text-sm leading-6 text-gray-600">
 							Aqui se narran todos los detalles de los casos.
 						</p>
-						<div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+						<div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-4">
 							<div className="sm:col-span-4">
 								<PersonaInvolucradaForm />
 							</div>

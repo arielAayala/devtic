@@ -114,7 +114,7 @@ function Demandas() {
 										<DemandaCard
 											key={i.idDemanda}
 											motivoDemanda={i.motivoDemanda}
-											tituloDemanda={i.tituloDemanda}
+											relatoDemanda={i.relatoDemanda}
 											nombreEstado={i.nombreEstado}
 											fotoProfesional={i.fotoProfesional}
 											nombreTipo={i.nombreTipo}

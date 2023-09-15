@@ -25,7 +25,6 @@ function AuthContextProvider({ children }) {
 			body: JSON.stringify(inputs),
 		})
 			.then((res) => {
-				console.log(res);
 				return res.json();
 			})
 			.then((res) => {

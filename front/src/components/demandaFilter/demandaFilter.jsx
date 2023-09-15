@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 function DemandaFilter() {
-	const [hide, setHide] = useState(true);
+	const [hide, setHide] = useState(false);
 	const [loader, setLoader] = useState(false);
 	const [organizaciones, setOrganizaciones] = useState([]);
 
@@ -31,12 +31,12 @@ function DemandaFilter() {
 	}, []);
 	return (
 		<div className="flex flex-col justify-between">
-			<button></button>
+			<button onClick={() => handleHide}>{hide ? "cerra" : "abrir"}</button>
 			{hide ? (
 				<form>
 					<label
-						for="filtros"
-						class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+						htmlFor="filtros"
+						className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
 					>
 						Filtros
 					</label>
@@ -44,7 +44,7 @@ function DemandaFilter() {
 						id="tipos"
 						className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-8px p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 					>
-						<option selected>Seleccione un tipo</option>
+						<option>Seleccione un tipo</option>
 						<option value="1">Invitación</option>
 						<option value="2">Solicitud</option>
 						<option value="3">Expediente</option>
@@ -72,7 +72,7 @@ function DemandaFilter() {
 						id="estados"
 						className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-8px p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 					>
-						<option selected>Seleccione un estado</option>
+						<option>Seleccione un estado</option>
 						<option value="1">Pendiente</option>
 						<option value="2">En curso</option>
 						<option value="3">Terminado</option>

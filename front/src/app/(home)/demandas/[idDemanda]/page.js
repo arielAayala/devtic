@@ -23,7 +23,6 @@ function PageIdDemanda() {
 			})
 			.then((rest) => {
 				setDemanda(rest ?? {});
-				console.log(rest);
 				setTimeout(() => setLoader(true), 1500);
 			});
 	};
@@ -88,7 +87,7 @@ function PageIdDemanda() {
 					<section className="bg-white dark:bg-gray-900">
 						<div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
 							<h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-								{demanda.data.tituloDemanda}
+								{demanda.data.motivoDemanda}
 							</h1>
 							<p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400">
 								{demanda.data.nombreOrganizacion}
@@ -98,7 +97,7 @@ function PageIdDemanda() {
 								{demanda.data.nombreTipo}
 							</p>
 							<p className="text-gray-500 dark:text-gray-400">
-								{demanda.data.motivoDemanda}
+								{demanda.data.relatoDemanda}
 							</p>
 						</div>
 						<div>
@@ -112,14 +111,7 @@ function PageIdDemanda() {
 						<div>
 							Personas Involucradas:
 							{demanda.personasInvolucradas.map((i) => (
-								<div key={i.idPersonaInvolucrada}>
-									{i.nombrePersona} - roles:
-									{i.rolesPersona.map((j) => (
-										<div key={`${j.idRol}${i.idPersonaInvolucrada}`}>
-											{j.nombreRol}
-										</div>
-									))}
-								</div>
+								<div key={i.idPersonaInvolucrada}>{i.nombrePersona}</div>
 							))}
 						</div>
 					</section>
@@ -197,7 +189,7 @@ function PageIdDemanda() {
 								<DemandaModalUpdate
 									obtenerDemanda={obtenerDemanda}
 									motivoDemanda={demanda.data.motivoDemanda}
-									tituloDemanda={demanda.data.tituloDemanda}
+									relatoDemanda={demanda.data.relatoDemanda}
 									idTipo={demanda.data.idTipo}
 									idOrganizacion={demanda.data.idOrganizacion}
 									idDemanda={demanda.data.idDemanda}

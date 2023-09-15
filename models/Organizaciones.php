@@ -18,6 +18,7 @@ include_once "../conexion/Conexion.php";
                         $datos[] = $row;
                     }
                 }
+                $con -> close();
                 return $datos;
             }
             return false;
