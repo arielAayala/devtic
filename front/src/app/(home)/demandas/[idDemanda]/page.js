@@ -1,10 +1,15 @@
 "use client";
 import DemandaModalUpdate from "@/components/demandaModalUpdate/demandaModalUpdate";
-import { useParams } from "next/navigation";
+import { useAlertContext } from "@/context/alertContext";
+import { useAuthContext } from "@/context/authContext";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 function PageIdDemanda() {
+	const { user } = useAuthContext();
+	const { crearAlert } = useAlertContext();
 	const params = useParams();
+	const router = useRouter();
 
 	const [demanda, setDemanda] = useState({});
 	const [loader, setLoader] = useState(false);
@@ -23,7 +28,7 @@ function PageIdDemanda() {
 			})
 			.then((rest) => {
 				setDemanda(rest ?? {});
-				setTimeout(() => setLoader(true), 1500);
+				setTimeout(() => setLoader(true), 100);
 			});
 	};
 
@@ -39,6 +44,28 @@ function PageIdDemanda() {
 
 	const closeModal = () => {
 		setIsModalOpen(false);
+	};
+
+	const handleBorrarDemanda = () => {
+		fetch("http://localhost/devtic/api/EliminarDemanda.php", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+			body: JSON.stringify(params),
+		})
+			.then((rest) => {
+				return rest.json();
+			})
+			.then((rest) => {
+				crearAlert(rest);
+				router.push("/demandas");
+			})
+			.catch((error) => {
+				crearAlert(error);
+				console.log(error);
+			});
 	};
 
 	if (!loader) {
@@ -117,7 +144,7 @@ function PageIdDemanda() {
 					</section>
 					<div className="flex items-center space-x-4">
 						<img
-							className="w-20 h-20 rounded-full"
+							className="w-12 h-12 rounded-full"
 							src={demanda.data.fotoProfesional}
 							alt="Large avatar"
 						/>
@@ -137,29 +164,53 @@ function PageIdDemanda() {
 									})}
 							</div>
 						</div>
-						<div className="flex items-center justify-end space-x-3 sm:space-x-4">
-							<button
-								type="button"
-								onClick={openModal}
-								className="text-white inline-flex items-center bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-							>
-								<svg
-									aria-hidden="true"
-									className="mr-1 -ml-1 w-5 h-5"
-									fill="currentColor"
-									viewBox="0 0 20 20"
-									xmlns="http://www.w3.org/2000/svg"
+						{demanda.grupo.some((i) => i.idProfesional == user.idProfesional) ||
+						user.prioridadProfesional == 1 ? (
+							<div className="flex items-center justify-end space-x-3 sm:space-x-4">
+								<button
+									type="button"
+									onClick={openModal}
+									className="text-white inline-flex items-center bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
 								>
-									<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path>
-									<path
-										fillRule="evenodd"
-										d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-										clipRule="evenodd"
-									></path>
-								</svg>
-								Editar
-							</button>
-						</div>
+									<svg
+										aria-hidden="true"
+										className="mr-1 -ml-1 w-5 h-5"
+										fill="currentColor"
+										viewBox="0 0 20 20"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path>
+										<path
+											fillRule="evenodd"
+											d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+											clipRule="evenodd"
+										></path>
+									</svg>
+									Editar
+								</button>
+								<button
+									type="button"
+									onClick={handleBorrarDemanda}
+									className="text-white inline-flex items-center bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+								>
+									<svg
+										aria-hidden="true"
+										className="mr-1 -ml-1 w-5 h-5"
+										fill="currentColor"
+										viewBox="0 0 20 20"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path>
+										<path
+											fillRule="evenodd"
+											d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+											clipRule="evenodd"
+										></path>
+									</svg>
+									Borrar
+								</button>
+							</div>
+						) : null}
 					</div>
 					{isModalOpen && (
 						<div className=" fixed inset-0 flex items-center justify-center z-50">

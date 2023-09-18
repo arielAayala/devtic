@@ -7,7 +7,7 @@ function DemandaModal(props) {
 
 	const {
 		motivoDemanda,
-		tituloDemanda,
+		relatoDemanda,
 		fotoProfesional,
 		nombreEstado,
 		nombrePersona,
@@ -19,7 +19,7 @@ function DemandaModal(props) {
 	} = props;
 
 	return (
-		<div>
+		<div className="w-full">
 			<div className="flex justify-between  mb-4 rounded-t sm:mb-5 ">
 				<div className="flex items-center space-x-4">
 					<img
@@ -50,13 +50,13 @@ function DemandaModal(props) {
 			</div>
 			<dl>
 				<dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">
-					#{idDemanda} - {tituloDemanda}
+					#{idDemanda} - {motivoDemanda}
 				</dt>
 				<dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">
-					Motivo
+					Relato
 				</dt>
 				<dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">
-					{motivoDemanda}
+					{relatoDemanda}
 				</dd>
 				<dt className="flex inset-0 mb-2 font-semibold leading-none text-gray-900 dark:text-white mt-4">
 					<svg

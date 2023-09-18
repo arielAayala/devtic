@@ -1,43 +1,35 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 
-function PersonaInvolucradaForm() {
+function PersonaInvolucradaForm(props) {
+	const {
+		alumno,
+		setAlumno,
+		demandante,
+		setDemandante,
+		esDemandante,
+		setEsDemandante,
+		curso,
+		setCurso,
+	} = props;
 	const [loader, setLoader] = useState(false);
 	const [localidades, setLocalidades] = useState([]);
 
-	const [demandante, setDemandante] = useState({
-		nombrePersona: null,
-		dniPersona: null,
-		localidad: null,
-		telefono: null,
-		correo: null,
-		domicilio: null,
-		demandante: true,
-		curso: null,
-		grado: null,
-		docente: null,
-		idParentesco: null,
-	});
-
-	const [alumno, setAlumno] = useState({
-		nombrePersona: null,
-		dniPersona: null,
-		localidad: null,
-		telefono: null,
-		correo: null,
-		domicilio: null,
-		demandante: false,
-		curso: null,
-		grado: null,
-		docente: null,
-		idParentesco: null,
-	});
+	const handleChangeEsDemandante = () => {
+		setEsDemandante(!esDemandante);
+	};
 
 	const handleChange = (e) => {
 		setDemandante({ ...demandante, [e.target.name]: e.target.value });
 	};
 
-	console.log(demandante);
+	const handleChangeAlumno = (e) => {
+		setAlumno({ ...alumno, [e.target.name]: e.target.value });
+	};
+
+	const handleChangeCurso = (e) => {
+		setCurso({ ...curso, [e.target.name]: e.target.value });
+	};
 
 	const listarLocalidades = () => {
 		fetch("http://localhost/devtic/api/ListarLocalidades.php", {
@@ -111,7 +103,7 @@ function PersonaInvolucradaForm() {
 				<div className="relative z-0 w-full mb-6 group">
 					<input
 						type="tel"
-						pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+						pattern="[0-9]{11}"
 						name="telefono"
 						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder=" "
@@ -151,12 +143,13 @@ function PersonaInvolucradaForm() {
 					<div className="mt-2">
 						<select
 							onChange={handleChange}
+							required
 							type="search"
 							name="idLocalidad"
 							className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 							autoComplete="organization"
 						>
-							<option value={0}>Seleccione una opción</option>
+							<option>Seleccione una opción</option>
 							{loader ? (
 								localidades.map((i) => (
 									<option
@@ -234,19 +227,29 @@ function PersonaInvolucradaForm() {
 					</p>
 				</div>
 			</div>
+			<button
+				onClick={handleChangeEsDemandante}
+				type="button"
+				className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 my-6"
+			>
+				{esDemandante
+					? "El alumno es demandante"
+					: "El alumno no es demandante"}
+			</button>
 			<div className="grid md:grid-cols-2 md:gap-6 mt-4">
-				{demandante.idParentesco == 1 ? null : (
+				{esDemandante ? null : (
 					<>
 						<div className="relative z-0 w-full mb-6 group">
 							<input
 								type="text"
-								name="floating_last_name"
+								name="nombrePersona"
 								className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 								placeholder=" "
 								required
+								onChange={handleChangeAlumno}
 							/>
 							<label
-								htmlFor="floating_last_name"
+								htmlFor="nombrePersona"
 								className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 							>
 								Nombre y apellido
@@ -255,13 +258,14 @@ function PersonaInvolucradaForm() {
 						<div className="relative z-0 w-full mb-6 group">
 							<input
 								type="text"
-								name="floating_last_name"
+								name="dniPersona"
 								className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 								placeholder=" "
 								required
+								onChange={handleChangeAlumno}
 							/>
 							<label
-								htmlFor="floating_last_name"
+								htmlFor="dniPersona"
 								className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 							>
 								Documento
@@ -270,13 +274,15 @@ function PersonaInvolucradaForm() {
 						<div className="relative z-0 w-full mb-6 group">
 							<input
 								type="text"
-								name="floating_company"
+								name="domicilio"
 								className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 								placeholder=" "
 								required
+								onChange={handleChangeAlumno}
 							/>
 							<label
-								htmlFor="floating_company"
+								htmlFor="domicilio"
+								required
 								className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 							>
 								Domicilio
@@ -284,20 +290,21 @@ function PersonaInvolucradaForm() {
 						</div>
 						<div className="relative z-0 w-full mb-6 group">
 							<label
-								htmlFor="idOrganizacion"
+								htmlFor="idLocalidad"
 								className="block text-sm font-medium leading-6 text-gray-900"
 							>
 								Localidad del domicilio
 							</label>
 							<div className="mt-2">
 								<select
-									onChange={handleChange}
+									onChange={handleChangeAlumno}
 									type="search"
-									name="idOrganizacion"
+									name="idLocalidad"
 									className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 									autoComplete="organization"
+									required
 								>
-									<option value={0}>Seleccione una opción</option>
+									<option value>Seleccione una opción</option>
 									{loader ? (
 										localidades.map((i) => (
 											<option
@@ -318,58 +325,63 @@ function PersonaInvolucradaForm() {
 
 				<div className="relative z-0 w-full mb-6 group">
 					<label
-						htmlFor="idTipo"
+						htmlFor="grado"
 						className="block text-sm font-medium leading-6 text-gray-900"
 					>
 						Grado
 					</label>
 					<div className="mt-2">
 						<select
-							onChange={handleChange}
-							name="idTipo"
-							id="idTipo"
+							onChange={handleChangeCurso}
+							name="grado"
+							id="grado"
+							required
 							className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 						>
-							<option value={0}>Seleccione una opción</option>
-							<option value={1}>Invitación</option>
-							<option value={2}>Solicitud</option>
-							<option value={3}>Expediente</option>
+							<option>Seleccione una opción</option>
+							<option value={1}>Primer</option>
+							<option value={2}>Segundo</option>
+							<option value={3}>Tercer</option>
+							<option value={4}>Cuarto</option>
+							<option value={5}>Quinto</option>
+							<option value={6}>Sexto</option>
+							<option value={6}>Septimo</option>
 						</select>
 					</div>
 				</div>
 
 				<div className="relative z-0 w-full mb-6 group">
 					<label
-						htmlFor="idTipo"
+						htmlFor="turno"
 						className="block text-sm font-medium leading-6 text-gray-900"
 					>
 						Turno
 					</label>
 					<div className="mt-2">
 						<select
-							onChange={handleChange}
-							name="idTipo"
-							id="idTipo"
+							onChange={handleChangeCurso}
+							name="turno"
+							id="turno"
+							required
 							className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 						>
-							<option value={0}>Seleccione una opción</option>
-							<option value={1}>Matutino</option>
-							<option value={2}>Vespertino</option>
-							<option value={3}>Nocturno</option>
-							<option value={4}>Especial</option>
+							<option>Seleccione una opción</option>
+							<option value={1}>Mañana</option>
+							<option value={2}>Tarde</option>
 						</select>
 					</div>
 				</div>
 				<div className="relative z-0 w-full mb-6 group">
 					<input
 						type="text"
-						name="floating_last_name"
+						name="docente"
 						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder=" "
 						required
+						onChange={handleChangeCurso}
 					/>
 					<label
-						htmlFor="floating_last_name"
+						htmlFor="docente"
 						className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 					>
 						Docente

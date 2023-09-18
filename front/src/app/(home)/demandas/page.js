@@ -34,7 +34,7 @@ function Demandas() {
 			})
 			.then((rest) => {
 				setDemandas(rest ?? []);
-				setTimeout(() => setLoader(true), 1500);
+				setTimeout(() => setLoader(true), 100);
 			});
 	};
 
@@ -61,16 +61,12 @@ function Demandas() {
 			})
 			.then((rest) => {
 				setDemandas(rest ?? []);
-				setTimeout(() => setLoader(true), 1500);
+				setTimeout(() => setLoader(true), 100);
 			});
 	};
 
 	useEffect(() => {
-		if (flags == 0) {
-			obtenerDemandas();
-		} else if (flags == 1) {
-			obtenerPorMotivo();
-		}
+		obtenerDemandas();
 	}, [page]);
 
 	return (

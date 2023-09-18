@@ -20,7 +20,6 @@ class Demandas {
 
                 if ($con-> query($queryGrupos)) {
                     foreach ($personasInvolucradas as  $i) {
-                        echo("grupos");
                         $personas = new PersonasInvolucradas();
                         $personas->crearPersonaInvolucrada($idDemanda,$i->nombrePersona,$i->dniPersona,$i->demandante, $i->alumno,$i->idParentesco , $i->telefono, $i->domicilio, $i->idLocalidad, $i->grado, $i->turno, $i->docente);
                     }
@@ -62,30 +61,77 @@ class Demandas {
         return false;
     }
 
-    public function eliminarDemanda($token, $idDemanda){
+    public function eliminarDemanda($token, $idDemanda): bool {
         if ($datos = Profesionales::validarToken($token)) {
-            if($datos-> prioridadProfesional == 1){
+            if ($datos->prioridadProfesional == 1) {
                 $con = new Conexion;
-                $prepareGrupo = $con->prepare("DELETE FROM grupos WHERE idDemanda = ?" );
-                $prepareGrupo->bind_param("i", $idDemanda);
-                $prepareGrupo->execute();
-                $prepareAlumnos = $con->prepare("DELETE FROM alumnosdetalles WHERE personasInvolucradas.idPersonaInvolucrada = alumnosdetalles.idPersonaInvolucrada  AND personasInvolucradas.idDemanda = ?");
-                $prepareAlumnos ->bind_param("i",$idDemanda);
-                $prepareAlumnos->execute();
-                $preparePersonas = $con ->prepare ("DELETE FROM personasinvolucradas WHERE idDemanda = $idDemanda");
-                $preparePersonas->bind_param("i", $idDemanda);
-                $preparePersonas->execute();
-                $prepareDemanda = $con->prepare("DELETE FROM demandas WHERE idDemanda = ?");
-                $prepareDemanda ->bind_param("i", $idDemanda);
-                if ($prepareDemanda->execute()) {
-                    $con ->close();
+    
+                try {
+                    $con->begin_transaction();
+    
+                    // Prepare and execute the DELETE query for profesionalesgrupos
+                    
+                    
+                    // Prepare and execute the DELETE query for alumnosdetalles
+                    $prepareAlumnos = $con->prepare("DELETE alumnosdetalles FROM alumnosdetalles
+                    JOIN personasinvolucradas ON alumnosdetalles.idPersonaInvolucrada = personasinvolucradas.idPersonaInvolucrada
+                    WHERE personasinvolucradas.idDemanda = ?");
+                    if ($prepareAlumnos === false) {
+                        throw new Exception("Error creating alumnos prepared statement: " . $con->error);
+                    }
+                    $prepareAlumnos->bind_param("i", $idDemanda);
+                    if (!$prepareAlumnos->execute()) {
+                        throw new Exception("Error executing alumnos query: " . $prepareAlumnos->error);
+                    }
+    
+                    // Prepare and execute the DELETE query for personasinvolucradas
+                    $preparePersonas = $con->prepare("DELETE FROM personasinvolucradas WHERE idDemanda = ?");
+                    if ($preparePersonas === false) {
+                        throw new Exception("Error creating personas prepared statement: " . $con->error);
+                    }
+                    $preparePersonas->bind_param("i", $idDemanda);
+                    if (!$preparePersonas->execute()) {
+                        throw new Exception("Error executing query: " . $preparePersonas->error);
+                    }
+    
+                    $prepareGrupo = $con->prepare("DELETE FROM profesionalesgrupos WHERE idDemanda = ?");
+                    if ($prepareGrupo === false) {
+                        throw new Exception("Error creating grupos prepared statement: " . $con->error);
+                    }
+                    $prepareGrupo->bind_param("i", $idDemanda);
+                    if (!$prepareGrupo->execute()) {
+                        throw new Exception("Error executing query: " . $prepareGrupo->error);
+                    }
+
+                    // Prepare and execute the DELETE query for demandas
+                    $prepareDemanda = $con->prepare("DELETE FROM demandas WHERE idDemanda = ?");
+                    if ($prepareDemanda === false) {
+                        throw new Exception("Error creating demandas prepared statement: " . $con->error);
+                    }
+                    $prepareDemanda->bind_param("i", $idDemanda);
+                    if (!$prepareDemanda->execute()) {
+                        throw new Exception("Error executing query: " . $prepareDemanda->error);
+                    }
+    
+                    $con->commit();
+                    $con->close();
+    
                     return true;
-                }  
+                } catch (Exception $e) {
+                    // Handle exceptions here, possibly log the error
+                    $con->rollback();
+                    echo "Error: " . $e->getMessage(); // You can log or display the error message here
+                }
             }
         }
-        echo $con ->error;
         return false;
     }
+       
+    
+    
+    
+    
+    
 
     public function obtenerTodasDemandas($token, $pagina){
         if ($datos = Profesionales::validarToken($token)) {
@@ -133,7 +179,7 @@ class Demandas {
     public function obtenerDemandaPorMotivo($token, $motivo, $pagina) {
         if ($datosProfesional = Profesionales::validarToken($token)) {
             $con = new Conexion();
-            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN grupos g ON g.idDemanda = d.idDemanda and g.creadorDemanda = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad WHERE d.relatoDemanda LIKE '%$motivo%' ORDER BY d.fechaIngresoDemanda LIMIT 10 OFFSET ". (($pagina - 1)*10) ;
+            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN profesionalesgrupos g ON g.idDemanda = d.idDemanda and g.creadorGrupo = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad WHERE d.relatoDemanda LIKE '%$motivo%' ORDER BY d.fechaIngresoDemanda LIMIT 10 OFFSET ". (($pagina - 1)*10) ;
             $datos =[];
             $resultado = $con ->query($query);
             if ($resultado->num_rows > 0) {

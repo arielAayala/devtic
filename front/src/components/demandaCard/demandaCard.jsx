@@ -5,7 +5,7 @@ import EstadoSpan from "@/components/estadoSpan/estadoSpan";
 function DemandaCard(props) {
 	const {
 		motivoDemanda,
-		tituloDemanda,
+		relatoDemanda,
 		fotoProfesional,
 		nombreEstado,
 		nombrePersona,
@@ -37,10 +37,10 @@ function DemandaCard(props) {
 				</div>
 				<div className="flex-1 min-w-0">
 					<p className="text-sm font-medium text-gray-900 truncate dark:text-white">
-						{tituloDemanda}
+						#{idDemanda} - {motivoDemanda}
 					</p>
 					<p className="text-sm text-gray-500 truncate dark:text-gray-400">
-						{motivoDemanda}
+						{relatoDemanda}
 					</p>
 				</div>
 				<div>
@@ -69,9 +69,9 @@ function DemandaCard(props) {
 				</button>
 			</div>
 			{isModalOpen && (
-				<div className="sm:px-8 fixed inset-0 flex items-center justify-center z-50">
+				<div className="sm:px-8 min-w-full fixed inset-0 flex items-center justify-center z-50">
 					<div className="absolute inset-0 bg-gray-800 opacity-60"></div>
-					<div className="bg-white dark:bg-gray-800 p-4 rounded-lg z-10">
+					<div className="bg-white dark:bg-gray-800 p-4 rounded-lg z-10 w-screen">
 						<button
 							type="button"
 							className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
@@ -95,7 +95,7 @@ function DemandaCard(props) {
 						</button>
 						<DemandaModal
 							motivoDemanda={motivoDemanda}
-							tituloDemanda={tituloDemanda}
+							relatoDemanda={relatoDemanda}
 							nombreEstado={nombreEstado}
 							fotoProfesional={fotoProfesional}
 							nombreTipo={nombreTipo}

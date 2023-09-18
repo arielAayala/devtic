@@ -1,5 +1,6 @@
 <?php
 include_once "../conexion/Conexion.php";
+include_once "Profesionales.php";
 
 class Grupos{
 
@@ -17,7 +18,11 @@ class Grupos{
         return $datos;
     }
 
-    public function agregarProfesionalAlGrupo(){
-        
+    public function agregarProfesionalAlGrupo($token){
+        if (Profesionales::validarToken($token)) {
+            # code...
+        }
+        $con = new Conexion();
+        $query = "";
     }
 }

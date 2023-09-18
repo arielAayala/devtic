@@ -34,7 +34,7 @@ class PersonasInvolucradas {
             $preparePersona->execute();
             $resultado = $preparePersona ->get_result();
             while ($row = $resultado->fetch_assoc()) {
-                $this ->idPersona = $row["dniPersona"];
+                $this ->idPersona = $row["idPersona"];
             }
         }    
         $preparePersonaInvolucrada = $con->prepare( "INSERT INTO personasinvolucradas(idDemanda, idPersona, idParentesco, demandante, alumno) VALUES (?, ?, ?, ?, ?)");

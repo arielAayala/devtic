@@ -16,7 +16,7 @@ function DemandaForm() {
 		idTipo: "",
 		idOrganizacion: "",
 		almacenDemanda: "",
-		personasInvolucradas: personasInvolucradas,
+		personasInvolucradas: [],
 	});
 
 	const textbox = useRef(null);
@@ -51,8 +51,68 @@ function DemandaForm() {
 			});
 	};
 
+	/* DATA PARA PERSONAS INVOLUCRADAS */
+
+	const [esDemandante, setEsDemandante] = useState(false);
+
+	const [curso, setCurso] = useState({
+		grado: null,
+		turno: null,
+		docente: null,
+	});
+
+	const [demandante, setDemandante] = useState({
+		nombrePersona: null,
+		dniPersona: null,
+		idLocalidad: null,
+		telefono: null,
+		domicilio: null,
+		demandante: true,
+		idParentesco: null,
+	});
+
+	const [alumno, setAlumno] = useState({
+		nombrePersona: null,
+		dniPersona: null,
+		idLocalidad: null,
+		telefono: null,
+		domicilio: null,
+		demandante: false,
+		idParentesco: null,
+	});
+
+	const submitPersonaInvolucrada = () => {
+		return esDemandante
+			? [{ ...demandante, ...curso, alumno: true }]
+			: [
+					{
+						...demandante,
+						grado: null,
+						turno: null,
+						docente: null,
+						alumno: false,
+					},
+					{ ...alumno, ...curso, alumno: true },
+			  ];
+	};
+
+	useEffect(() => {
+		setPersonasInvolucradas(submitPersonaInvolucrada());
+		setInput({
+			...input,
+			personasInvolucradas: personasInvolucradas,
+		});
+	}, [demandante, alumno, curso, esDemandante]);
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
+
+		setInput({
+			...input,
+			personasInvolucradas: setPersonasInvolucradas(submitPersonaInvolucrada()),
+		});
+
+		console.log(input);
 		fetch("http://localhost/devtic/api/CrearDemanda.php", {
 			method: "POST",
 			headers: {
@@ -103,9 +163,7 @@ function DemandaForm() {
 							</label>
 							<div className="mt-2">
 								<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-									<span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">
-										/
-									</span>
+									<span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
 									<input
 										onChange={handleChange}
 										type="text"
@@ -120,33 +178,19 @@ function DemandaForm() {
 						</div>
 						<div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-4">
 							<div className="sm:col-span-4">
-								<PersonaInvolucradaForm />
+								<PersonaInvolucradaForm
+									alumno={alumno}
+									setAlumno={setAlumno}
+									demandante={demandante}
+									setDemandante={setDemandante}
+									esDemandante={esDemandante}
+									setEsDemandante={setEsDemandante}
+									curso={curso}
+									setCurso={setCurso}
+								/>
 							</div>
 						</div>
 						<div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-							<div className="col-span-full">
-								<label
-									htmlFor="relatoDemanda"
-									className="block text-sm font-medium leading-6 text-gray-900"
-								>
-									Relato de la Situacion
-								</label>
-								<div className="mt-2">
-									<textarea
-										onChange={handleKeyDown}
-										ref={textbox}
-										name="relatoDemanda"
-										id="relatoDemanda"
-										rows="3"
-										autoComplete="about"
-										className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-									></textarea>
-								</div>
-								<p className="mt-3 text-sm leading-6 text-gray-600">
-									Relate brevemente la situacion de la demanda.
-								</p>
-							</div>
-
 							<div className="col-span-full">
 								<label
 									htmlFor="idOrganizacion"
@@ -178,6 +222,28 @@ function DemandaForm() {
 										)}
 									</select>
 								</div>
+							</div>
+							<div className="col-span-full">
+								<label
+									htmlFor="relatoDemanda"
+									className="block text-sm font-medium leading-6 text-gray-900"
+								>
+									Relato de la Situacion
+								</label>
+								<div className="mt-2">
+									<textarea
+										onChange={handleKeyDown}
+										ref={textbox}
+										name="relatoDemanda"
+										id="relatoDemanda"
+										rows="3"
+										autoComplete="about"
+										className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									></textarea>
+								</div>
+								<p className="mt-3 text-sm leading-6 text-gray-600">
+									Relate brevemente la situacion de la demanda.
+								</p>
 							</div>
 
 							<div className="col-span-full">
