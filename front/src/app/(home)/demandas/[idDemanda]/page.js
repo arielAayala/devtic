@@ -1,5 +1,6 @@
 "use client";
 import DemandaModalUpdate from "@/components/demandaModalUpdate/demandaModalUpdate";
+import SelectEstado from "@/components/selectEstado/selectEstado";
 import SelectProfesional from "@/components/selectProfesional/selectProfesional";
 import { useAlertContext } from "@/context/alertContext";
 import { useAuthContext } from "@/context/authContext";
@@ -171,8 +172,12 @@ function PageIdDemanda() {
 								<SelectProfesional
 									idDemanda={params.idDemanda}
 									grupo={demanda.grupo}
+									obtenerDemanda={obtenerDemanda}
 								/>
-
+								<SelectEstado
+									idDemanda={params.idDemanda}
+									obtenerDemanda={obtenerDemanda}
+								/>
 								<button
 									type="button"
 									onClick={openModal}

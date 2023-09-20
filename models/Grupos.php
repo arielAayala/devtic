@@ -22,16 +22,18 @@ class Grupos{
         try { 
             if ($datos=Profesionales::validarToken($token)) {
                 $con = new Conexion();
-                $prepareGrupo=$con -> prepare("SELECT COUNT(*) AS profesional  FROM profesionalesgrupos WHERE idDemanda = ? AND idProfesional = ?");
-                $prepareGrupo ->bind_param("ii", $idDemanda, $idProfesional);
-                $prepareGrupo->execute();
-                $prepareGrupo->store_result();
-                if ($prepareGrupo->num_rows() < 1){
+                $prepareRepetido=$con -> prepare("SELECT COUNT(*) AS profesional  FROM profesionalesgrupos WHERE idDemanda = ? AND idProfesional = ?");
+                $prepareRepetido ->bind_param("ii", $idDemanda, $idProfesional);
+                $prepareRepetido->execute();
+                $result = $prepareRepetido->get_result();
+                $value= $result-> fetch_object();
+                if ($value->profesional == 0){
                     $prepareGrupo=$con -> prepare("SELECT COUNT(*) AS profesional  FROM profesionalesgrupos WHERE idDemanda = ? AND idProfesional = ?");
                     $prepareGrupo ->bind_param("ii", $idDemanda, $datos->idProfesional);
                     $prepareGrupo->execute();
-                    $prepareGrupo->store_result();
-                    if ($prepareGrupo->num_rows() == 1 || $datos-> prioridadProfesional == 1) {
+                    $result =$prepareGrupo->get_result();
+                    $value= $result-> fetch_object();
+                    if ($value->profesional == 1 || $datos-> prioridadProfesional == 1) {
                         $prepareAddProfesional = $con ->prepare("INSERT INTO profesionalesgrupos (idDemanda, idProfesional, creadorGrupo) VALUES (?,?, false)");
                         $prepareAddProfesional ->bind_param("ii", $idDemanda, $idProfesional);
                         if ($prepareAddProfesional ->execute()) {

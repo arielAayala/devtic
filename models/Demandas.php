@@ -126,8 +126,38 @@ class Demandas {
         }
         return false;
     }
-       
     
+    public function cambiarEstado($token,$idEstado,$idDemanda){
+        try {
+            if($datos = Profesionales::validarToken($token)){
+                $con = new Conexion();
+                $prepareValidar = $con -> prepare("SELECT COUNT(*) AS profesional FROM profesionalesgrupos WHERE idDemanda = ? AND idProfesional = ?");
+                $prepareValidar->bind_param("ii", $idDemanda, $datos->idProfesional);
+                $prepareValidar->execute();
+                $result = $prepareValidar->get_result();
+                $value = $result->fetch_object();
+                if ($value->profesional == 1 || $datos-> idPrioridad == 1) {
+                    if ($idEstado == 3) {
+                        $prepareEstado = $con -> prepare("UPDATE demandas SET idEstado = ? , fechaCierreDemanda = CURDATE() WHERE idDemanda = ?");
+                    }else{
+                        $prepareEstado = $con -> prepare("UPDATE demandas SET idEstado = ? , fechaCierreDemanda = NULL WHERE idDemanda = ?");
+                    }
+                    $prepareEstado->bind_param("ii", $idEstado, $idDemanda);
+                    if($prepareEstado->execute()){
+                        return true;
+                    }
+                    
+                    throw new Exception("Error El Estado no pudo cambiarse");
+                } 
+                throw new Exception("Error Profesional sin permiso");     
+            }
+            throw new Exception("Error Token no Valido");
+            
+        } catch (Exception $e) {
+            echo json_encode(["error"=>$e->getMessage()]);
+        }
+
+    }
     
     
     
@@ -136,7 +166,7 @@ class Demandas {
     public function obtenerTodasDemandas($token, $pagina){
         if ($datos = Profesionales::validarToken($token)) {
             $con = new Conexion();
-            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN profesionalesgrupos g ON g.idDemanda = d.idDemanda AND g.creadorGrupo = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad ORDER BY d.fechaIngresoDemanda  LIMIT 10 OFFSET ". (($pagina - 1)*10) ;
+            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN profesionalesgrupos g ON g.idDemanda = d.idDemanda AND g.creadorGrupo = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad ORDER BY d.fechaIngresoDemanda DESC LIMIT 10 OFFSET ". (($pagina - 1)*10) ;
             $datos =[];
             $resultado = $con ->query($query);
             if ($resultado->num_rows > 0) {

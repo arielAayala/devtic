@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 
 function SelectProfesional(props) {
-	const { idDemanda, grupo } = props;
+	const { idDemanda, grupo, obtenerDemanda } = props;
 
 	const { crearAlert } = useAlertContext();
 	const [profesionales, setProfesionales] = useState([]);
@@ -54,17 +54,17 @@ function SelectProfesional(props) {
 			.then((res) => {
 				crearAlert(res);
 			})
+			.then(() => {
+				obtenerDemanda();
+			})
 			.catch((error) => {
 				console.log(error);
-				crearAlert(error);
 			});
 	};
 
 	useEffect(() => {
 		listarProfesional();
 	}, []);
-
-	console.log({ grupo, profesionales });
 
 	return (
 		<form onSubmit={handleSubmitProfesional}>
@@ -73,7 +73,7 @@ function SelectProfesional(props) {
 				onChange={handleChange}
 				className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-8px p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 			>
-				<option value={0}>Seleccione un profesionales</option>
+				<option>Seleccione un profesionales</option>
 				{loader ? (
 					profesionales.map((i) => {
 						if (grupo.every((g) => i.idProfesional != g.idProfesional)) {
