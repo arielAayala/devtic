@@ -1,5 +1,6 @@
 "use client";
 import DemandaModalUpdate from "@/components/demandaModalUpdate/demandaModalUpdate";
+import SelectProfesional from "@/components/selectProfesional/selectProfesional";
 import { useAlertContext } from "@/context/alertContext";
 import { useAuthContext } from "@/context/authContext";
 import { useParams, useRouter } from "next/navigation";
@@ -167,6 +168,11 @@ function PageIdDemanda() {
 						{demanda.grupo.some((i) => i.idProfesional == user.idProfesional) ||
 						user.prioridadProfesional == 1 ? (
 							<div className="flex items-center justify-end space-x-3 sm:space-x-4">
+								<SelectProfesional
+									idDemanda={params.idDemanda}
+									grupo={demanda.grupo}
+								/>
+
 								<button
 									type="button"
 									onClick={openModal}

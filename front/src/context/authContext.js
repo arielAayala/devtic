@@ -28,11 +28,11 @@ function AuthContextProvider({ children }) {
 				return res.json();
 			})
 			.then((res) => {
-				crearAlert({ msg: res.msg });
+				crearAlert(res);
 				setUser(res.data);
 			})
 			.catch((error) => {
-				crearAlert({ error: "error" });
+				crearAlert({ error: error });
 				setUser(null);
 			});
 	}, []);

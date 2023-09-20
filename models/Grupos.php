@@ -18,11 +18,35 @@ class Grupos{
         return $datos;
     }
 
-    public function agregarProfesionalAlGrupo($token){
-        if (Profesionales::validarToken($token)) {
-            # code...
+    public function agregarProfesionalAlGrupo($token, $idDemanda, $idProfesional){
+        try { 
+            if ($datos=Profesionales::validarToken($token)) {
+                $con = new Conexion();
+                $prepareGrupo=$con -> prepare("SELECT COUNT(*) AS profesional  FROM profesionalesgrupos WHERE idDemanda = ? AND idProfesional = ?");
+                $prepareGrupo ->bind_param("ii", $idDemanda, $idProfesional);
+                $prepareGrupo->execute();
+                $prepareGrupo->store_result();
+                if ($prepareGrupo->num_rows() < 1){
+                    $prepareGrupo=$con -> prepare("SELECT COUNT(*) AS profesional  FROM profesionalesgrupos WHERE idDemanda = ? AND idProfesional = ?");
+                    $prepareGrupo ->bind_param("ii", $idDemanda, $datos->idProfesional);
+                    $prepareGrupo->execute();
+                    $prepareGrupo->store_result();
+                    if ($prepareGrupo->num_rows() == 1 || $datos-> prioridadProfesional == 1) {
+                        $prepareAddProfesional = $con ->prepare("INSERT INTO profesionalesgrupos (idDemanda, idProfesional, creadorGrupo) VALUES (?,?, false)");
+                        $prepareAddProfesional ->bind_param("ii", $idDemanda, $idProfesional);
+                        if ($prepareAddProfesional ->execute()) {
+                            return true;
+                        }
+                        throw new Exception("Error al agregar al profesional");
+                    }
+                    throw new Exception("Error No autorizado a agregar profesionales al grupo");
+                }
+                throw new Exception("Error Profesional ya agregada al grupo");
+            }
+            throw new Exception("Error validando identidad");
+        } catch (Exception $e) {
+            echo json_encode(["error"=> $e->getMessage() ]);
+            return false;
         }
-        $con = new Conexion();
-        $query = "";
     }
 }

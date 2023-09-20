@@ -13,7 +13,7 @@ function AlertContextProvider({ children }) {
 	const [alert, setAlert] = useState(null);
 
 	const crearAlert = useCallback((res) => {
-		setAlert(res.msg ? { msg: res.msg } : { error: "ocurrio un error" });
+		setAlert(res.msg ? { msg: res.msg } : { error: res.error });
 	}, []);
 
 	const cerrarAlert = useCallback(() => {

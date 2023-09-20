@@ -111,8 +111,6 @@ function DemandaForm() {
 			...input,
 			personasInvolucradas: setPersonasInvolucradas(submitPersonaInvolucrada()),
 		});
-
-		console.log(input);
 		fetch("http://localhost/devtic/api/CrearDemanda.php", {
 			method: "POST",
 			headers: {
