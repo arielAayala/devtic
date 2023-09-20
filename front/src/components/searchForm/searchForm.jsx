@@ -1,5 +1,49 @@
-function SearchForm(props) {
-	const { onChangeMotivo, submitMotivo } = props;
+"use client";
+
+import { useState, useCallback, useEffect } from "react";
+
+function SearchForm() {
+	const [motivo, setMotivo] = useState("");
+	const [demandas, setDemandas] = useState([]);
+
+	const handleChange = useCallback((e) => setMotivo(e.target.value));
+
+	useEffect(() => {
+		const controller = new AbortController();
+		const signal = controller.signal;
+		if (motivo != "") {
+			setTimeout(() => {
+				fetch("http://localhost/devtic/api/ObtenerDemandasPorMotivo.php", {
+					signal: signal,
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					credentials: "include",
+					body: JSON.stringify({ motivoDemanda: motivo }),
+				})
+					.then((response) => {
+						if (!response.ok) {
+							throw new Error("La solicitud no se completó correctamente");
+						}
+						return response.json();
+					})
+					.then((rest) => {
+						setDemandas(rest ?? []);
+					})
+					.catch((error) => {
+						setDemandas([]);
+					});
+			}, 500);
+		} else {
+			setDemandas([]);
+		}
+		return function cleanUp() {
+			controller.abort();
+		};
+	}, [motivo]);
+
+	console.log(demandas);
 
 	return (
 		<>
@@ -32,15 +76,31 @@ function SearchForm(props) {
 					id="default-search"
 					className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 					placeholder="Buscar motivos"
-					onChange={onChangeMotivo}
+					autoComplete="off"
+					onChange={handleChange}
 				/>
-				<button
-					onClick={submitMotivo}
-					className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-				>
-					Buscar
-				</button>
 			</div>
+			{demandas.length > 0 ? (
+				<div className="z-10 absolute bg-white divide-y divide-gray-700 rounded-lg  shadow-xl   dark:bg-gray-700">
+					<ul
+						className="py-2 text-sm text-gray-700 dark:text-gray-200"
+						aria-labelledby="dropdownDefaultButton"
+					>
+						{demandas.map((i) => {
+							return (
+								<li>
+									<a
+										href="#"
+										class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+									>
+										{i.motivoDemanda}
+									</a>
+								</li>
+							);
+						})}
+					</ul>
+				</div>
+			) : null}
 		</>
 	);
 }

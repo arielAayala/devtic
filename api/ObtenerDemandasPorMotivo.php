@@ -14,15 +14,13 @@ switch ($_SERVER["REQUEST_METHOD"]) {
         if ($_COOKIE["token"]) {
             $datos = json_decode(file_get_contents("php://input"));
             $demanda = new Demandas();
-            if ($lstDemandas = $demanda->obtenerDemandaPorMotivo($_COOKIE["token"], $datos->motivoDemanda,$datos->pagina)) {            
+            if ($lstDemandas = $demanda->obtenerDemandaPorMotivo($_COOKIE["token"], $datos->motivoDemanda)) {            
                 echo json_encode($lstDemandas);
                 http_response_code(200);
             }else {
                 http_response_code(400);
-                echo json_encode(["error"=> "Ocurrio un error"]);
             }
         }else {
-            echo json_encode(["error"=> "token no existente"]);
             http_response_code(401);
         }
         break;
