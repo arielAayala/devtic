@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 import { useState, useCallback, useEffect } from "react";
 
 function SearchForm() {
@@ -42,8 +42,6 @@ function SearchForm() {
 			controller.abort();
 		};
 	}, [motivo]);
-
-	console.log(demandas);
 
 	return (
 		<>
@@ -88,13 +86,13 @@ function SearchForm() {
 					>
 						{demandas.map((i) => {
 							return (
-								<li>
-									<a
-										href="#"
-										class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+								<li key={i.idDemanda}>
+									<Link
+										href={`demandas/${i.idDemanda}`}
+										className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
 									>
 										{i.motivoDemanda}
-									</a>
+									</Link>
 								</li>
 							);
 						})}
