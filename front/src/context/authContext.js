@@ -25,6 +25,9 @@ function AuthContextProvider({ children }) {
 			body: JSON.stringify(inputs),
 		})
 			.then((res) => {
+				if (!res.ok) {
+					throw new Error("ocurrio un error");
+				}
 				return res.json();
 			})
 			.then((res) => {
@@ -34,6 +37,7 @@ function AuthContextProvider({ children }) {
 			.catch((error) => {
 				crearAlert({ error: error });
 				setUser(null);
+				console.log(error);
 			});
 	}, []);
 
@@ -46,10 +50,17 @@ function AuthContextProvider({ children }) {
 			credentials: "include",
 		})
 			.then((res) => {
+				if (!res.ok) {
+					throw new Error("Error al iniciar sesion");
+				}
 				return res.json();
 			})
 			.then((res) => {
 				setUser(res.data);
+			})
+			.catch((error) => {
+				setUser(null);
+				console.log(error);
 			});
 	}, []);
 

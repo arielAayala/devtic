@@ -10,6 +10,9 @@ class Administradores extends Profesionales{
         if ($datos = Profesionales::validarToken($token)) {           
             if ($datos->prioridadProfesional==1) {
                 $con = new Conexion();
+                $especialidad = intval($especialidad);
+                $dni = intval($dni);
+                $prioridad = intval($prioridad); 
                 $queryPersona = "INSERT INTO personas (dniPersona, nombrePersona) VALUES (?, ?)";               
                 $consultaPreparada = $con -> prepare($queryPersona);
                 $consultaPreparada->bind_param("is",$dni,$nombre);
@@ -34,5 +37,11 @@ class Administradores extends Profesionales{
         return false;
     }
 
-
+    public function borrarProfesional($token,$idProfesional){
+        if ($datosProfesional = Profesionales::validarToken($token)) {
+            if ($datosProfesional->prioridadProfesional==1) {
+                
+            }
+        }
+    }
 }

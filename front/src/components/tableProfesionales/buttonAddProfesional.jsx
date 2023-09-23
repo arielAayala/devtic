@@ -1,20 +1,45 @@
 "use client";
+import { useAlertContext } from "@/context/alertContext";
 import React, { useState } from "react";
 
-function ButtonAddProfesional() {
+function ButtonAddProfesional(props) {
+	const { crearAlert } = useAlertContext();
+	const { obtenerProfesionales } = props;
+
 	const [hide, setHide] = useState(true);
 	const [inputs, setInputs] = useState({
 		nombrePersona: null,
 		dniPersona: null,
 		correoProfesional: null,
-		idEspecialidad: null,
+		especialidadProfesional: null,
+		prioridadProfesional: null,
 	});
 
 	const handleOnChange = (e) => {
 		setInputs({ ...inputs, [e.target.name]: e.target.value });
 	};
 
-	console.log(inputs);
+	const submitProfesional = (e) => {
+		e.preventDefault();
+		fetch("http://localhost/devtic/api/CrearProfesional.php", {
+			body: JSON.stringify(inputs),
+			credentials: "include",
+			method: "POST",
+		})
+			.then((res) => {
+				if (!res.ok) {
+					throw new Error("Ocurrio un errror al crear el profesional");
+				}
+				return res.json();
+			})
+			.then((res) => {
+				obtenerProfesionales();
+				crearAlert(res);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
 
 	return (
 		<>
@@ -56,7 +81,7 @@ function ButtonAddProfesional() {
 									Registrar profesional
 								</h3>
 
-								<form>
+								<form onSubmit={submitProfesional}>
 									<div className="relative z-0 w-full mb-6 group">
 										<input
 											name="nombrePersona"
@@ -100,7 +125,7 @@ function ButtonAddProfesional() {
 												name="correoProfesional"
 												id="correoProfesional"
 												className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-												placeholder=" "
+												placeholder=""
 												autoComplete="off"
 												required
 											/>
@@ -115,15 +140,15 @@ function ButtonAddProfesional() {
 									<div className="grid md:grid-cols-2 md:gap-6">
 										<div className="relative z-0 w-full mb-6 group col-span-2">
 											<label
-												htmlFor="idEspecialidad"
+												htmlFor="especialidadProfesional"
 												className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
 											>
 												Selecciona una Especialidad
 											</label>
 											<select
 												onChange={handleOnChange}
-												id="idEspecialidad"
-												name="idEspecialidad"
+												id="especialidadProfesional"
+												name="especialidadProfesional"
 												className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 											>
 												<option>Sin selección</option>
@@ -132,7 +157,26 @@ function ButtonAddProfesional() {
 											</select>
 										</div>
 									</div>
-
+									<div className="grid md:grid-cols-2 md:gap-6">
+										<div className="relative z-0 w-full mb-6 group col-span-2">
+											<label
+												htmlFor="prioridadProfesional"
+												className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+											>
+												Selecciona la prioridad
+											</label>
+											<select
+												onChange={handleOnChange}
+												id="prioridadProfesional"
+												name="prioridadProfesional"
+												className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+											>
+												<option>Sin selección</option>
+												<option value={0}>Usuario normal</option>
+												<option value={1}>Usuario administrador</option>
+											</select>
+										</div>
+									</div>
 									<button
 										type="submit"
 										className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
