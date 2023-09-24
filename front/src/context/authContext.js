@@ -34,10 +34,16 @@ function AuthContextProvider({ children }) {
 				crearAlert(res);
 				setUser(res.data);
 			})
+			.catch((fetchError) => {
+				// Handle fetch-related error
+				crearAlert({ error: "Error conectando al servidor" });
+			})
 			.catch((error) => {
-				crearAlert({ error: error });
-				setUser(null);
-				console.log(error);
+				// Extract the error message
+				const errorMessage = error.message || "Error desconocido";
+
+				// Log the shortened error message
+				crearAlert({ error: errorMessage });
 			});
 	}, []);
 
@@ -58,9 +64,12 @@ function AuthContextProvider({ children }) {
 			.then((res) => {
 				setUser(res.data);
 			})
+			.catch((fetchError) => {
+				// Handle fetch-related error
+				crearAlert({ error: "Error conectando al servidor" });
+			})
 			.catch((error) => {
 				setUser(null);
-				console.log(error);
 			});
 	}, []);
 
@@ -72,11 +81,17 @@ function AuthContextProvider({ children }) {
 			},
 			credentials: "include",
 		})
-			.then((res) => res.json())
+			.then((res) => {
+				if (!res.ok) {
+					throw new Error("Ocurrio un error");
+				}
+				return res.json();
+			})
 			.then((res) => {
 				setUser(null);
 				crearAlert(res);
 			})
+
 			.catch((error) => {
 				setUser(null);
 			});

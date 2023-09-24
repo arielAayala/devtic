@@ -13,7 +13,7 @@ export default function HomeLayout({ children }) {
 	}
 
 	return (
-		<>
+		<Loader>
 			<Header />
 			<Aside />
 			<div className="p-4 sm:ml-64">
@@ -21,6 +21,6 @@ export default function HomeLayout({ children }) {
 					{children}
 				</div>
 			</div>
-		</>
+		</Loader>
 	);
 }

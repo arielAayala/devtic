@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import React from "react";
 
-function Aside({ children }) {
+function Aside() {
 	const { user } = useAuthContext();
 
 	return (
@@ -115,8 +115,8 @@ function Aside({ children }) {
 									</a>
 								</li>
 								<li>
-									<a
-										href="#"
+									<Link
+										href="/estadisticas"
 										className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition duration-75 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group"
 									>
 										<svg
@@ -129,7 +129,7 @@ function Aside({ children }) {
 											<path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path>
 										</svg>
 										<span className="ml-3">Estadisticas</span>
-									</a>
+									</Link>
 								</li>
 								<li>
 									<a

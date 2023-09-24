@@ -1,6 +1,7 @@
 import { useAuthContext } from "@/context/authContext";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 function Header() {
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -58,10 +59,12 @@ function Header() {
 							href=""
 							className="flex ml-2 md:mr-24"
 						>
-							<img
-								src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-								className="h-8 mr-3"
+							<Image
+								src="/appFoto.png"
+								className=" mr-1"
 								alt="Devtic Logo"
+								width={30}
+								height={10}
 							/>
 							<span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
 								DevTic
