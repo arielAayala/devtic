@@ -86,6 +86,8 @@ function DemandaModalUpdate(props) {
 		setInput({ ...input, [e.target.name]: e.target.value });
 	};
 
+	console.log(input);
+
 	useEffect(() => {
 		listarOrganizaciones();
 	}, []);
@@ -197,12 +199,7 @@ function DemandaModalUpdate(props) {
 					required=""
 					defaultValue={parseInt(idTipo)}
 				>
-					<option
-						className=" text-xs"
-						value={0}
-					>
-						Seleccione una opcion
-					</option>
+					<option className=" text-xs">Seleccione una opcion</option>
 					<option
 						className=" text-xs"
 						value={1}

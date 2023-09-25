@@ -167,7 +167,7 @@ function DemandaForm() {
 										type="text"
 										name="motivoDemanda"
 										id="motivoDemanda"
-										autoComplete="username"
+										autoComplete="off"
 										className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
 										placeholder="Ingrese un motivo aqui"
 									/>
@@ -235,7 +235,7 @@ function DemandaForm() {
 										name="relatoDemanda"
 										id="relatoDemanda"
 										rows="3"
-										autoComplete="about"
+										autoComplete="off"
 										className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 									></textarea>
 								</div>
@@ -258,7 +258,7 @@ function DemandaForm() {
 										id="idTipo"
 										className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 									>
-										<option value={0}>Seleccione una opción</option>
+										<option value>Seleccione una opción</option>
 										<option value={1}>Invitación</option>
 										<option value={2}>Solicitud</option>
 										<option value={3}>Expediente</option>
@@ -279,7 +279,7 @@ function DemandaForm() {
 										type="text"
 										name="almacenDemanda"
 										id="almacenDemanda"
-										autoComplete="organization"
+										autoComplete="off"
 										className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 									/>
 								</div>

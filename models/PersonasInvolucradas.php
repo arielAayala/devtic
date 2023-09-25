@@ -15,7 +15,7 @@ class PersonasInvolucradas {
         $prepare-> bind_param("si",$nombre, $dni);
         if ($prepare -> execute()) {
             $this -> idPersona = $con ->insert_id;
-            $patternPhone = "/^((\(?\d{3}\)?[-. ]?\d{4})|(\(?\d{4}\)?[-. ]?\d{3})|(\(?\d{5}\)?[-. ]?\d{2}))[-. ]?\d{4}$/";
+            $patternPhone = "/^\+\d{2} \(\d{3}\) \d{3}-\d{4}$/";
             if ($telefono && preg_match_all($patternPhone,$telefono)) {
                 $preparePhone = $con->prepare("INSERT INTO telefonos (idPersona, numeroTelefono) VALUES (?,?)");      
                 $preparePhone->bind_param("is",$this->idPersona,$telefono);

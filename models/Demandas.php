@@ -209,7 +209,7 @@ class Demandas {
     public function obtenerDemandaPorMotivo($token, $motivo) {
         if (Profesionales::validarToken($token)) {
             $con = new Conexion();
-            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN profesionalesgrupos g ON g.idDemanda = d.idDemanda and g.creadorGrupo = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad WHERE d.motivoDemanda LIKE '%$motivo%' ORDER BY d.fechaIngresoDemanda DESC LIMIT 3" ;
+            $query = "SELECT d.idDemanda, d.motivoDemanda FROM demandas d WHERE d.motivoDemanda LIKE '%$motivo%' ORDER BY d.fechaIngresoDemanda DESC LIMIT 5" ;
             $datos =[];
             $resultado = $con ->query($query);
             if ($resultado->num_rows > 0) {

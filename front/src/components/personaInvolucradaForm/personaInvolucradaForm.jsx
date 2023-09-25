@@ -72,6 +72,7 @@ function PersonaInvolucradaForm(props) {
 						name="nombrePersona"
 						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder=" "
+						autoComplete="off"
 						onChange={handleChange}
 						required
 					/>
@@ -86,6 +87,7 @@ function PersonaInvolucradaForm(props) {
 					<input
 						type="text"
 						name="dniPersona"
+						autoComplete="off"
 						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder=" "
 						onChange={handleChange}
@@ -103,10 +105,11 @@ function PersonaInvolucradaForm(props) {
 				<div className="relative z-0 w-full mb-6 group">
 					<input
 						type="tel"
-						pattern="[0-9]{11}"
+						pattern="^\+\d{2} \(\d{3}\) \d{3}-\d{4}$"
+						autoComplete="off"
 						name="telefono"
 						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-						placeholder=" "
+						placeholder=""
 						onChange={handleChange}
 						required
 					/>
@@ -114,7 +117,7 @@ function PersonaInvolucradaForm(props) {
 						htmlFor="telefono"
 						className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 					>
-						Número De Teléfono
+						Teléfono +54 (370) 123-4567
 					</label>
 				</div>
 				<div className="relative z-0 w-full mb-6 group">
@@ -124,6 +127,7 @@ function PersonaInvolucradaForm(props) {
 						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder=" "
 						onChange={handleChange}
+						autoComplete="off"
 						required
 					/>
 					<label
@@ -168,52 +172,54 @@ function PersonaInvolucradaForm(props) {
 
 				<fieldset>
 					<h3>Tipo de relación</h3>
-					<div className="flex items-center mb-4">
-						<input
-							type="radio"
-							name="idParentesco"
-							value="1"
-							onChange={handleChange}
-							className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600"
-						/>
-						<label
-							htmlFor="country-option-3"
-							className="block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-						>
-							Ninguno
-						</label>
-					</div>
+					<div className="mt-4 ml-4">
+						<div className="flex items-center mb-4 ">
+							<input
+								type="radio"
+								name="idParentesco"
+								value="1"
+								onChange={handleChange}
+								className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600"
+							/>
+							<label
+								htmlFor="country-option-3"
+								className="block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+							>
+								Ninguno
+							</label>
+						</div>
 
-					<div className="flex items-center mb-4">
-						<input
-							type="radio"
-							onChange={handleChange}
-							name="idParentesco"
-							value="2"
-							className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-						/>
-						<label
-							htmlFor="country-option-1"
-							className="block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-						>
-							Padre o Madre
-						</label>
-					</div>
+						<div className="flex items-center mb-4">
+							<input
+								type="radio"
+								onChange={handleChange}
+								name="idParentesco"
+								value="2"
+								className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+							/>
+							<label
+								htmlFor="country-option-1"
+								className="block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+							>
+								Padre o Madre
+							</label>
+						</div>
 
-					<div className="flex items-center mb-4">
-						<input
-							type="radio"
-							name="idParentesco"
-							onChange={handleChange}
-							value="3"
-							className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-						/>
-						<label
-							htmlFor="country-option-2"
-							className="block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-						>
-							Tutor Legal
-						</label>
+						<div className="flex items-center mb-4">
+							<input
+								type="radio"
+								name="idParentesco"
+								onChange={handleChange}
+								value="3"
+								className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+							/>
+							<label
+								htmlFor="country-option-2"
+								className="block ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+							>
+								Tutor Legal
+							</label>
+						</div>
 					</div>
 				</fieldset>
 			</div>
@@ -244,6 +250,7 @@ function PersonaInvolucradaForm(props) {
 								type="text"
 								name="nombrePersona"
 								className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+								autoComplete="off"
 								placeholder=" "
 								required
 								onChange={handleChangeAlumno}
@@ -260,6 +267,7 @@ function PersonaInvolucradaForm(props) {
 								type="text"
 								name="dniPersona"
 								className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+								autoComplete="off"
 								placeholder=" "
 								required
 								onChange={handleChangeAlumno}
@@ -274,6 +282,7 @@ function PersonaInvolucradaForm(props) {
 						<div className="relative z-0 w-full mb-6 group">
 							<input
 								type="text"
+								autoComplete="off"
 								name="domicilio"
 								className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 								placeholder=" "
@@ -376,6 +385,7 @@ function PersonaInvolucradaForm(props) {
 						type="text"
 						name="docente"
 						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+						autoComplete="off"
 						placeholder=" "
 						required
 						onChange={handleChangeCurso}
