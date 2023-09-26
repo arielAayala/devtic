@@ -64,47 +64,9 @@ class Demandas {
     public function eliminarDemanda($token, $idDemanda): bool {
         if ($datos = Profesionales::validarToken($token)) {
             if ($datos->prioridadProfesional == 1) {
-                $con = new Conexion;
-    
-                try {
-                    $con->begin_transaction();
-    
-                    // Prepare and execute the DELETE query for profesionalesgrupos
-                    
-                    
-                    // Prepare and execute the DELETE query for alumnosdetalles
-                    $prepareAlumnos = $con->prepare("DELETE alumnosdetalles FROM alumnosdetalles
-                    JOIN personasinvolucradas ON alumnosdetalles.idPersonaInvolucrada = personasinvolucradas.idPersonaInvolucrada
-                    WHERE personasinvolucradas.idDemanda = ?");
-                    if ($prepareAlumnos === false) {
-                        throw new Exception("Error creating alumnos prepared statement: " . $con->error);
-                    }
-                    $prepareAlumnos->bind_param("i", $idDemanda);
-                    if (!$prepareAlumnos->execute()) {
-                        throw new Exception("Error executing alumnos query: " . $prepareAlumnos->error);
-                    }
-    
-                    // Prepare and execute the DELETE query for personasinvolucradas
-                    $preparePersonas = $con->prepare("DELETE FROM personasinvolucradas WHERE idDemanda = ?");
-                    if ($preparePersonas === false) {
-                        throw new Exception("Error creating personas prepared statement: " . $con->error);
-                    }
-                    $preparePersonas->bind_param("i", $idDemanda);
-                    if (!$preparePersonas->execute()) {
-                        throw new Exception("Error executing query: " . $preparePersonas->error);
-                    }
-    
-                    $prepareGrupo = $con->prepare("DELETE FROM profesionalesgrupos WHERE idDemanda = ?");
-                    if ($prepareGrupo === false) {
-                        throw new Exception("Error creating grupos prepared statement: " . $con->error);
-                    }
-                    $prepareGrupo->bind_param("i", $idDemanda);
-                    if (!$prepareGrupo->execute()) {
-                        throw new Exception("Error executing query: " . $prepareGrupo->error);
-                    }
-
+                $con = new Conexion;    
                     // Prepare and execute the DELETE query for demandas
-                    $prepareDemanda = $con->prepare("DELETE FROM demandas WHERE idDemanda = ?");
+                    $prepareDemanda = $con->prepare("UPDATE demandas SET borrarDemanda = 1 WHERE idDemanda = ?");
                     if ($prepareDemanda === false) {
                         throw new Exception("Error creating demandas prepared statement: " . $con->error);
                     }
@@ -112,16 +74,10 @@ class Demandas {
                     if (!$prepareDemanda->execute()) {
                         throw new Exception("Error executing query: " . $prepareDemanda->error);
                     }
-    
-                    $con->commit();
                     $con->close();
     
                     return true;
-                } catch (Exception $e) {
-                    // Handle exceptions here, possibly log the error
-                    $con->rollback();
-                    echo "Error: " . $e->getMessage(); // You can log or display the error message here
-                }
+                
             }
         }
         return false;

@@ -5,10 +5,12 @@ import { useState, useCallback, useEffect } from "react";
 function SearchForm() {
 	const [motivo, setMotivo] = useState("");
 	const [demandas, setDemandas] = useState([]);
+	const [loader, setLoader] = useState(true);
 
 	const handleChange = useCallback((e) => setMotivo(e.target.value));
 
 	useEffect(() => {
+		setLoader(true);
 		const controller = new AbortController();
 		const signal = controller.signal;
 		if (motivo != "") {
@@ -23,9 +25,13 @@ function SearchForm() {
 					body: JSON.stringify({ motivoDemanda: motivo }),
 				})
 					.then((response) => {
+						if (response.status == 404) {
+							setLoader(false);
+						}
 						if (!response.ok) {
 							throw new Error("La solicitud no se completó correctamente");
 						}
+
 						return response.json();
 					})
 					.then((rest) => {
@@ -38,6 +44,7 @@ function SearchForm() {
 		} else {
 			setDemandas([]);
 		}
+
 		return function cleanUp() {
 			controller.abort();
 		};
@@ -96,6 +103,19 @@ function SearchForm() {
 								</li>
 							);
 						})}
+					</ul>
+				</div>
+			) : motivo != "" && !loader ? (
+				<div className="z-10 absolute bg-white divide-y divide-gray-700 rounded-lg  shadow-xl   dark:bg-gray-700">
+					<ul
+						className="py-2 text-sm text-gray-700 dark:text-gray-200"
+						aria-labelledby="dropdownDefaultButton"
+					>
+						<li>
+							<div className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+								No se encuentran coincidencias
+							</div>
+						</li>
 					</ul>
 				</div>
 			) : null}

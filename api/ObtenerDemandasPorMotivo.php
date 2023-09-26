@@ -18,7 +18,7 @@ switch ($_SERVER["REQUEST_METHOD"]) {
                 echo json_encode($lstDemandas);
                 http_response_code(200);
             }else {
-                http_response_code(400);
+                http_response_code(404);
             }
         }else {
             http_response_code(401);
