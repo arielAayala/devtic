@@ -1,32 +1,46 @@
 import { useAuthContext } from "@/context/authContext";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 function Header() {
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
+	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const { user, cerrarSesion } = useAuthContext();
-
-	const toggleSidebar = () => {
-		const sidebar = document.getElementById("logo-sidebar");
-		if (sidebar) {
-			sidebar.classList.toggle("-translate-x-full");
-		}
-	};
+	const sidebarRef = useRef(null);
 
 	const toggleUserMenu = () => {
 		setUserMenuOpen(!userMenuOpen);
 	};
 
 	const handleCerrarSesion = () => {
+		setUserMenuOpen(false);
 		cerrarSesion();
 	};
 
 	const router = useRouter();
 	const handleRedirectToPerfil = () => {
+		setUserMenuOpen(false);
 		router.push("/perfil");
 	};
 
+	const toggleSidebar = () => {
+		setSidebarOpen(!sidebarOpen);
+	};
+
+	useEffect(() => {
+		function handleClickOutside(event) {
+		  if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+			setUserMenuOpen(false); // Cierra el menú del usuario
+		  }
+		}
+	
+		document.addEventListener("mousedown", handleClickOutside);
+	
+		return () => {
+		  document.removeEventListener("mousedown", handleClickOutside);
+		};
+	  }, []);
 	return (
 		<nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
 			<div className="px-3 py-3 lg:px-5 lg:pl-3">
@@ -91,10 +105,11 @@ function Header() {
 								</button>
 							</div>
 							<div
-								className={`z-50 ${
+								ref = {sidebarRef}
+								className={`${
 									userMenuOpen ? "" : "hidden"
-								} absolute right-2 top-10 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600`}
-								id="dropdown-user"
+								  } absolute right-2 top-10 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600`}
+								  id="dropdown-user"
 							>
 								<div className="px-4 py-3">
 									<p className="text-sm text-gray-900 dark:text-white">
