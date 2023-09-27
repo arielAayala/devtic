@@ -4,7 +4,6 @@ import React, { useRef, useLayoutEffect, useEffect, useState } from "react";
 import PersonaInvolucradaForm from "../personaInvolucradaForm/personaInvolucradaForm";
 import PopUpDemanda from "../popUpDemanda/popUpDemanda";
 
-
 function DemandaForm() {
 	const { crearAlert } = useAlertContext();
 	const [organizaciones, setOrganizaciones] = useState([]);
@@ -109,7 +108,6 @@ function DemandaForm() {
 			...input,
 			personasInvolucradas: personasInvolucradas,
 		});
-		console.log("useEffect");
 	}, [demandante, alumno, curso, esDemandante]);
 
 	const handleSubmit = (e) => {
@@ -156,9 +154,9 @@ function DemandaForm() {
 	const closePopUp = () => {
 		setPopUp(false);
 	};
-	  return (
+	return (
 		<>
-		{showPopUp && <PopUpDemanda/>}
+			{showPopUp && <PopUpDemanda />}
 			<form
 				id="formDemanda"
 				onSubmit={handleSubmit}
@@ -307,9 +305,9 @@ function DemandaForm() {
 					</div>
 				</div>
 				<div className="mt-6 flex items-center justify-end gap-x-6">
-					<button 
-					type="button" 
-					className="px-3 py-2 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+					<button
+						type="button"
+						className="px-3 py-2 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
 					>
 						Cancelar
 					</button>
@@ -321,40 +319,37 @@ function DemandaForm() {
 						Guardar
 					</button>
 				</div>
-				
+
 				{showPopUp && (
 					<div className="sm:px-8 min-w-full fixed inset-0 flex items-center justify-center z-50">
-					<div className="absolute inset-0 bg-gray-800 opacity-60"></div>
-					<div className="bg-white dark:bg-gray-800 p-4 rounded-lg z-10 w-screen shadow">
-						<button
-							type="button"
-							className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
-							data-modal-toggle="readProductModal"
-							onClick={closePopUp}
-						>
-							<svg
-								aria-hidden="true"
-								className="w-5 h-5"
-								fill="currentColor"
-								viewBox="0 0 20 20"
-								xmlns="http://www.w3.org/2000/svg"
+						<div className="absolute inset-0 bg-gray-800 opacity-60"></div>
+						<div className="bg-white dark:bg-gray-800 p-4 rounded-lg z-10 w-screen shadow">
+							<button
+								type="button"
+								className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
+								data-modal-toggle="readProductModal"
+								onClick={closePopUp}
 							>
-								<path
-									fillRule="evenodd"
-									d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-									clipRule="evenodd"
-								></path>
-							</svg>
-							<span className="sr-only">Cerrar Demanda</span>
-						</button>
-						<PopUpDemanda>
-							
-						</PopUpDemanda>
+								<svg
+									aria-hidden="true"
+									className="w-5 h-5"
+									fill="currentColor"
+									viewBox="0 0 20 20"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path
+										fillRule="evenodd"
+										d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+										clipRule="evenodd"
+									></path>
+								</svg>
+								<span className="sr-only">Cerrar Demanda</span>
+							</button>
+							<PopUpDemanda></PopUpDemanda>
+						</div>
 					</div>
-				</div>
 				)}
 			</form>
-
 		</>
 	);
 }

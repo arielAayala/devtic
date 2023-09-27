@@ -28,7 +28,7 @@ function DemandaFilter() {
 				setTimeout(() => setLoader(true), 1500);
 			})
 			.catch((error) => {
-				console.log(error.message);
+				console.error(error.message);
 			});
 	};
 	useEffect(() => {
