@@ -102,7 +102,7 @@ function SearchForm() {
                 >
                   <div className="mb-1 font-medium">{demanda.motivoDemanda}</div>
                   <div className="text-sm text-gray-500">
-                    Creado por: {demanda.idProfesional}
+                    Creado por: {demanda.nombrePersona}
                   </div>
                   <div className="text-sm text-gray-500">
                     Fecha de Creación: {demanda.fechaIngresoDemanda}
