@@ -177,6 +177,22 @@ class Demandas {
         }
         return false;
     }
+    public function obtenerFechaIngresoDemanda($token, $motivo) {
+        if (Profesionales::validarToken($token)) {
+            $con = new Conexion();
+            $query = "SELECT d.fechaIngresoDemanda FROM demandas d WHERE d.motivoDemanda LIKE '%$motivo%' ORDER BY d.fechaIngresoDemanda DESC LIMIT 5";
+            $datos = [];
+            $resultado = $con->query($query);
+            if ($resultado->num_rows > 0) {
+                while ($row = $resultado->fetch_assoc()) {
+                    $datos[] = $row['fechaIngresoDemanda'];
+                }
+            }
+            return $datos;
+        }
+        return false;
+    }
+    
 
     public function obtenerDemandaPorFiltro($token, $pagina, $idTipo = "NULL", $idEstado= "NULL", $idCreador= "NULL", $fechaIngreso = "NULL", $fechaCierre = "NULL"){
         if ( Profesionales::validarToken($token)) {
