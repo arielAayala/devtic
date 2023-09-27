@@ -43,8 +43,8 @@ class PersonasInvolucradas {
         if ($preparePersonaInvolucrada->execute()) {
             if ($alumno) {
                 $this->idPersonaInvolucrada = $con->insert_id;
-                $prepareAlumno = $con -> prepare("INSERT INTO alumnosdetalles (idPersonaInvolucrada, grado, turno, docente) VALUES (?,?,?,?)");
-                $prepareAlumno->bind_param("isss", $this->idPersonaInvolucrada,$grado, $turno, $docente );
+                $prepareAlumno = $con -> prepare("INSERT INTO alumnosdetalles (idPersonaInvolucrada, idGrado, idTurno, docente) VALUES (?,?,?,?)");
+                $prepareAlumno->bind_param("iiis", $this->idPersonaInvolucrada,$grado, $turno, $docente );
                 $prepareAlumno->execute();
             }
             $con-> close();
@@ -56,22 +56,31 @@ class PersonasInvolucradas {
     }
 
     public function obtenerPersonasInvolucradas($idDemanda){
-        $con = new Conexion();
-        $preparePersonasInvolucradas = $con->prepare("SELECT personasinvolucradas.idPersonaInvolucrada, p.nombrePersona, p.dniPersona ,  personasinvolucradas.demandante,  personasinvolucradas.alumno , alumnosdetalles.turno, alumnosdetalles.grado, alumnosdetalles.docente, parentesco.nombreParentesco 
-        FROM personasinvolucradas 
-        INNER JOIN personas p ON p.idPersona = personasinvolucradas.idPersona
-        LEFT JOIN alumnosdetalles ON  personasinvolucradas.idPersonaInvolucrada = alumnosdetalles.idPersonaInvolucrada 
-        LEFT JOIN parentesco ON parentesco.idParentesco = personasinvolucradas.idParentesco 
-        WHERE personasinvolucradas.idDemanda = ? ");
-        $preparePersonasInvolucradas ->bind_param("i", $idDemanda);
-        $preparePersonasInvolucradas->execute();
-        $datos=[];
-        $resultado = $preparePersonasInvolucradas->get_result();
-        while ($row = $resultado ->fetch_assoc()) {
-            $datos[]=$row;
+        try {
+            $con = new Conexion();
+            $query = "SELECT personasinvolucradas.idPersonaInvolucrada, p.nombrePersona, p.dniPersona ,  personasinvolucradas.demandante,  personasinvolucradas.alumno , alumnosdetalles.idTurno, alumnosdetalles.idGrado, alumnosdetalles.docente, parentesco.nombreParentesco 
+            FROM personasinvolucradas 
+            INNER JOIN personas p ON p.idPersona = personasinvolucradas.idPersona
+            LEFT JOIN alumnosdetalles ON  personasinvolucradas.idPersonaInvolucrada = alumnosdetalles.idPersonaInvolucrada 
+            LEFT JOIN parentesco ON parentesco.idParentesco = personasinvolucradas.idParentesco 
+            WHERE personasinvolucradas.idDemanda = ? ";
+            if ($preparePersonasInvolucradas = $con->prepare($query)) {
+                $preparePersonasInvolucradas ->bind_param("i", $idDemanda);
+                if($preparePersonasInvolucradas->execute()){
+                    $datos=[];
+                    $resultado = $preparePersonasInvolucradas->get_result();
+                    while ($row = $resultado ->fetch_assoc()) {
+                        $datos[]=$row;
+                    }
+                    $con -> close();
+                    return  $datos;
+                }
+            }
+            throw new Exception("Error al obtener las personas involucradas a la demanda");
+        } catch (Exception $e) {
+            
+            
         }
-        $con -> close();
-        return  $datos;
     }
 
 

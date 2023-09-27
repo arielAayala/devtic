@@ -20,7 +20,7 @@ function RowTableProfesionales(props) {
 			</th>
 			<td className="px-6 py-4">{nombreEspecialidad}</td>
 			<td className="px-6 py-4">
-				{prioridadProfesional ? "Administrador" : "Usuario normal"}
+				{prioridadProfesional == 1 ? "Administrador" : "Usuario normal"}
 			</td>
 
 			<td className="px-6 py-4 text-right">

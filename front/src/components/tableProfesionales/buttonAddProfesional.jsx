@@ -37,7 +37,7 @@ function ButtonAddProfesional(props) {
 				crearAlert(res);
 			})
 			.catch((error) => {
-				console.log(error);
+				crearAlert({ error: error.message });
 			});
 	};
 

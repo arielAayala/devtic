@@ -64,10 +64,7 @@ function AuthContextProvider({ children }) {
 			.then((res) => {
 				setUser(res.data);
 			})
-			.catch((fetchError) => {
-				// Handle fetch-related error
-				crearAlert({ error: "Error conectando al servidor" });
-			})
+
 			.catch((error) => {
 				setUser(null);
 			});

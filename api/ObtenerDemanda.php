@@ -19,10 +19,8 @@ switch ($_SERVER["REQUEST_METHOD"]) {
                 http_response_code(200);
             }else {
                 http_response_code(400);
-                echo json_encode(["error"=> "Ocurrio un error"]);
             }
         }else {
-            echo json_encode(["error"=> "token no existente"]);
             http_response_code(401);
         }
         break;

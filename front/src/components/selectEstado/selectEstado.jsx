@@ -26,6 +26,11 @@ function SelectEstado(props) {
 			body: JSON.stringify(estado),
 		})
 			.then((res) => {
+				if (!res.ok) {
+					throw new Error(
+						"Ocurrio un error al cambiar el estado de la demanda"
+					);
+				}
 				return res.json();
 			})
 			.then((res) => {
@@ -35,8 +40,7 @@ function SelectEstado(props) {
 				obtenerDemanda();
 			})
 			.catch((error) => {
-				console.log(error);
-				crearAlert(error);
+				crearAlert({ error: error.message });
 			});
 	};
 

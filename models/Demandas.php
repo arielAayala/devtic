@@ -9,29 +9,40 @@ include_once "PersonasInvolucradas.php";
 class Demandas {
 
     public function crearDemanda($token,  $idTipo, $idOrganizacion, $motivoDemanda, $relatoDemanda, $almacenDemanda, $personasInvolucradas){
-        if($datosProfesional=Profesionales::validarToken($token)) {
-            $con = new Conexion();
-            $prepareDemanda=$con->prepare("INSERT INTO demandas(idEstado, idTipo, idOrganizacion, motivoDemanda, relatoDemanda, almacenDemanda, fechaIngresoDemanda) 
-            VALUES(1,?,?,?,?,?,CURDATE())");
-            $prepareDemanda->bind_param("iisss",$idTipo,$idOrganizacion,$motivoDemanda,$relatoDemanda,$almacenDemanda);
-            if ($prepareDemanda->execute()) {
-                $idDemanda = $con -> insert_id;
-                $queryGrupos = "INSERT INTO profesionalesgrupos(idDemanda, idProfesional, creadorGrupo) VALUES ($idDemanda, $datosProfesional->idProfesional, 1)";
-
-                if ($con-> query($queryGrupos)) {
-                    foreach ($personasInvolucradas as  $i) {
-                        $personas = new PersonasInvolucradas();
-                        $personas->crearPersonaInvolucrada($idDemanda,$i->nombrePersona,$i->dniPersona,$i->demandante, $i->alumno,$i->idParentesco , $i->telefono, $i->domicilio, $i->idLocalidad, $i->grado, $i->turno, $i->docente);
-                    }
-                    echo($con->error);
-                    $con -> close();
-                    return true;
+        try {
+            if($datosProfesional=Profesionales::validarToken($token)) {
+                $con = new Conexion();
+                if (!$personasInvolucradas) {
+                    throw new Exception("Error al cargar las personas Involucradas");
                 }
+
+                $prepareDemanda=$con->prepare("INSERT INTO demandas(idEstado, idTipo, idOrganizacion, motivoDemanda, relatoDemanda, almacenDemanda, fechaIngresoDemanda) 
+                VALUES(1,?,?,?,?,?,CURDATE())");
+                $prepareDemanda->bind_param("iisss",$idTipo,$idOrganizacion,$motivoDemanda,$relatoDemanda,$almacenDemanda);
+                if ($prepareDemanda->execute()) {
+                    $idDemanda = $con -> insert_id;
+                    $queryGrupos = "INSERT INTO profesionalesgrupos(idDemanda, idProfesional, creadorGrupo) VALUES ($idDemanda, $datosProfesional->idProfesional, 1)";
+    
+                    if ($con-> query($queryGrupos)) {
+                        foreach ($personasInvolucradas as  $i) {
+                            $personas = new PersonasInvolucradas();
+                            if(!($personas->crearPersonaInvolucrada($idDemanda,$i->nombrePersona,$i->dniPersona,$i->demandante, $i->alumno,$i->idParentesco , $i->telefono, $i->domicilio, $i->idLocalidad, $i->grado, $i->turno, $i->docente))){
+                                throw new Exception("Ocurrio un error al vincular las personas involucradas con la demanda");
+                            };
+                        }
+                        $con -> close();
+                        return true;
+                    }
+                    throw new Exception("Ocurrio un error al vincular al profesional con la demanda");
+                }
+                throw new Exception("Ocurrio un error al crear la demanda");
             }
+            throw new Exception("Token no autorizado");
+        } catch (Exception $e) {
+            echo json_encode(["error"=>$e->getMessage()]);
+            return false;
         }
-        echo($con-> error);
-        $con -> close();
-        return false;
+
     }
 
     public function actualizarDemanda($token, $idDemanda,$idTipo, $idOrganizacion, $motivoDemanda, $relatoDemanda, $almacenDemanda){
@@ -61,26 +72,31 @@ class Demandas {
         return false;
     }
 
-    public function eliminarDemanda($token, $idDemanda): bool {
-        if ($datos = Profesionales::validarToken($token)) {
-            if ($datos->prioridadProfesional == 1) {
-                $con = new Conexion;    
-                    // Prepare and execute the DELETE query for demandas
-                    $prepareDemanda = $con->prepare("UPDATE demandas SET borrarDemanda = 1 WHERE idDemanda = ?");
-                    if ($prepareDemanda === false) {
-                        throw new Exception("Error creating demandas prepared statement: " . $con->error);
-                    }
-                    $prepareDemanda->bind_param("i", $idDemanda);
-                    if (!$prepareDemanda->execute()) {
-                        throw new Exception("Error executing query: " . $prepareDemanda->error);
-                    }
-                    $con->close();
-    
-                    return true;
-                
+    public function eliminarDemanda($token, $idDemanda) {
+        try {
+            if ($datos = Profesionales::validarToken($token)) {
+                if ($datos->prioridadProfesional == 1) {
+                    $con = new Conexion;    
+                        // Prepare and execute the DELETE query for demandas
+                        $prepareDemanda = $con->prepare("UPDATE demandas SET borrarDemanda = 1 WHERE idDemanda = ?");
+                        if ($prepareDemanda === false) {
+                            throw new Exception("Error creating demandas prepared statement: " . $con->error);
+                        }
+                        $prepareDemanda->bind_param("i", $idDemanda);
+                        if ($prepareDemanda->execute()) {
+                            $con->close();
+                            return true;
+                        }
+                        $con->close();
+                        throw new Exception("Error al eliminar la demanda");
+                }
+                throw new Exception("Error ausencia de permisos");
             }
+            throw new Exception("Error token no autorizado");
+        } catch (Exception $e) {
+            echo json_encode(["error"=>$e->getMessage()]);
+            return false;
         }
-        return false;
     }
     
     public function cambiarEstado($token,$idEstado,$idDemanda){
@@ -111,6 +127,7 @@ class Demandas {
             
         } catch (Exception $e) {
             echo json_encode(["error"=>$e->getMessage()]);
+            return false;
         }
 
     }
@@ -122,7 +139,7 @@ class Demandas {
     public function obtenerTodasDemandas($token, $pagina){
         if ($datos = Profesionales::validarToken($token)) {
             $con = new Conexion();
-            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN profesionalesgrupos g ON g.idDemanda = d.idDemanda AND g.creadorGrupo = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad ORDER BY d.fechaIngresoDemanda DESC LIMIT 10 OFFSET ". (($pagina - 1)*10) ;
+            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN profesionalesgrupos g ON g.idDemanda = d.idDemanda AND g.creadorGrupo = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad WHERE d.borrarDemanda = 0 ORDER BY d.fechaIngresoDemanda DESC LIMIT 10 OFFSET ". (($pagina - 1)*10) ;
             $datos =[];
             $resultado = $con ->query($query);
             if ($resultado->num_rows > 0) {
@@ -143,22 +160,41 @@ class Demandas {
     }
 
     public function obtenerDemanda($token, $id){
-        if ($datos = Profesionales::validarToken($token)) {
-            $con = new Conexion();
-            $query = "SELECT d.idDemanda, d.almacenDemanda,p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado,e.idEstado, t.nombreTipo, t.idTipo, o.nombreOrganizacion, o.idOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN profesionalesgrupos g ON g.idDemanda = d.idDemanda and g.creadorGrupo = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad WHERE d.idDemanda = $id";
-            $datos =[];
-            $resultado = $con ->query($query);
-            if ($resultado->num_rows > 0) {
-                while ($row = $resultado->fetch_assoc()) {
-                    $datos=$row;
+
+        try {
+            //code...
+            if ($datos = Profesionales::validarToken($token)) {
+                $con = new Conexion();
+                $query = "SELECT d.idDemanda, d.borrarDemanda ,d.almacenDemanda,p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado,e.idEstado, t.nombreTipo, t.idTipo, o.nombreOrganizacion, o.idOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN profesionalesgrupos g ON g.idDemanda = d.idDemanda and g.creadorGrupo = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad WHERE d.idDemanda = $id";
+                if ($resultado = $con ->query($query)) {
+                    $datos =[];
+                    if ($resultado->num_rows > 0) {
+                        while ($row = $resultado->fetch_assoc()) {
+                            $datos=$row;
+                        }
+                    }
+                    $grupo = new Grupos();
+                    $personasInvolucradas = new PersonasInvolucradas();
+                    $con -> close();
+                    if (!$datos) {
+                        throw new Exception("Error al obtener la demanda");
+                    }
+                    if (!($grupoData =$grupo->obtenerGrupo($id))) {
+                        throw new Exception("Error al obtener el grupo");
+                    }if (!($personasData = $personasInvolucradas->obtenerPersonasInvolucradas($id))) {
+                        throw new Exception("Error al obtener las persona involucradas de la demanda");
+                    }
+                    $datosDemanda = ["data"=>$datos , "grupo"=> $grupoData, "personasInvolucradas"=> $personasData];
+                    return $datosDemanda;
                 }
+                throw new Exception("Error al obtener la demanda");
             }
-            $grupo = new Grupos();
-            $personasInvolucradas = new PersonasInvolucradas();
-            $con -> close();
-            return ["data"=>$datos , "grupo"=> $grupo->obtenerGrupo($id), "personasInvolucradas"=> $personasInvolucradas->obtenerPersonasInvolucradas($id)];
+            throw new Exception("Error Token no valido");
+        } catch (Exception $e) {
+            echo json_encode(["error"=>$e->getMessage()]);
+            
         }
-        return false;
+
     }
     
 

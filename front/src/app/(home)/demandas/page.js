@@ -6,8 +6,11 @@ import SearchForm from "@/components/searchForm/searchForm";
 import Pagination from "@/components/pagination/pagination";
 import Link from "next/link";
 import DemandaFilter from "@/components/demandaFilter/demandaFilter";
+import { useAlertContext } from "@/context/alertContext";
 
 function Demandas() {
+	const { crearAlert } = useAlertContext();
+
 	const [demandas, setDemandas] = useState([]);
 	const [loader, setLoader] = useState(false);
 	const [page, setPage] = useState(1);
@@ -22,11 +25,19 @@ function Demandas() {
 			body: JSON.stringify({ pagina: page }),
 		})
 			.then((rest) => {
-				return rest.json();
+				{
+					if (!rest.ok) {
+						throw new Error("Ocurrio un error al cargar las demandas");
+					}
+					return rest.json();
+				}
 			})
 			.then((rest) => {
 				setDemandas(rest ?? []);
 				setTimeout(() => setLoader(true), 100);
+			})
+			.catch((error) => {
+				crearAlert({ error: error.message });
 			});
 	};
 

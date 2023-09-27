@@ -61,10 +61,11 @@ function Header() {
 						>
 							<Image
 								src="/appFoto.png"
-								className=" mr-1"
+								className=" w-auto h-auto mr-1"
 								alt="Devtic Logo"
 								width={30}
 								height={10}
+								priority
 							/>
 							<span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
 								DevTic

@@ -48,6 +48,9 @@ function DemandaModalUpdate(props) {
 			credentials: "include",
 		})
 			.then((res) => {
+				if (!res.ok) {
+					throw new Error("Ocurrio un error al listar las organizaciones");
+				}
 				return res.json();
 			})
 			.then((res) => {
@@ -55,7 +58,7 @@ function DemandaModalUpdate(props) {
 				setTimeout(() => setLoader(true), 1500);
 			})
 			.catch((error) => {
-				console.log(error);
+				console.error(error.message);
 			});
 	};
 
@@ -70,23 +73,24 @@ function DemandaModalUpdate(props) {
 			body: JSON.stringify(input),
 		})
 			.then((res) => {
+				if (!res.ok) {
+					throw new Error("Ocurrio un error al actualizar la demanda");
+				}
+
 				return res.json();
 			})
 			.then((res) => {
-				crearAlert({ msg: res.msg });
+				crearAlert(res);
 				obtenerDemanda();
 			})
 			.catch((error) => {
-				crearAlert(error);
-				console.log(error);
+				crearAlert({ error: error.message });
 			});
 	};
 
 	const handleChange = (e) => {
 		setInput({ ...input, [e.target.name]: e.target.value });
 	};
-
-	console.log(input);
 
 	useEffect(() => {
 		listarOrganizaciones();
@@ -95,7 +99,7 @@ function DemandaModalUpdate(props) {
 	return (
 		<form
 			onSubmit={handleSubmit}
-			className=" w-screen px-8"
+			className="  px-8"
 		>
 			<h3 className="mb-4">Actualizar Demanda</h3>
 			{/* INGRESAR UN TITULO PARA LA DEMANDA */}

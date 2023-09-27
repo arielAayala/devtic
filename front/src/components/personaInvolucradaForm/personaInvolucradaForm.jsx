@@ -39,13 +39,18 @@ function PersonaInvolucradaForm(props) {
 			},
 			credentials: "include",
 		})
-			.then((res) => res.json())
+			.then((res) => {
+				if (!res.ok) {
+					throw new Error("Ocurrio un error al listar las organizaciones");
+				}
+				return res.json();
+			})
 			.then((res) => {
 				setLocalidades(res);
 				setTimeout(() => setLoader(true), 1500);
 			})
 			.catch((error) => {
-				console.log(error);
+				console.error(error.message);
 			});
 	};
 

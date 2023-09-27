@@ -23,6 +23,9 @@ function SelectProfesional(props) {
 			credentials: "include",
 		})
 			.then((res) => {
+				if (!res.ok) {
+					throw new Error("Ocurrio un error al listar los profesionales");
+				}
 				return res.json();
 			})
 			.then((res) => {
@@ -30,7 +33,7 @@ function SelectProfesional(props) {
 				setTimeout(() => setLoader(true), 1500);
 			})
 			.catch((error) => {
-				console.log(error);
+				console.error(error.message);
 			});
 	};
 
@@ -49,6 +52,11 @@ function SelectProfesional(props) {
 			body: JSON.stringify(profesional),
 		})
 			.then((res) => {
+				if (!res.ok) {
+					throw new Error(
+						"Ocurrio un error al agregar al profesional al grupo de trabajo"
+					);
+				}
 				return res.json();
 			})
 			.then((res) => {
@@ -58,7 +66,7 @@ function SelectProfesional(props) {
 				obtenerDemanda();
 			})
 			.catch((error) => {
-				console.log(error);
+				crearAlert({ error: error.message });
 			});
 	};
 

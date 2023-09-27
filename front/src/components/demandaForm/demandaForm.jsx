@@ -41,13 +41,18 @@ function DemandaForm() {
 			},
 			credentials: "include",
 		})
-			.then((res) => res.json())
+			.then((res) => {
+				if (!res.ok) {
+					throw new Error("Error al listar las organizaciones");
+				}
+				return res.json();
+			})
 			.then((res) => {
 				setOrganizaciones(res);
 				setTimeout(() => setLoader(true), 1500);
 			})
 			.catch((error) => {
-				console.log(error);
+				console.error(error.message);
 			});
 	};
 
@@ -102,6 +107,7 @@ function DemandaForm() {
 			...input,
 			personasInvolucradas: personasInvolucradas,
 		});
+		console.log("useEffect");
 	}, [demandante, alumno, curso, esDemandante]);
 
 	const handleSubmit = (e) => {
@@ -109,7 +115,7 @@ function DemandaForm() {
 
 		setInput({
 			...input,
-			personasInvolucradas: setPersonasInvolucradas(submitPersonaInvolucrada()),
+			personasInvolucradas: personasInvolucradas,
 		});
 		fetch("http://localhost/devtic/api/CrearDemanda.php", {
 			method: "POST",
@@ -119,14 +125,18 @@ function DemandaForm() {
 			credentials: "include",
 			body: JSON.stringify(input),
 		})
-			.then((res) => res.json())
+			.then((res) => {
+				if (!res.ok) {
+					throw new Error("Ocurrio un error");
+				}
+				return res.json();
+			})
 			.then((res) => {
 				crearAlert(res);
 				document.getElementById("formDemanda").reset();
 			})
 			.catch((error) => {
-				crearAlert(error);
-				console.log(error);
+				crearAlert({ error: error.message });
 			});
 	};
 

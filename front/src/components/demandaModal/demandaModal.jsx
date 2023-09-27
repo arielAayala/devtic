@@ -1,10 +1,8 @@
 import EstadoSpan from "@/components/estadoSpan/estadoSpan";
-import { useRouter } from "next/navigation";
+
 import Link from "next/link";
 
 function DemandaModal(props) {
-	const router = useRouter();
-
 	const {
 		motivoDemanda,
 		relatoDemanda,

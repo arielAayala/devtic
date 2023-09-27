@@ -26,11 +26,18 @@ function PageIdDemanda() {
 			body: JSON.stringify(params),
 		})
 			.then((rest) => {
+				if (!rest.ok) {
+					throw new Error("Ocurrio un error al cargar la demanda");
+				}
+
 				return rest.json();
 			})
 			.then((rest) => {
 				setDemanda(rest ?? {});
 				setTimeout(() => setLoader(true), 100);
+			})
+			.catch((error) => {
+				crearAlert({ error: error.message });
 			});
 	};
 
@@ -58,6 +65,9 @@ function PageIdDemanda() {
 			body: JSON.stringify(params),
 		})
 			.then((rest) => {
+				if (!rest.ok) {
+					throw new Error("Ocurrio un error al eliminar la demanda");
+				}
 				return rest.json();
 			})
 			.then((rest) => {
@@ -65,8 +75,7 @@ function PageIdDemanda() {
 				router.push("/demandas");
 			})
 			.catch((error) => {
-				crearAlert(error);
-				console.log(error);
+				crearAlert({ error: error.message });
 			});
 	};
 
@@ -226,7 +235,7 @@ function PageIdDemanda() {
 					{isModalOpen && (
 						<div className=" fixed inset-0 flex items-center justify-center z-50">
 							<div className="absolute inset-0 bg-gray-800 opacity-60"></div>
-							<div className="bg-white dark:bg-gray-800  p-4 px-10  rounded-lg z-10">
+							<div className="bg-white dark:bg-gray-800  p-4 px-10  rounded-lg z-10 w-screen">
 								<button
 									type="button"
 									className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 inline-flex dark:hover:bg-gray-600 dark:hover:text-white"
