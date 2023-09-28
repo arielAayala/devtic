@@ -100,7 +100,7 @@ function SearchForm() {
                   href={`demandas/${demanda.idDemanda}`}
                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
-                  <div className="mb-1 font-medium">{demanda.motivoDemanda}</div>
+                  <div className="mb-1 font-medium">#{demanda.idDemanda} - {demanda.motivoDemanda}</div>
                   <div className="text-sm text-gray-500">
                     Creado por: {demanda.nombrePersona}
                   </div>

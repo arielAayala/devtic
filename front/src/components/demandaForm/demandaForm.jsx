@@ -110,8 +110,9 @@ function DemandaForm() {
 		});
 	}, [demandante, alumno, curso, esDemandante]);
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+	const handleSubmit = () => {
+		console.log(
+			"que onda")
 		setInput({
 			...input,
 			personasInvolucradas: personasInvolucradas,
@@ -156,10 +157,9 @@ function DemandaForm() {
 	};
 	return (
 		<>
-			{showPopUp && <PopUpDemanda />}
+			{showPopUp && <PopUpDemanda handleSubmit={handleSubmit} />}
 			<form
 				id="formDemanda"
-				onSubmit={handleSubmit}
 			>
 				<div className="space-y-12">
 					<div className="border-b border-gray-900/10 pb-12">
