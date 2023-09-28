@@ -25,22 +25,25 @@ function Header() {
 	};
 
 	const toggleSidebar = () => {
-		setSidebarOpen(!sidebarOpen);
+		const sidebar = document.getElementById("logo-sidebar");
+		if (sidebar) {
+			sidebar.classList.toggle("-translate-x-full");
+		}
 	};
 
 	useEffect(() => {
 		function handleClickOutside(event) {
-		  if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-			setUserMenuOpen(false); // Cierra el menú del usuario
-		  }
+			if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+				setUserMenuOpen(false); // Cierra el menú del usuario
+			}
 		}
-	
+
 		document.addEventListener("mousedown", handleClickOutside);
-	
+
 		return () => {
-		  document.removeEventListener("mousedown", handleClickOutside);
+			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	  }, []);
+	}, []);
 	return (
 		<nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
 			<div className="px-3 py-3 lg:px-5 lg:pl-3">
@@ -105,11 +108,11 @@ function Header() {
 								</button>
 							</div>
 							<div
-								ref = {sidebarRef}
+								ref={sidebarRef}
 								className={`${
 									userMenuOpen ? "" : "hidden"
-								  } absolute right-2 top-10 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600`}
-								  id="dropdown-user"
+								} absolute right-2 top-10 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600`}
+								id="dropdown-user"
 							>
 								<div className="px-4 py-3">
 									<p className="text-sm text-gray-900 dark:text-white">

@@ -141,7 +141,7 @@ class Profesionales  {
     public static function listarProfesionales($token){
         if (Profesionales::validarToken($token)) {
             $con = new Conexion();
-            $query = "SELECT p.idProfesional, e.nombreEspecialidad, personas.nombrePersona,p.prioridadProfesional FROM profesionales p INNER JOIN especialidades e ON e.idEspecialidad = p.idEspecialidad INNER JOIN personas ON personas.idPersona = p.idPersona";
+            $query = "SELECT p.idProfesional, e.nombreEspecialidad, personas.nombrePersona,p.prioridadProfesional FROM profesionales p INNER JOIN especialidades e ON e.idEspecialidad = p.idEspecialidad INNER JOIN personas ON personas.idPersona = p.idPersona WHERE p.borrarProfesional = 0";
             $resultado = $con->query($query);
             $datos = [];
             if ($resultado ->num_rows >0) {

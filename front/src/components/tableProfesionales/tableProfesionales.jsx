@@ -62,12 +62,7 @@ function TableProfesionales() {
 						>
 							Prioridad
 						</th>
-						<th
-							scope="col"
-							className="px-6 py-3"
-						>
-							<span className="sr-only">Actualizar</span>
-						</th>
+
 						<th
 							scope="col"
 							className="px-6 py-3"
@@ -80,6 +75,7 @@ function TableProfesionales() {
 					{profesionales.map((i) => (
 						<RowTableProfesionales
 							key={i.idProfesional}
+							obtenerProfesionales={obtenerProfesionales}
 							idProfesional={i.idProfesional}
 							nombrePersona={i.nombrePersona}
 							nombreEspecialidad={i.nombreEspecialidad}

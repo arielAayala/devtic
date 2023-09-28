@@ -38,10 +38,31 @@ class Administradores extends Profesionales{
     }
 
     public function borrarProfesional($token,$idProfesional){
-        if ($datosProfesional = Profesionales::validarToken($token)) {
-            if ($datosProfesional->prioridadProfesional==1) {
-                
+        try {
+            //code...
+            if ($datosProfesional = Profesionales::validarToken($token)) {
+                if ($datosProfesional->prioridadProfesional==1) {
+                    $con = new Conexion();
+
+                    $query = "UPDATE profesionales SET borrarProfesional = 1 WHERE idProfesional = ?";
+                    $prepareDeleteProfesional = $con->prepare($query);
+                    $prepareDeleteProfesional ->bind_param("i",$idProfesional);
+                    if ($prepareDeleteProfesional->execute()) {
+                        $con ->close();
+                        return true;
+                    }
+                    throw new Exception("Ocurrio un error al borrar el profesional" );
+                }
+                throw new Exception("Error No autorizado" );
             }
+            throw new Exception("Error Token no valido" );
+            
+        } catch (Exception $e) {
+            $con-> close();
+            echo json_encode(["error"=>$e]);
         }
     }
+
+
+
 }

@@ -1,9 +1,10 @@
 import React from "react";
-import ButtonEditProfesional from "./buttonEditProfesional";
+
 import ButtonDeleteProfesional from "./buttonDeleteProfesional";
 
 function RowTableProfesionales(props) {
 	const {
+		obtenerProfesionales,
 		idProfesional,
 		nombrePersona,
 		nombreEspecialidad,
@@ -24,10 +25,10 @@ function RowTableProfesionales(props) {
 			</td>
 
 			<td className="px-6 py-4 text-right">
-				<ButtonEditProfesional />
-			</td>
-			<td className="px-6 py-4 text-right">
-				<ButtonDeleteProfesional />
+				<ButtonDeleteProfesional
+					idProfesional={idProfesional}
+					obtenerProfesionales={obtenerProfesionales}
+				/>
 			</td>
 		</tr>
 	);
