@@ -297,7 +297,7 @@ function PageIdDemanda() {
 											</ul>
 										</div>
 									</div>
-									<div key={i.idProfesional} className="flex flex-col items-center pb-10">
+									<div key={i?.idProfesional} className="flex flex-col items-center pb-10">
 										<img className="w-24 h-24 mb-3 rounded-full shadow-lg" src={i.fotoProfesional} alt="profesionalFoto"/>
 										<h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">{i.nombrePersona}</h5>
 										<span className="text-sm text-gray-500 dark:text-gray-400">{i.nombreEspecialidad}</span>

@@ -1,30 +1,29 @@
+import { useAuthContext } from "@/context/authContext";
 import React from 'react';
+import { useRouter } from "next/navigation";
 
-function PopUpDemanda( props ) {
-    const { handleSubmit
-    } = props
-
+function PopUpDemanda(){ 
+    const router = useRouter();
+	const handleRedirectToDemanda = () => {
+		router.push("/demandas");
+	};
     return (
-        <div>
-              <div className="relative p-4 bg-white rounded-lg dark:bg-gray-800 md:p-8">
-                <div className="mb-4 text-sm font-light text-gray-500 dark:text-gray-400">
-                <h3 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
-                    Guardar Demanda
-                </h3>
-                <p className="text-sm text-gray-900 dark:text-white">
-                    ¿Estás seguro de que deseas guardar esta demanda?
-                </p>
-                </div>
-                
-                    <button 
-                    type="button" 
-                    onClick={()=>handleSubmit()}
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" 
-                    >
-                    Confirmar
-                    </button>
-              </div>
+        <>
+            <div className="text-center top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
+                <div className="relative p-4 w-full max-w-md h-full md:h-auto">
+                <div className="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
+            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 p-2 flex items-center justify-center mx-auto mb-3.5">
+                <svg className="w-8 h-8 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                <span className="sr-only">Aprobado</span>
+            </div>
+            <p className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Se agrego correctamente la demanda</p>
+            <button type="button" onClick={handleRedirectToDemanda} className="py-2 px-3 text-sm font-medium text-center text-white rounded-lg bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:focus:ring-primary-900">
+                Continuar
+            </button>
         </div>
+        </div>
+            </div>
+        </>
       );
     }
     
