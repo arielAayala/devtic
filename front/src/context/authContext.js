@@ -34,10 +34,6 @@ function AuthContextProvider({ children }) {
 				crearAlert(res);
 				setUser(res.data);
 			})
-			.catch((fetchError) => {
-				// Handle fetch-related error
-				crearAlert({ error: "Error conectando al servidor" });
-			})
 			.catch((error) => {
 				// Extract the error message
 				const errorMessage = error.message || "Error desconocido";
