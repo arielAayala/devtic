@@ -25,6 +25,9 @@ function AuthContextProvider({ children }) {
 			body: JSON.stringify(inputs),
 		})
 			.then((res) => {
+				if (res.status == 404) {
+					throw new Error("Profesional no encontrado");
+				}
 				if (!res.ok) {
 					throw new Error("ocurrio un error");
 				}

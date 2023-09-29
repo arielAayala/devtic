@@ -239,18 +239,16 @@ function PersonaInvolucradaForm(props) {
 				</div>
 			</div>
 			<div className="border-b border-gray-900/10 pb-3">
-			<h2 className="text-base font-semibold leading-7 text-gray-900">
-						El alumno es el demandante ?
-					</h2>
-			<button
-				onClick={handleChangeEsDemandante}
-				type="button"
-				className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 my-6"
-			>
-				{esDemandante
-					? "No"
-					: "Si"}
-			</button>
+				<h2 className="text-base font-semibold leading-7 text-gray-900">
+					El alumno es el demandante ?
+				</h2>
+				<button
+					onClick={handleChangeEsDemandante}
+					type="button"
+					className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 my-6"
+				>
+					{esDemandante ? "Si" : "No"}
+				</button>
 			</div>
 			<div className="grid md:grid-cols-2 md:gap-6 mt-4">
 				{esDemandante ? null : (
