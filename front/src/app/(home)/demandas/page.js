@@ -24,10 +24,12 @@ function Demandas() {
 			credentials: "include",
 			body: JSON.stringify({ pagina: page }),
 		})
-			.then((rest) => {
+			.then(async (rest) => {
 				{
 					if (!rest.ok) {
-						throw new Error("Ocurrio un error al cargar las demandas");
+						throw new Error("Ocurrio un error al cargar las demandas", {
+							cause: await rest.json(),
+						});
 					}
 					return rest.json();
 				}
@@ -37,7 +39,8 @@ function Demandas() {
 				setTimeout(() => setLoader(true), 100);
 			})
 			.catch((error) => {
-				crearAlert({ error: error.message });
+				const errorMessage = error.cause.error || "Ocurrio un error";
+				crearAlert(errorMessage);
 			});
 	};
 

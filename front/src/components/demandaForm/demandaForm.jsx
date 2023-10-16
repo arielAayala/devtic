@@ -41,9 +41,11 @@ function DemandaForm() {
 			},
 			credentials: "include",
 		})
-			.then((res) => {
+			.then(async (res) => {
 				if (!res.ok) {
-					throw new Error("Error al listar las organizaciones");
+					throw new Error("Error al listar las organizaciones", {
+						cause: await res.json(),
+					});
 				}
 				return res.json();
 			})
@@ -52,7 +54,7 @@ function DemandaForm() {
 				setTimeout(() => setLoader(true), 1500);
 			})
 			.catch((error) => {
-				console.error(error.message);
+				console.error(error.cause.error || error.message);
 			});
 	};
 
@@ -109,8 +111,6 @@ function DemandaForm() {
 		});
 	}, [demandante, alumno, curso, esDemandante]);
 
-	console.log(input);
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		setInput({
@@ -151,6 +151,7 @@ function DemandaForm() {
 	const handleRedirectToDemanda = () => {
 		router.push("/demandas");
 	};
+
 	return (
 		<>
 			<form
@@ -212,7 +213,7 @@ function DemandaForm() {
 								<div className="mt-2">
 									<select
 										onChange={handleChange}
-										type="search"
+										type="text"
 										name="idOrganizacion"
 										id="idOrganizacion"
 										className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
