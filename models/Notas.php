@@ -38,16 +38,16 @@ class Notas {
             $query = "SELECT n.idNota, n.idProfesionalCreador, personas.nombrePersona, profesionales.fotoProfesional, n.tituloNota, n.descripcionNota, n.fechaCreacionNota, n.idTipoNota, tn.nombreTipoNota FROM notas n INNER JOIN profesionales ON profesionales.idProfesional = n.idProfesionalCreador INNER JOIN personas ON personas.idPersona = profesionales.idPersona INNER JOIN tiponota tn ON tn.idTipoNota =  n.idTipoNota   WHERE n.idDemanda = ?";
             $prepareObtener = $con->prepare($query);
             $prepareObtener-> bind_param("i", $idDemanda);
+            $datos = [];
             if ($prepareObtener->execute()) {
                 $result = $prepareObtener->get_result();
-                $datos = [];
                 while ($row = $result->fetch_assoc()) {
                     $datos[] = $row;
                 }
                 $con -> close();
                 return $datos;
             }
-            throw new Exception("Error al obtener las notas de la demanda", 404);   
+            
         } catch (Exception $e) {
             echo json_encode(["error"=> $e->getMessage()]);
             http_response_code($e->getCode());

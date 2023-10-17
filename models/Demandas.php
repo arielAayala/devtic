@@ -181,15 +181,9 @@ class Demandas {
                     if (!$datos) {
                         throw new Exception("Error al obtener la demanda",400);
                     }
-                    if (!($grupoData =$grupo->obtenerGrupo($id))) {
-                        throw new Exception("Error al obtener el grupo",400);
-                    }
-                    if (!($personasData = $personasInvolucradas->obtenerPersonasInvolucradas($id))) {
-                        throw new Exception("Error al obtener las persona involucradas de la demanda",400);
-                    }
-                    if (!($notasData = $notas -> obtenerNotas($id))) {
-                        throw new Exception("Error al obtener las notas de la demanda",400);
-                    }
+                    $grupoData =$grupo->obtenerGrupo($id);
+                    $personasData = $personasInvolucradas->obtenerPersonasInvolucradas($id);
+                    $notasData = $notas -> obtenerNotas($id);
                     $datosDemanda = ["data"=>$datos , "grupo"=> $grupoData, "personasInvolucradas"=> $personasData, "notas" => $notasData];
                     return $datosDemanda;
                 }
