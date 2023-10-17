@@ -1,11 +1,12 @@
 <?php
 
 include_once "Profesionales.php";
+include_once "Anexos.php";
 include_once "../conexion/Conexion.php";
 
 class Notas {
 
-    public function crearNotas($token, $idDemanda, $idTipoNota, $tituloNota, $descripcionNota){
+    public function crearNotas($token, $idDemanda, $idTipoNota, $tituloNota, $descripcionNota, $anexos){
         try {
             if ($datosProfesional =Profesionales::validarToken($token)){
                 $con = new Conexion();
@@ -19,6 +20,13 @@ class Notas {
                     $prepareCrear=$con->prepare($queryCrear);
                     $prepareCrear->bind_param("iiiss", $idDemanda, $datosProfesional->idProfesional,$idTipoNota,$tituloNota,$descripcionNota ); 
                     if ($prepareCrear->execute()) {
+                        if (isset($anexos)) {
+                            $idNota = $con -> insert_id;
+                            
+                            $anexos = new Anexos();
+                            $anexos->agregarAnexosNotas( $anexos, $idNota);
+                        }
+
                         return true;
                     }
                     throw new Exception("Error al crear la nota",400);
@@ -47,7 +55,7 @@ class Notas {
                 $con -> close();
                 return $datos;
             }
-            
+            throw new Exception("Error al obtener las notas de la demanda", 404);   
         } catch (Exception $e) {
             echo json_encode(["error"=> $e->getMessage()]);
             http_response_code($e->getCode());

@@ -12,11 +12,11 @@ switch ($_SERVER["REQUEST_METHOD"]) {
 
     
     case "POST":
-        if(isset($_COOKIE["token"])){
+        if(isset($_COOKIE["token"] )){
             $datos = json_decode(file_get_contents("php://input"));
             if ($datos){
                 $demanda = new Notas();
-                if($demanda -> crearNotas($_COOKIE["token"], $datos->idDemanda, $datos->idTipoNota, $datos->tituloNota, $datos->descripcionNota)){
+                if($demanda -> crearNotas($_COOKIE["token"], $datos->idDemanda, $datos->idTipoNota, $datos->tituloNota, $datos->descripcionNota, $_FILES["anexosNotas"])){
                     http_response_code(200); 
                     echo json_encode(["msg" => "Se creo la nota correctamente"]);
                 }

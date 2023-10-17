@@ -43,8 +43,6 @@ function PageIdDemanda() {
 			});
 	};
 
-	console.log(demanda);
-
 	useEffect(() => {
 		const controller = new AbortController();
 		fetch("http://localhost/devtic/api/ObtenerDemanda.php", {
