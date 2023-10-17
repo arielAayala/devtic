@@ -32,29 +32,27 @@ class Notas {
         }
     }
 
-    public function obtenerNotas($token, $idDemanda){
-        try {
-            if (Profesionales::validarToken($token)) {
-                $con = new Conexion();
-                $query = "SELECT n.idNota, n.idProfesionalCreador, personas.nombrePersona, profesionales.fotoProfesional, n.tituloNota, n.descripcionNota, n.fechaCreacionNota, n.idTipoNota, tn.nombreTipoNota FROM notas n INNER JOIN profesionales ON profesionales.idProfesional = n.idProfesionalCreador INNER JOIN personas ON personas.idPersona = profesionales.idPersona INNER JOIN tiponota tn ON tn.idTipoNota =  n.idTipoNota   WHERE n.idDemanda = ?";
-                $prepareObtener = $con->prepare($query);
-                $prepareObtener-> bind_param("i", $idDemanda);
-                $prepareObtener->execute();
-                $prepareObtener->store_result();
-                if ($prepareObtener->num_rows() > 0) {
-                    $result = $prepareObtener->get_result();
-                    $datos = [];
-                    while ($row = $result->fetch_assoc()) {
-                        $datos[] = $row;
-                    }
-                    return $datos;
+    public function obtenerNotas( $idDemanda){
+        try {      
+            $con = new Conexion();
+            $query = "SELECT n.idNota, n.idProfesionalCreador, personas.nombrePersona, profesionales.fotoProfesional, n.tituloNota, n.descripcionNota, n.fechaCreacionNota, n.idTipoNota, tn.nombreTipoNota FROM notas n INNER JOIN profesionales ON profesionales.idProfesional = n.idProfesionalCreador INNER JOIN personas ON personas.idPersona = profesionales.idPersona INNER JOIN tiponota tn ON tn.idTipoNota =  n.idTipoNota   WHERE n.idDemanda = ?";
+            $prepareObtener = $con->prepare($query);
+            $prepareObtener-> bind_param("i", $idDemanda);
+            if ($prepareObtener->execute()) {
+                $result = $prepareObtener->get_result();
+                $datos = [];
+                while ($row = $result->fetch_assoc()) {
+                    $datos[] = $row;
                 }
-                throw new Exception("Error al obtener las notas de la demanda", 404);
+                $con -> close();
+                return $datos;
             }
-            throw new Exception("Error al validar el token", 401);
+            throw new Exception("Error al obtener las notas de la demanda", 404);   
         } catch (Exception $e) {
             echo json_encode(["error"=> $e->getMessage()]);
             http_response_code($e->getCode());
+            $con -> close();
+
         }
     }
 }

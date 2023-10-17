@@ -5,6 +5,7 @@ include_once "../conexion/Conexion.php";
 include_once "PersonasInvolucradas.php";
 include_once "Grupos.php";
 include_once "PersonasInvolucradas.php";
+include_once "Notas.php";
 
 class Demandas {
 
@@ -175,22 +176,28 @@ class Demandas {
                     }
                     $grupo = new Grupos();
                     $personasInvolucradas = new PersonasInvolucradas();
+                    $notas = new Notas();
                     $con -> close();
                     if (!$datos) {
-                        throw new Exception("Error al obtener la demanda");
+                        throw new Exception("Error al obtener la demanda",400);
                     }
                     if (!($grupoData =$grupo->obtenerGrupo($id))) {
-                        throw new Exception("Error al obtener el grupo");
-                    }if (!($personasData = $personasInvolucradas->obtenerPersonasInvolucradas($id))) {
-                        throw new Exception("Error al obtener las persona involucradas de la demanda");
+                        throw new Exception("Error al obtener el grupo",400);
                     }
-                    $datosDemanda = ["data"=>$datos , "grupo"=> $grupoData, "personasInvolucradas"=> $personasData];
+                    if (!($personasData = $personasInvolucradas->obtenerPersonasInvolucradas($id))) {
+                        throw new Exception("Error al obtener las persona involucradas de la demanda",400);
+                    }
+                    if (!($notasData = $notas -> obtenerNotas($id))) {
+                        throw new Exception("Error al obtener las notas de la demanda",400);
+                    }
+                    $datosDemanda = ["data"=>$datos , "grupo"=> $grupoData, "personasInvolucradas"=> $personasData, "notas" => $notasData];
                     return $datosDemanda;
                 }
-                throw new Exception("Error al obtener la demanda");
+                throw new Exception("Error al obtener la demanda", 404);
             }
-            throw new Exception("Error Token no valido");
+            throw new Exception("Error Token no valido", 401);
         } catch (Exception $e) {
+            http_response_code($e->getCode());
             echo json_encode(["error"=>$e->getMessage()]);
             
         }

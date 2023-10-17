@@ -15,9 +15,8 @@ function PageIdDemanda() {
 	const { crearAlert } = useAlertContext();
 	const params = useParams();
 
-	const [demanda, setDemanda] = useState({});
+	const [demanda, setDemanda] = useState(null);
 	const [loader, setLoader] = useState(false);
-	console.log(demanda);
 
 	const obtenerDemanda = () => {
 		fetch("http://localhost/devtic/api/ObtenerDemanda.php", {
@@ -43,6 +42,8 @@ function PageIdDemanda() {
 				crearAlert({ error: error.message });
 			});
 	};
+
+	console.log(demanda);
 
 	useEffect(() => {
 		const controller = new AbortController();
@@ -130,7 +131,7 @@ function PageIdDemanda() {
 									className="inline-flex rounded-md shadow-sm"
 									role="group"
 								>
-									<NotasModalForm />
+									<NotasModalForm idDemanda={params.idDemanda} />
 									<DemandaModalUpdate
 										obtenerDemanda={obtenerDemanda}
 										motivoDemanda={demanda.data.motivoDemanda}

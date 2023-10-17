@@ -54,7 +54,7 @@ function GrupoModal({ grupo }) {
 							</svg>
 							<span className="sr-only">Cerrar </span>
 						</button>
-						<div className=" flex flex-row justify-center w-full overflow-x-scroll overflow-y-hidden">
+						<div className=" flex flex-row justify-center w-full overflow-x-auto overflow-y-hidden">
 							{grupo.map((i) => {
 								return (
 									<div
@@ -104,16 +104,16 @@ function GrupoModal({ grupo }) {
 												src={i.fotoProfesional}
 												alt="profesionalFoto"
 											/>
-											<h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+											<h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
 												{i.nombrePersona}
 											</h5>
 											<span className="text-sm text-gray-500 dark:text-gray-400">
 												{i.nombreEspecialidad}
 											</span>
-											<div class="flex mt-4 space-x-3 md:mt-6">
+											<div className="flex mt-4 space-x-3 md:mt-6">
 												<Link
 													href={`/perfil`}
-													class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+													className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 												>
 													Ver Perfil
 												</Link>
