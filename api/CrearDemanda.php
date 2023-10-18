@@ -13,13 +13,13 @@ switch ($_SERVER["REQUEST_METHOD"]) {
     
     case "POST":
         if(isset($_COOKIE["token"])){
-            if (isset($_POST["motivoDemanda"],$_POST["relatoDemanda"],$_POST["idTipo"],$_POST["idOrganizacion"],$_POST["almacenDemanda"],$_POST["personasInvolucradas"])) {
+            if (isset($_POST["motivoDemanda"], $_POST["relatoDemanda"], $_POST["idTipo"],$_POST["idOrganizacion"],$_POST["almacenDemanda"])) {
                 $motivoDemanda = $_POST["motivoDemanda"];
                 $relatoDemanda = $_POST["relatoDemanda"];
                 $idTipo = $_POST["idTipo"];
                 $idOrganizacion = $_POST["idOrganizacion"];
                 $almacenDemanda = $_POST["almacenDemanda"];
-                $personasInvolucradas =$_POST["personasInvolucradas"];
+                $personasInvolucradas = json_decode(html_entity_decode($_POST["personasInvolucradas"]));
                 if (isset($_FILES["anexosDemanda"])) {
                     $anexosDemanda = $_FILES["anexosDemanda"];
                 }else{
@@ -31,9 +31,11 @@ switch ($_SERVER["REQUEST_METHOD"]) {
                     http_response_code(200); 
                     echo json_encode(["msg" => "Se creó la demanda correctamente"]);
                 }   
+            }else{
+
+                http_response_code(400); 
+                echo json_encode(["error" => "Falta información en el formulario"]);
             }
-            http_response_code(400); 
-            echo json_encode(["error" => "Falta información en el formulario"]);
         } else {
             http_response_code(401); 
             echo json_encode(["error" => "Token no existente"]);

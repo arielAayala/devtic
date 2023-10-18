@@ -73,6 +73,8 @@ function PageIdDemanda() {
 		};
 	}, [params.idDemanda]);
 
+	console.log(demanda);
+
 	if (!loader) {
 		return (
 			<div
@@ -158,11 +160,12 @@ function PageIdDemanda() {
 						/>
 						<div className="font-medium flex-1 dark:text-white">
 							<div>
-								{demanda.data.nombrePersona
-									.toLowerCase()
-									.replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
+								{demanda.data?.nombrePersona.replace(
+									/\b[a-z](?=[a-z]{2})/g,
+									function (letter) {
 										return letter.toUpperCase();
-									})}
+									}
+								)}
 							</div>
 							<div className="text-sm text-gray-500 dark:text-gray-400">
 								{demanda.data.nombreEspecialidad

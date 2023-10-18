@@ -98,7 +98,7 @@ function DemandaForm() {
 					grado: null,
 					turno: null,
 					docente: null,
-					idParentesco: null,
+					idParentesco: 1,
 				},
 			];
 		} else {
@@ -130,8 +130,6 @@ function DemandaForm() {
 		});
 	}, [demandante, alumno, curso, esDemandante, input.idTipo]);
 
-	console.log(input);
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		setPersonasInvolucradas(submitPersonaInvolucrada());
@@ -146,27 +144,21 @@ function DemandaForm() {
 		formData.append("idTipo", input.idTipo);
 		formData.append("idOrganizacion", input.idOrganizacion);
 		formData.append("almacenDemanda", input.almacenDemanda);
-
-		for (let i = 0; i < input.personasInvolucradas.length; i++) {
-			formData.append("personasInvolucradas[]", input.personasInvolucradas[i]);
-		}
-
-		/* motivoDemanda: null,
-		relatoDemanda: null,
-		idTipo: null,
-		idOrganizacion: null,	
-		almacenDemanda: null,
-		personasInvolucradas: null, */
+		formData.append(
+			"personasInvolucradas",
+			JSON.stringify(input.personasInvolucradas)
+		);
 
 		for (let i = 0; i < inputFiles.length; i++) {
 			formData.append("anexosDemanda[]", inputFiles[i]);
 		}
-		console.log(formData.getAll("personasInvolucradas[]"));
+
+		for (let i of formData.entries()) {
+			console.log(i);
+		}
+
 		fetch("http://localhost/devtic/api/CrearDemanda.php", {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
 			credentials: "include",
 			body: formData,
 		})
@@ -189,6 +181,7 @@ function DemandaForm() {
 	const handleChange = (e) => {
 		setInput({ ...input, [e.target.name]: e.target.value });
 	};
+
 	const handleChangeFiles = (e) => {
 		setInputFiles(e.target.files);
 	};

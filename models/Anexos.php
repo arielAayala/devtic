@@ -9,12 +9,12 @@ class Anexos{
         foreach ($anexosNotas['name'] as $key => $name) {
             $tmpName = $anexosNotas['tmp_name'][$key];
             $nameFile = "idNota=".$idNota . "&nombreAnexoNota=" . $name;
-            $urlFile = dir . "\\anexosNotas\\" . $nameFile;
+            $urlFile = __DIR__ . "\\..\\anexos\\" . $nameFile;
     
             if(move_uploaded_file($tmpName, $urlFile)){
                 $con = new Conexion();
                 $prepareAnexoNota = $con -> prepare("INSERT INTO anexosnotas (idNota, urlAnexoNota, nombreAnexoNota)VALUES (?,?,?)");
-                $prepareAnexoNota->bind_param("iss",$idNota,$urlFile, $nameFile);
+                $prepareAnexoNota->bind_param("iss",$idNota,$urlFile, $name);
                 $prepareAnexoNota->execute();
             }
                 
@@ -22,16 +22,15 @@ class Anexos{
     }
 
     public function agregarAnexosDemanda(array $anexosDemanda, int $idDemanda) {
-    
         foreach ($anexosDemanda['name'] as $key => $name) {
             $tmpName = $anexosDemanda['tmp_name'][$key];
             $nameFile = "idDemanda=".$idDemanda . "&nombreAnexoDemanda=" . $name;
-            $urlFile = dir . "\\anexosDemandas\\" . $nameFile;
+            $urlFile = __DIR__. "\\..\\anexos\\" . $nameFile;
     
             if(move_uploaded_file($tmpName, $urlFile)){
                 $con = new Conexion();
                 $prepareAnexoNota = $con -> prepare("INSERT INTO anexosdemandas (idDemanda, urlAnexoDemanda, nombreAnexoDemanda)VALUES (?,?,?)");
-                $prepareAnexoNota->bind_param("iss",$idNota,$urlFile, $nameFile);
+                $prepareAnexoNota->bind_param("iss",$idNota,$urlFile, $name);
                 $prepareAnexoNota->execute();
             }
                 

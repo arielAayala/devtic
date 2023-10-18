@@ -180,7 +180,7 @@ class Demandas {
                             $idDemanda = $row['idDemanda'];
                             $anexos = $anexo->obtenerAnexosDemandasByIdDemanda($idDemanda); 
                             $row['anexosDemanda'] = $anexos;
-                            $datos[] = $row;
+                            $datos = $row;
                         }
                     }
                     $grupo = new Grupos();
