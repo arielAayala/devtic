@@ -6,41 +6,46 @@ include_once "PersonasInvolucradas.php";
 include_once "Grupos.php";
 include_once "PersonasInvolucradas.php";
 include_once "Notas.php";
+include_once "Anexos.php";
 
 class Demandas {
 
-    public function crearDemanda($token,  $idTipo, $idOrganizacion, $motivoDemanda, $relatoDemanda, $almacenDemanda, $personasInvolucradas){
+    public function crearDemanda($token,  $idTipo, $idOrganizacion, $motivoDemanda, $relatoDemanda, $almacenDemanda, $personasInvolucradas, $anexosDemanda){
         try {
             if($datosProfesional=Profesionales::validarToken($token)) {
                 $con = new Conexion();
                 if (!$personasInvolucradas) {
-                    throw new Exception("Error al cargar las personas Involucradas");
+                    throw new Exception("Error al cargar las personas Involucradas",400);
                 }
-
                 $prepareDemanda=$con->prepare("INSERT INTO demandas(idEstado, idTipo, idOrganizacion, motivoDemanda, relatoDemanda, almacenDemanda, fechaIngresoDemanda) 
                 VALUES(1,?,?,?,?,?,CURDATE())");
                 $prepareDemanda->bind_param("iisss",$idTipo,$idOrganizacion,$motivoDemanda,$relatoDemanda,$almacenDemanda);
                 if ($prepareDemanda->execute()) {
                     $idDemanda = $con -> insert_id;
                     $queryGrupos = "INSERT INTO profesionalesgrupos(idDemanda, idProfesional, creadorGrupo) VALUES ($idDemanda, $datosProfesional->idProfesional, 1)";
-    
+                    if (!empty($anexosDemanda)) {
+                        $anexos = new Anexos();
+                        $anexos->agregarAnexosDemanda($anexosDemanda,$idDemanda);
+                    }
                     if ($con-> query($queryGrupos)) {
                         foreach ($personasInvolucradas as  $i) {
                             $personas = new PersonasInvolucradas();
                             if(!($personas->crearPersonaInvolucrada($idDemanda,$i->nombrePersona,$i->dniPersona,$i->demandante, $i->alumno,$i->idParentesco , $i->telefono, $i->domicilio, $i->idLocalidad, $i->grado, $i->turno, $i->docente))){
-                                throw new Exception("Ocurrio un error al vincular las personas involucradas con la demanda");
+                                throw new Exception("Ocurrio un error al vincular las personas involucradas con la demanda",400);
                             };
                         }
                         $con -> close();
                         return true;
                     }
-                    throw new Exception("Ocurrio un error al vincular al profesional con la demanda");
+                    throw new Exception("Ocurrio un error al vincular al profesional con la demanda",400);
                 }
-                throw new Exception("Ocurrio un error al crear la demanda");
+                throw new Exception("Ocurrio un error al crear la demanda",400);
             }
-            throw new Exception("Token no autorizado");
+            throw new Exception("Token no autorizado", 401);
         } catch (Exception $e) {
             echo json_encode(["error"=>$e->getMessage()]);
+            http_response_code($e->getCode());
+            $con->close();
             return false;
         }
 
@@ -170,8 +175,12 @@ class Demandas {
                 if ($resultado = $con ->query($query)) {
                     $datos =[];
                     if ($resultado->num_rows > 0) {
+                        $anexo = new Anexos();
                         while ($row = $resultado->fetch_assoc()) {
-                            $datos=$row;
+                            $idDemanda = $row['idDemanda'];
+                            $anexos = $anexo->obtenerAnexosDemandasByIdDemanda($idDemanda); 
+                            $row['anexosDemanda'] = $anexos;
+                            $datos[] = $row;
                         }
                     }
                     $grupo = new Grupos();
@@ -179,7 +188,7 @@ class Demandas {
                     $notas = new Notas();
                     $con -> close();
                     if (!$datos) {
-                        throw new Exception("Error al obtener la demanda",400);
+                            throw new Exception("Error no existe esta demanda",404);
                     }
                     $grupoData =$grupo->obtenerGrupo($id);
                     $personasData = $personasInvolucradas->obtenerPersonasInvolucradas($id);
@@ -187,13 +196,12 @@ class Demandas {
                     $datosDemanda = ["data"=>$datos , "grupo"=> $grupoData, "personasInvolucradas"=> $personasData, "notas" => $notasData];
                     return $datosDemanda;
                 }
-                throw new Exception("Error al obtener la demanda", 404);
+                throw new Exception("Error al obtener la demanda", 400);
             }
-            throw new Exception("Error Token no valido", 401);
+        throw new Exception("Error Token no valido", 401);
         } catch (Exception $e) {
             http_response_code($e->getCode());
             echo json_encode(["error"=>$e->getMessage()]);
-            
         }
 
     }

@@ -8,15 +8,15 @@ function DemandaForm() {
 	const [organizaciones, setOrganizaciones] = useState([]);
 	const [loader, setLoader] = useState(false);
 	const [personasInvolucradas, setPersonasInvolucradas] = useState([]);
-	const [showPopUp, setPopUp] = useState(false);
+	const [inputFiles, setInputFiles] = useState(null);
 
 	const [input, setInput] = useState({
-		motivoDemanda: "",
-		relatoDemanda: "",
-		idTipo: "",
-		idOrganizacion: "",
-		almacenDemanda: "",
-		personasInvolucradas: [],
+		motivoDemanda: null,
+		relatoDemanda: null,
+		idTipo: null,
+		idOrganizacion: null,
+		almacenDemanda: null,
+		personasInvolucradas: null,
 	});
 
 	const textbox = useRef(null);
@@ -54,7 +54,7 @@ function DemandaForm() {
 				setTimeout(() => setLoader(true), 1500);
 			})
 			.catch((error) => {
-				console.error(error.cause.error || error.message);
+				console.error(error.cause?.error || error.message);
 			});
 	};
 
@@ -89,9 +89,23 @@ function DemandaForm() {
 	});
 
 	const submitPersonaInvolucrada = () => {
-		return esDemandante
-			? [{ ...demandante, ...curso, alumno: true }]
-			: [
+		let personaInvolucradas = [];
+		if (input.idTipo != 3) {
+			personaInvolucradas = [
+				{
+					...demandante,
+					alumno: false,
+					grado: null,
+					turno: null,
+					docente: null,
+					idParentesco: null,
+				},
+			];
+		} else {
+			if (esDemandante) {
+				personaInvolucradas = [{ ...demandante, ...curso, alumno: true }];
+			} else {
+				personaInvolucradas = [
 					{
 						...demandante,
 						grado: null,
@@ -100,57 +114,88 @@ function DemandaForm() {
 						alumno: false,
 					},
 					{ ...alumno, ...curso, alumno: true },
-			  ];
+				];
+			}
+		}
+
+		return personaInvolucradas;
 	};
 
 	useEffect(() => {
+		console.log("personas");
 		setPersonasInvolucradas(submitPersonaInvolucrada());
 		setInput({
 			...input,
 			personasInvolucradas: personasInvolucradas,
 		});
-	}, [demandante, alumno, curso, esDemandante]);
+	}, [demandante, alumno, curso, esDemandante, input.idTipo]);
+
+	console.log(input);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		setPersonasInvolucradas(submitPersonaInvolucrada());
 		setInput({
 			...input,
 			personasInvolucradas: personasInvolucradas,
 		});
+
+		const formData = new FormData();
+		formData.append("motivoDemanda", input.motivoDemanda);
+		formData.append("relatoDemanda", input.relatoDemanda);
+		formData.append("idTipo", input.idTipo);
+		formData.append("idOrganizacion", input.idOrganizacion);
+		formData.append("almacenDemanda", input.almacenDemanda);
+
+		for (let i = 0; i < input.personasInvolucradas.length; i++) {
+			formData.append("personasInvolucradas[]", input.personasInvolucradas[i]);
+		}
+
+		/* motivoDemanda: null,
+		relatoDemanda: null,
+		idTipo: null,
+		idOrganizacion: null,	
+		almacenDemanda: null,
+		personasInvolucradas: null, */
+
+		for (let i = 0; i < inputFiles.length; i++) {
+			formData.append("anexosDemanda[]", inputFiles[i]);
+		}
+		console.log(formData.getAll("personasInvolucradas[]"));
 		fetch("http://localhost/devtic/api/CrearDemanda.php", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			credentials: "include",
-			body: JSON.stringify(input),
+			body: formData,
 		})
-			.then((res) => {
+			.then(async (res) => {
 				if (!res.ok) {
-					throw new Error("Ocurrio un error");
+					throw new Error("Ocurrio un error", { cause: await res.json() });
 				}
 				return res.json();
 			})
 			.then((res) => {
 				document.getElementById("formDemanda").reset();
-				setPopUp(true);
+				crearAlert(res);
 			})
 			.catch((error) => {
-				crearAlert({ error: error.message });
+				const errorMessage = error.cause?.error || error.message;
+				crearAlert({ error: errorMessage });
 			});
 	};
 
 	const handleChange = (e) => {
 		setInput({ ...input, [e.target.name]: e.target.value });
 	};
+	const handleChangeFiles = (e) => {
+		setInputFiles(e.target.files);
+	};
 
 	useEffect(() => {
 		listarOrganizaciones();
 	}, []);
-
-	const handleRedirectToDemanda = () => {
-		router.push("/demandas");
-	};
 
 	return (
 		<>
@@ -163,7 +208,7 @@ function DemandaForm() {
 						<h2 className="mt-2 text-base font-semibold leading-7 text-gray-900">
 							Recepción de Casos
 						</h2>
-						<p className="mt-1 text-sm leading-6 text-gray-600">
+						<p className="mt-1 mb-4  text-sm leading-6 text-gray-600">
 							Aqui se narran todos los detalles de los casos.
 						</p>
 						<div className="sm:col-span-4">
@@ -174,23 +219,44 @@ function DemandaForm() {
 								Motivo
 							</label>
 							<div className="mt-2">
-								<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-									<span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
+								<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 ">
 									<input
 										onChange={handleChange}
 										type="text"
 										name="motivoDemanda"
 										id="motivoDemanda"
 										autoComplete="off"
-										className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+										className="block flex-1 w-full border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
 										placeholder="Ingrese un motivo aqui"
 									/>
 								</div>
 							</div>
 						</div>
 						<div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-4">
+							<div className="col-span-full">
+								<label
+									htmlFor="idTipo"
+									className="block text-sm font-medium leading-6 text-gray-900"
+								>
+									Tipo
+								</label>
+								<div className="mt-2">
+									<select
+										onChange={handleChange}
+										name="idTipo"
+										id="idTipo"
+										className="block w-full border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									>
+										<option value>Seleccione una opción</option>
+										<option value={1}>Invitación</option>
+										<option value={2}>Solicitud</option>
+										<option value={3}>Expediente</option>
+									</select>
+								</div>
+							</div>
 							<div className="sm:col-span-4">
 								<PersonaInvolucradaForm
+									idTipo={input.idTipo}
 									alumno={alumno}
 									setAlumno={setAlumno}
 									demandante={demandante}
@@ -208,7 +274,7 @@ function DemandaForm() {
 									htmlFor="idOrganizacion"
 									className="block text-sm font-medium leading-6 text-gray-900"
 								>
-									Escuela a la que asiste
+									Organizacion de la que proviene la demanda
 								</label>
 								<div className="mt-2">
 									<select
@@ -216,7 +282,7 @@ function DemandaForm() {
 										type="text"
 										name="idOrganizacion"
 										id="idOrganizacion"
-										className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+										className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 w-full"
 										autoComplete="organization"
 									>
 										<option value={0}>Seleccione una opción</option>
@@ -250,34 +316,12 @@ function DemandaForm() {
 										id="relatoDemanda"
 										rows="3"
 										autoComplete="off"
-										className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+										className="block w-full resize-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 									></textarea>
 								</div>
 								<p className="mt-3 text-sm leading-6 text-gray-600">
 									Relate brevemente la situacion de la demanda.
 								</p>
-							</div>
-
-							<div className="col-span-full">
-								<label
-									htmlFor="idTipo"
-									className="block text-sm font-medium leading-6 text-gray-900"
-								>
-									Tipo
-								</label>
-								<div className="mt-2">
-									<select
-										onChange={handleChange}
-										name="idTipo"
-										id="idTipo"
-										className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-									>
-										<option value>Seleccione una opción</option>
-										<option value={1}>Invitación</option>
-										<option value={2}>Solicitud</option>
-										<option value={3}>Expediente</option>
-									</select>
-								</div>
 							</div>
 
 							<div className="col-span-full">
@@ -294,9 +338,21 @@ function DemandaForm() {
 										name="almacenDemanda"
 										id="almacenDemanda"
 										autoComplete="off"
-										className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+										className="block w-full resize-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 									/>
 								</div>
+							</div>
+							<div className="col-span-full">
+								<label className="block mb-2 text-sm font-medium text-left text-gray-900 dark:text-white">
+									Subir Anexos
+								</label>
+								<input
+									onChange={handleChangeFiles}
+									className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+									type="file"
+									name="anexosDemanda"
+									multiple
+								/>
 							</div>
 						</div>
 					</div>
@@ -310,39 +366,6 @@ function DemandaForm() {
 					</button>
 				</div>
 			</form>
-			{showPopUp ? (
-				<div className="text-center top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal fixed md:h-full">
-					<div className="relative p-4 w-full max-w-md h-full md:h-auto">
-						<div className="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-							<div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 p-2 flex items-center justify-center mx-auto mb-3.5">
-								<svg
-									className="w-8 h-8 text-green-500 dark:text-green-400"
-									fill="currentColor"
-									viewBox="0 0 20 20"
-									xmlns="http://www.w3.org/2000/svg"
-								>
-									<path
-										fillRule="evenodd"
-										d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-										clipRule="evenodd"
-									></path>
-								</svg>
-								<span className="sr-only">Aprobado</span>
-							</div>
-							<p className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-								Se agrego correctamente la demanda
-							</p>
-							<button
-								type="button"
-								onClick={handleRedirectToDemanda}
-								className="py-2 px-3 text-sm font-medium text-center text-black rounded-lg bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:focus:ring-primary-900"
-							>
-								Continuar
-							</button>
-						</div>
-					</div>
-				</div>
-			) : null}
 		</>
 	);
 }

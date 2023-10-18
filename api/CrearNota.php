@@ -7,32 +7,44 @@ header("Access-Control-Allow-Methods: POST ");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Credentials: true");
 
-
 switch ($_SERVER["REQUEST_METHOD"]) {
 
-    
     case "POST":
-        if(isset($_COOKIE["token"] )){
-            $datos = json_decode(file_get_contents("php://input"));
-            if ($datos){
-                $demanda = new Notas();
-                if($demanda -> crearNotas($_COOKIE["token"], $datos->idDemanda, $datos->idTipoNota, $datos->tituloNota, $datos->descripcionNota, $_FILES["anexosNotas"])){
-                    http_response_code(200); 
-                    echo json_encode(["msg" => "Se creo la nota correctamente"]);
+        if (isset($_COOKIE["token"])) {
+            if (isset($_POST['idDemanda']) && isset($_POST['idTipoNota']) && isset($_POST['tituloNota']) && isset($_POST['descripcionNota'])) {
+                $idDemanda = $_POST['idDemanda'];
+                $idTipoNota = $_POST['idTipoNota'];
+                $tituloNota = $_POST['tituloNota'];
+                $descripcionNota = $_POST['descripcionNota'];
+                if (isset( $_FILES["anexosNotas"])) {
+                    $anexosNotas = $_FILES["anexosNotas"];
+                } else{
+                    $anexosNotas = [];
                 }
-            }else{
-                http_response_code(400); 
-                echo json_encode(["error" => "Datos no existentes"]);
+                
+
+                $nota = new Notas();
+
+                if ($nota->crearNotas($_COOKIE["token"], $idDemanda, $idTipoNota, $tituloNota, $descripcionNota, $anexosNotas)) {
+                    http_response_code(200);
+                    echo json_encode(["msg" => "Se creó la nota correctamente"]);
+                } else {
+                    http_response_code(500); // Cambié el código de error para reflejar un problema en el servidor
+                    echo json_encode(["error" => "Error al crear la nota"]);
+                }
+            } else {
+                http_response_code(400);
+                echo json_encode(["error" => "Faltan datos requeridos en el formulario"]);
             }
-        }else{
-            http_response_code(401); 
+        } else {
+            http_response_code(401);
             echo json_encode(["error" => "Token no existente"]);
-        } 
+        }
 
         break;
-
 
     default:
-        # code...
+        // Manejar otras solicitudes aquí si es necesario
         break;
 }
+
