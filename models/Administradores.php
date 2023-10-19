@@ -63,6 +63,55 @@ class Administradores extends Profesionales{
         }
     }
 
+    public function verEstadistica($token){
+        try {
+            if ($datos = Profesionales::validarToken($token)) {
+                if ($datos->prioridadProfesional== 1) {
+                    $con = new Conexion();
+                    $query = "SELECT * FROM ";
+                    if ($resultado = $con->query($query)) {
+                        $datos = [];
+                        while( $row = $resultado->fetch_assoc() ) {
+                            $datos[] = $row;
+                        }
+                        $con->close();
+                        return $datos;
+                    }
+                    throw new Exception("Error al cargar las estadisticas", 404);
+                }
+                throw new Exception("Error no posee los permisos",401);
+            }
+            throw new Exception("Error token no valido",401);
+        }
+        catch (Exception $e) {
+            echo json_encode(["error"=>$e]);
+            http_response_code($e->getCode());
+        }
+    }
 
+    public function verAuditoria($token){
+        try {
+            if ($datos = Profesionales::validarToken($token)){
+                if ($datos->prioridadAplicacion== 1) {
+                    $con = new Conexion();
+                    $query = "SELECT * FROM auditoria ORDER BY fecha DESC ";
+                    if($resultado =$con->query($query)){
+                        $datos = [];
+                        while ($row = $resultado->fetch_assoc()) {
+                            $datos[]= $row;
+                        }
+                        $con->close();
+                        return $datos;
+                    }
+                    throw new Exception("Error ocurrio un error al cargar los ultimos movimientos", 404);
+                }
+                throw new Exception("Error no posee los permisos necesarios", 401);
+            }
+            throw new Exception("Token no valido", 401);
+        } catch (Exception $e) {
+            echo json_encode(["error"=>$e]);
+            http_response_code($e->getCode());
+        }
+    }
 
 }
