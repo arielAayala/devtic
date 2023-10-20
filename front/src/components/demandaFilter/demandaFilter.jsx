@@ -36,7 +36,7 @@ function DemandaFilter() {
 	}, []);
 	return (
 		<div className="flex flex-col justify-between">
-			<button onClick={() => handleHide}>{hide ? "cerra" : "abrir"}</button>
+			<button onClick={handleHide}>{hide ? "cerrar" : "abrir"}</button>
 			{hide ? (
 				<form>
 					<label
