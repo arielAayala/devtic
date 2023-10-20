@@ -1,23 +1,20 @@
 "use client";
 import { useAlertContext } from "@/context/alertContext";
-import React, { useRef, useLayoutEffect, useEffect, useState } from "react";
+import React, {
+	useRef,
+	useLayoutEffect,
+	useEffect,
+	useState,
+	useReducer,
+} from "react";
 import PersonaInvolucradaForm from "../personaInvolucradaForm/personaInvolucradaForm";
+import { Initial, demandaFormReducer } from "./demandaFormReducer";
 
 function DemandaForm() {
 	const { crearAlert } = useAlertContext();
 	const [organizaciones, setOrganizaciones] = useState([]);
 	const [loader, setLoader] = useState(false);
-	const [personasInvolucradas, setPersonasInvolucradas] = useState([]);
 	const [inputFiles, setInputFiles] = useState(null);
-
-	const [input, setInput] = useState({
-		motivoDemanda: null,
-		relatoDemanda: null,
-		idTipo: null,
-		idOrganizacion: null,
-		almacenDemanda: null,
-		personasInvolucradas: null,
-	});
 
 	const textbox = useRef(null);
 
@@ -33,12 +30,26 @@ function DemandaForm() {
 		handleChange(e);
 	};
 
-	const listarOrganizaciones = () => {
+	/* DATA PARA PERSONAS INVOLUCRADAS Y iNPUT */
+
+	const [input, dispatch] = useReducer(demandaFormReducer, Initial);
+
+	const handleChange = (e) => {
+		dispatch({
+			type: "inputDemandaChange",
+			field: e.target.name,
+			payload: e.target.value,
+		});
+	};
+
+	const handleChangeFiles = (e) => {
+		setInputFiles(e.target.files);
+	};
+
+	useEffect(() => {
+		const controller = new AbortController();
 		fetch("http://localhost/devtic/api/ListarOrganizaciones.php", {
 			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-			},
 			credentials: "include",
 		})
 			.then(async (res) => {
@@ -56,87 +67,11 @@ function DemandaForm() {
 			.catch((error) => {
 				console.error(error.cause?.error || error.message);
 			});
-	};
-
-	/* DATA PARA PERSONAS INVOLUCRADAS */
-
-	const [esDemandante, setEsDemandante] = useState(false);
-
-	const [curso, setCurso] = useState({
-		grado: null,
-		turno: null,
-		docente: null,
-	});
-
-	const [demandante, setDemandante] = useState({
-		nombrePersona: null,
-		dniPersona: null,
-		idLocalidad: null,
-		telefono: null,
-		domicilio: null,
-		demandante: true,
-		idParentesco: null,
-	});
-
-	const [alumno, setAlumno] = useState({
-		nombrePersona: null,
-		dniPersona: null,
-		idLocalidad: null,
-		telefono: null,
-		domicilio: null,
-		demandante: false,
-		idParentesco: null,
-	});
-
-	const submitPersonaInvolucrada = () => {
-		let personaInvolucradas = [];
-		if (input.idTipo != 3) {
-			personaInvolucradas = [
-				{
-					...demandante,
-					alumno: false,
-					grado: null,
-					turno: null,
-					docente: null,
-					idParentesco: 1,
-				},
-			];
-		} else {
-			if (esDemandante) {
-				personaInvolucradas = [{ ...demandante, ...curso, alumno: true }];
-			} else {
-				personaInvolucradas = [
-					{
-						...demandante,
-						grado: null,
-						turno: null,
-						docente: null,
-						alumno: false,
-					},
-					{ ...alumno, ...curso, alumno: true },
-				];
-			}
-		}
-
-		return personaInvolucradas;
-	};
-
-	useEffect(() => {
-		console.log("personas");
-		setPersonasInvolucradas(submitPersonaInvolucrada());
-		setInput({
-			...input,
-			personasInvolucradas: personasInvolucradas,
-		});
-	}, [demandante, alumno, curso, esDemandante, input.idTipo]);
+		return () => controller.abort;
+	}, []);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		setPersonasInvolucradas(submitPersonaInvolucrada());
-		setInput({
-			...input,
-			personasInvolucradas: personasInvolucradas,
-		});
 
 		const formData = new FormData();
 		formData.append("motivoDemanda", input.motivoDemanda);
@@ -144,10 +79,20 @@ function DemandaForm() {
 		formData.append("idTipo", input.idTipo);
 		formData.append("idOrganizacion", input.idOrganizacion);
 		formData.append("almacenDemanda", input.almacenDemanda);
-		formData.append(
-			"personasInvolucradas",
-			JSON.stringify(input.personasInvolucradas)
-		);
+		if (input.personasInvolucradas.alumno.length > 0) {
+			formData.append(
+				"personasInvolucradas",
+				JSON.stringify([
+					input.personasInvolucradas.demandante,
+					input.personasInvolucradas.alumno,
+				])
+			);
+		} else {
+			formData.append(
+				"personasInvolucradas",
+				JSON.stringify([input.personasInvolucradas.demandante])
+			);
+		}
 
 		for (let i = 0; i < inputFiles.length; i++) {
 			formData.append("anexosDemanda[]", inputFiles[i]);
@@ -177,18 +122,6 @@ function DemandaForm() {
 				crearAlert({ error: errorMessage });
 			});
 	};
-
-	const handleChange = (e) => {
-		setInput({ ...input, [e.target.name]: e.target.value });
-	};
-
-	const handleChangeFiles = (e) => {
-		setInputFiles(e.target.files);
-	};
-
-	useEffect(() => {
-		listarOrganizaciones();
-	}, []);
 
 	return (
 		<>
@@ -249,15 +182,9 @@ function DemandaForm() {
 							</div>
 							<div className="sm:col-span-4">
 								<PersonaInvolucradaForm
+									dispatch={dispatch}
 									idTipo={input.idTipo}
-									alumno={alumno}
-									setAlumno={setAlumno}
-									demandante={demandante}
-									setDemandante={setDemandante}
-									esDemandante={esDemandante}
-									setEsDemandante={setEsDemandante}
-									curso={curso}
-									setCurso={setCurso}
+									esDemandante={input.esDemandante}
 								/>
 							</div>
 						</div>

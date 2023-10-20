@@ -2,42 +2,15 @@
 import React, { useEffect, useRef, useState } from "react";
 
 function PersonaInvolucradaForm(props) {
-	const {
-		idTipo,
-		alumno,
-		setAlumno,
-		demandante,
-		setDemandante,
-		esDemandante,
-		setEsDemandante,
-		curso,
-		setCurso,
-	} = props;
+	const { idTipo, esDemandante, dispatch } = props;
 	const [loader, setLoader] = useState(false);
 	const [localidades, setLocalidades] = useState([]);
 
-	const handleChangeEsDemandante = () => {
-		setEsDemandante(!esDemandante);
-	};
-
-	const handleChange = (e) => {
-		setDemandante({ ...demandante, [e.target.name]: e.target.value });
-	};
-
-	const handleChangeAlumno = (e) => {
-		setAlumno({ ...alumno, [e.target.name]: e.target.value });
-	};
-
-	const handleChangeCurso = (e) => {
-		setCurso({ ...curso, [e.target.name]: e.target.value });
-	};
-
-	const listarLocalidades = () => {
+	useEffect(() => {
+		const controller = new AbortController();
 		fetch("http://localhost/devtic/api/ListarLocalidades.php", {
 			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-			},
+			signal: controller.signal,
 			credentials: "include",
 		})
 			.then((res) => {
@@ -53,11 +26,50 @@ function PersonaInvolucradaForm(props) {
 			.catch((error) => {
 				console.error(error.message);
 			});
+		return () => controller.abort();
+	}, []);
+
+	const handleChangeEsDemandante = () => {
+		dispatch({
+			type: "esDemandanteChange",
+		});
 	};
 
-	useEffect(() => {
-		listarLocalidades();
-	}, []);
+	const handleChangeDemandante = (e) => {
+		dispatch({
+			type: "inputPersonasInvolucradasChange",
+			field: e.target.name,
+			payload: e.target.value,
+			demandante: true,
+		});
+	};
+
+	const handleChangeAlumno = (e) => {
+		dispatch({
+			type: "inputPersonasInvolucradasChange",
+			field: e.target.name,
+			payload: e.target.value,
+			demandante: false,
+		});
+	};
+
+	const handleChangeCurso = (e) => {
+		if (esDemandante) {
+			dispatch({
+				type: "inputPersonasInvolucradasChange",
+				field: e.target.name,
+				payload: e.target.value,
+				demandante: true,
+			});
+		} else {
+			dispatch({
+				type: "inputPersonasInvolucradasChange",
+				field: e.target.name,
+				payload: e.target.value,
+				demandante: false,
+			});
+		}
+	};
 
 	return (
 		<>
@@ -75,28 +87,11 @@ function PersonaInvolucradaForm(props) {
 				<div className="relative z-0 w-full mb-6 group">
 					<input
 						type="text"
-						name="nombrePersona"
-						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-						placeholder=" "
-						autoComplete="off"
-						onChange={handleChange}
-						required
-					/>
-					<label
-						htmlFor="nombrePersona"
-						className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-					>
-						Nombre y apellido
-					</label>
-				</div>
-				<div className="relative z-0 w-full mb-6 group">
-					<input
-						type="text"
 						name="dniPersona"
 						autoComplete="off"
 						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder=" "
-						onChange={handleChange}
+						onChange={handleChangeDemandante}
 						required
 					/>
 					<label
@@ -104,6 +99,23 @@ function PersonaInvolucradaForm(props) {
 						className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 					>
 						Documento
+					</label>
+				</div>
+				<div className="relative z-0 w-full mb-6 group">
+					<input
+						type="text"
+						name="nombrePersona"
+						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+						placeholder=" "
+						autoComplete="off"
+						onChange={handleChangeDemandante}
+						required
+					/>
+					<label
+						htmlFor="nombrePersona"
+						className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+					>
+						Nombre y apellido
 					</label>
 				</div>
 			</div>
@@ -116,8 +128,7 @@ function PersonaInvolucradaForm(props) {
 						name="telefono"
 						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder=""
-						onChange={handleChange}
-						required
+						onChange={handleChangeDemandante}
 					/>
 					<label
 						htmlFor="telefono"
@@ -132,7 +143,7 @@ function PersonaInvolucradaForm(props) {
 						name="domicilio"
 						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder=" "
-						onChange={handleChange}
+						onChange={handleChangeDemandante}
 						autoComplete="off"
 						required
 					/>
@@ -145,19 +156,16 @@ function PersonaInvolucradaForm(props) {
 				</div>
 				<div className="relative z-0 w-full mb-6 group">
 					<label
-						htmlFor="idOrganizacion"
+						htmlFor="idLocalidad"
 						className="block text-sm font-medium leading-6 text-gray-900"
 					>
 						Localidad del domicilio
 					</label>
 					<div className="mt-2">
 						<select
-							onChange={handleChange}
-							required
-							type="search"
+							onChange={handleChangeDemandante}
 							name="idLocalidad"
 							className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-							autoComplete="organization"
 						>
 							<option>Seleccione una opción</option>
 							{loader ? (
@@ -184,7 +192,7 @@ function PersonaInvolucradaForm(props) {
 									type="radio"
 									name="idParentesco"
 									value="1"
-									onChange={handleChange}
+									onChange={handleChangeDemandante}
 									className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600"
 								/>
 								<label
@@ -198,7 +206,7 @@ function PersonaInvolucradaForm(props) {
 							<div className="flex items-center mb-4">
 								<input
 									type="radio"
-									onChange={handleChange}
+									onChange={handleChangeDemandante}
 									name="idParentesco"
 									value="2"
 									className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
@@ -215,7 +223,7 @@ function PersonaInvolucradaForm(props) {
 								<input
 									type="radio"
 									name="idParentesco"
-									onChange={handleChange}
+									onChange={handleChangeDemandante}
 									value="3"
 									className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
 								/>
@@ -406,7 +414,7 @@ function PersonaInvolucradaForm(props) {
 								htmlFor="docente"
 								className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 							>
-								Docente
+								Docente a cargo del alumno
 							</label>
 						</div>
 					</div>

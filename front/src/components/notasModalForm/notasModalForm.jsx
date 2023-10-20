@@ -31,8 +31,6 @@ function NotasModalForm({ idDemanda }) {
 		setInputFile(e.target.files);
 	};
 
-	console.log(inputFile);
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const formData = new FormData();

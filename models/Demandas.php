@@ -30,7 +30,7 @@ class Demandas {
                     if ($con-> query($queryGrupos)) {
                         foreach ($personasInvolucradas as  $i) {
                             $personas = new PersonasInvolucradas();
-                            if(!($personas->crearPersonaInvolucrada($idDemanda,$i->nombrePersona,$i->dniPersona,$i->demandante, $i->alumno,$i->idParentesco , $i->telefono, $i->domicilio, $i->idLocalidad, $i->grado, $i->turno, $i->docente))){
+                            if(!($personas->crearPersonaInvolucrada($idDemanda,$i->nombrePersona,$i->dniPersona,$i->demandante, $i->alumno,$i->idParentesco ?? "NULL" , $i->telefono, $i->domicilio, $i->idLocalidad, $i->grado, $i->turno, $i->docente))){
                                 throw new Exception("Ocurrio un error al vincular las personas involucradas con la demanda",400);
                             };
                         }

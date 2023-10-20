@@ -1,8 +1,7 @@
 .env
 /vendor
 
-/anexosNotas/
-/anexosDemandas/
+anexos/*
 
 # dependencies
 /front/node_modules

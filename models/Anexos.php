@@ -14,7 +14,7 @@ class Anexos{
             if(move_uploaded_file($tmpName, $urlFile)){
                 $con = new Conexion();
                 $prepareAnexoNota = $con -> prepare("INSERT INTO anexosnotas (idNota, urlAnexoNota, nombreAnexoNota)VALUES (?,?,?)");
-                $prepareAnexoNota->bind_param("iss",$idNota,$urlFile, $name);
+                $prepareAnexoNota->bind_param("iss",$idNota,$urlFile, $nameFile);
                 $prepareAnexoNota->execute();
             }
                 
@@ -30,7 +30,7 @@ class Anexos{
             if(move_uploaded_file($tmpName, $urlFile)){
                 $con = new Conexion();
                 $prepareAnexoNota = $con -> prepare("INSERT INTO anexosdemandas (idDemanda, urlAnexoDemanda, nombreAnexoDemanda)VALUES (?,?,?)");
-                $prepareAnexoNota->bind_param("iss",$idNota,$urlFile, $name);
+                $prepareAnexoNota->bind_param("iss",$idDemanda,$urlFile, $nameFile);
                 $prepareAnexoNota->execute();
             }
                 
@@ -87,9 +87,8 @@ class Anexos{
                     $con->close();
                 } 
                 return $datos;
-            } else {
-                throw new Exception("Error al preparar la consulta para obtener los anexos de la demanda");
-            }
+            } 
+            throw new Exception("Error al preparar la consulta para obtener los anexos de la demanda");
         } catch (Exception $e) {
             echo json_encode(["error" => $e->getMessage()]);
             http_response_code($e->getCode());
