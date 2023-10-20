@@ -6,7 +6,7 @@ class Grupos{
 
     public function obtenerGrupo( $idDemanda){
         $con = new Conexion();
-        $query = "SELECT p.idProfesional, personas.nombrePersona, e.nombreEspecialidad, p.fotoProfesional  FROM profesionalesgrupos g INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN especialidades e ON e.idEspecialidad = p.idEspecialidad INNER JOIN personas ON personas.idPersona = p.idPersona WHERE g.idDemanda = $idDemanda";
+        $query = "SELECT p.idProfesional, personas.nombrePersona, e.nombreEspecialidad, p.fotoProfesional, g.creadorGrupo  FROM profesionalesgrupos g INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN especialidades e ON e.idEspecialidad = p.idEspecialidad INNER JOIN personas ON personas.idPersona = p.idPersona WHERE g.idDemanda = $idDemanda";
         $resultado = $con ->query($query);
         $datos = [];
         if ($resultado ->num_rows>0) {

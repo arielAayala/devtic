@@ -104,7 +104,10 @@ export const demandaFormReducer = (state, action) => {
 							demandante: {
 								...state.personasInvolucradas.demandante,
 								[action.field]: action.payload,
+								alumno: true,
+								demandante: true,
 							},
+							alumno: {},
 						},
 					};
 				} else {
@@ -116,6 +119,16 @@ export const demandaFormReducer = (state, action) => {
 								demandante: {
 									...state.personasInvolucradas.demandante,
 									[action.field]: action.payload,
+									alumno: false,
+									demandante: true,
+									grado: null,
+									turno: null,
+									docente: null,
+								},
+								alumno: {
+									...state.personasInvolucradas.alumno,
+									alumno: true,
+									demandante: false,
 								},
 							},
 						};
@@ -127,6 +140,16 @@ export const demandaFormReducer = (state, action) => {
 								alumno: {
 									...state.personasInvolucradas.alumno,
 									[action.field]: action.payload,
+									alumno: true,
+									demandante: false,
+								},
+								demandante: {
+									...state.personasInvolucradas.demandante,
+									alumno: false,
+									demandante: true,
+									grado: null,
+									turno: null,
+									docente: null,
 								},
 							},
 						};

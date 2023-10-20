@@ -42,7 +42,6 @@ class PersonasInvolucradas {
             $idParentesco = $idParentesco ?? "NULL";
             $preparePersonaInvolucrada = $con->prepare( "INSERT INTO personasinvolucradas(idDemanda, idPersona, idParentesco, demandante, alumno) VALUES (?, ?, $idParentesco, ?, ?)");
             $preparePersonaInvolucrada-> bind_param("iiii",$idDemanda,$this->idPersona, $demandante,$alumno);
-            echo($preparePersonaInvolucrada->error); 
             if ($preparePersonaInvolucrada->execute()) {
                 if ($alumno) {
                     $this->idPersonaInvolucrada = $con->insert_id;
@@ -52,7 +51,8 @@ class PersonasInvolucradas {
                 }
                 $con-> close();
                 return true;
-            } 
+            }
+            throw new Exception("Error al crear al vincular las personas", 404);  
         }
         catch (Exception $e) {
             echo json_encode(["error"=> $e->getMessage()]);
@@ -65,11 +65,16 @@ class PersonasInvolucradas {
     public function obtenerPersonasInvolucradas($idDemanda){
         try {
             $con = new Conexion();
-            $query = "SELECT personasinvolucradas.idPersonaInvolucrada, p.nombrePersona, p.dniPersona ,  personasinvolucradas.demandante,  personasinvolucradas.alumno , alumnosdetalles.idTurno, alumnosdetalles.idGrado, alumnosdetalles.docente, parentesco.nombreParentesco 
+            $query = "SELECT personasinvolucradas.idPersonaInvolucrada, p.nombrePersona, p.dniPersona ,  personasinvolucradas.demandante,  personasinvolucradas.alumno , turnos.nombreTurno, g.nombreGrado, alumnosdetalles.docente, parentesco.nombreParentesco, d.direccionDomicilio, l.nombreLocalidad ,t.numeroTelefono
             FROM personasinvolucradas 
             INNER JOIN personas p ON p.idPersona = personasinvolucradas.idPersona
             LEFT JOIN alumnosdetalles ON  personasinvolucradas.idPersonaInvolucrada = alumnosdetalles.idPersonaInvolucrada 
             LEFT JOIN parentesco ON parentesco.idParentesco = personasinvolucradas.idParentesco 
+            LEFT JOIN domicilios d ON p.idPersona = d.idPersona
+            LEFT JOIN localidades l ON d.idLocalidad = l.idLocalidad
+            LEFT JOIN telefonos t ON t.idPersona = p.idPersona
+            LEFT JOIN grados g ON g.idGrado = alumnosdetalles.idGrado
+            LEFT JOIN turnos ON turnos.idTurno = alumnosdetalles.idTurno 
             WHERE personasinvolucradas.idDemanda = ? ";
             if ($preparePersonasInvolucradas = $con->prepare($query)) {
                 $preparePersonasInvolucradas ->bind_param("i", $idDemanda);

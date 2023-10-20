@@ -14,7 +14,7 @@ function DemandaForm() {
 	const { crearAlert } = useAlertContext();
 	const [organizaciones, setOrganizaciones] = useState([]);
 	const [loader, setLoader] = useState(false);
-	const [inputFiles, setInputFiles] = useState(null);
+	const [inputFiles, setInputFiles] = useState([]);
 
 	const textbox = useRef(null);
 
@@ -70,6 +70,8 @@ function DemandaForm() {
 		return () => controller.abort;
 	}, []);
 
+	console.log(input);
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
@@ -79,7 +81,7 @@ function DemandaForm() {
 		formData.append("idTipo", input.idTipo);
 		formData.append("idOrganizacion", input.idOrganizacion);
 		formData.append("almacenDemanda", input.almacenDemanda);
-		if (input.personasInvolucradas.alumno.length > 0) {
+		if (Object.keys(input.personasInvolucradas.alumno).length > 0) {
 			formData.append(
 				"personasInvolucradas",
 				JSON.stringify([

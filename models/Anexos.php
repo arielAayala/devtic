@@ -9,12 +9,13 @@ class Anexos{
         foreach ($anexosNotas['name'] as $key => $name) {
             $tmpName = $anexosNotas['tmp_name'][$key];
             $nameFile = "idNota=".$idNota . "&nombreAnexoNota=" . $name;
-            $urlFile = __DIR__ . "\\..\\anexos\\" . $nameFile;
+            $urlMove = __DIR__. "\\..\\anexos\\" . $nameFile;
+            $urlFile = "http://localhost/devtic/anexos/".$nameFile;
     
-            if(move_uploaded_file($tmpName, $urlFile)){
+            if(move_uploaded_file($tmpName, $urlMove)){
                 $con = new Conexion();
                 $prepareAnexoNota = $con -> prepare("INSERT INTO anexosnotas (idNota, urlAnexoNota, nombreAnexoNota)VALUES (?,?,?)");
-                $prepareAnexoNota->bind_param("iss",$idNota,$urlFile, $nameFile);
+                $prepareAnexoNota->bind_param("iss",$idNota,$urlFile, $name);
                 $prepareAnexoNota->execute();
             }
                 
@@ -25,12 +26,13 @@ class Anexos{
         foreach ($anexosDemanda['name'] as $key => $name) {
             $tmpName = $anexosDemanda['tmp_name'][$key];
             $nameFile = "idDemanda=".$idDemanda . "&nombreAnexoDemanda=" . $name;
-            $urlFile = __DIR__. "\\..\\anexos\\" . $nameFile;
+            $urlMove = __DIR__. "\\..\\anexos\\" . $nameFile;
+            $urlFile = "http://localhost/devtic/anexos/".$nameFile;
     
-            if(move_uploaded_file($tmpName, $urlFile)){
+            if(move_uploaded_file($tmpName, $urlMove)){
                 $con = new Conexion();
                 $prepareAnexoNota = $con -> prepare("INSERT INTO anexosdemandas (idDemanda, urlAnexoDemanda, nombreAnexoDemanda)VALUES (?,?,?)");
-                $prepareAnexoNota->bind_param("iss",$idDemanda,$urlFile, $nameFile);
+                $prepareAnexoNota->bind_param("iss",$idDemanda,$urlFile, $name);
                 $prepareAnexoNota->execute();
             }
                 

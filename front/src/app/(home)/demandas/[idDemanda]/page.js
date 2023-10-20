@@ -1,8 +1,11 @@
 "use client";
+import Anexos from "@/components/anexos/anexos";
 import DemandaModalDelete from "@/components/demandaModalDelete/demandaModalDelete";
 import DemandaModalUpdate from "@/components/demandaModalUpdate/demandaModalUpdate";
 import GrupoModal from "@/components/grupoModal/grupoModal";
+import Notas from "@/components/notas/notas";
 import NotasModalForm from "@/components/notasModalForm/notasModalForm";
+import PersonasInvolucradas from "@/components/personasInvolucradas/personasInvolucradas";
 import SelectEstado from "@/components/selectEstado/selectEstado";
 import SelectProfesional from "@/components/selectProfesional/selectProfesional";
 import { useAlertContext } from "@/context/alertContext";
@@ -54,9 +57,11 @@ function PageIdDemanda() {
 			credentials: "include",
 			body: JSON.stringify(params),
 		})
-			.then((rest) => {
+			.then(async (rest) => {
 				if (!rest.ok) {
-					throw new Error("Ocurrio un error al cargar la demanda");
+					throw new Error("Ocurrio un error al cargar la demanda", {
+						cause: await rest.json(),
+					});
 				}
 
 				return rest.json();
@@ -66,14 +71,15 @@ function PageIdDemanda() {
 				setTimeout(() => setLoader(true), 100);
 			})
 			.catch((error) => {
-				crearAlert({ error: error.message });
+				const errorMessage = error.cause?.error || error.message;
+				setDemanda({});
+				setLoader(true);
+				crearAlert({ error: errorMessage });
 			});
 		return () => {
 			controller.abort();
 		};
 	}, [params.idDemanda]);
-
-	console.log(demanda);
 
 	if (!loader) {
 		return (
@@ -104,10 +110,10 @@ function PageIdDemanda() {
 
 	return (
 		<>
-			{demanda == {} ? (
+			{Object.keys(demanda).length === 0 ? (
 				<h2>No existe estaDemanda</h2>
 			) : (
-				<div>
+				<>
 					<section className="bg-white dark:bg-gray-900">
 						<div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
 							<h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
@@ -145,51 +151,25 @@ function PageIdDemanda() {
 								</div>
 							</div>
 						) : null}
-						<div>
-							Personas Involucradas:
-							{demanda.personasInvolucradas.map((i) => (
-								<div key={i.idPersonaInvolucrada}>{i.nombrePersona}</div>
-							))}
-						</div>
 					</section>
-					<div className="flex items-center space-x-4">
-						<img
-							className="w-12 h-12 rounded-full"
-							src={demanda.data.fotoProfesional}
-							alt="Large avatar"
-						/>
-						<div className="font-medium flex-1 dark:text-white">
-							<div>
-								{demanda.data?.nombrePersona.replace(
-									/\b[a-z](?=[a-z]{2})/g,
-									function (letter) {
-										return letter.toUpperCase();
-									}
-								)}
-							</div>
-							<div className="text-sm text-gray-500 dark:text-gray-400">
-								{demanda.data.nombreEspecialidad
-									.toLowerCase()
-									.replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
-										return letter.toUpperCase();
-									})}
-							</div>
-						</div>
-						<div className="flex items-center justify-end space-x-3 sm:space-x-4">
-							<SelectProfesional
-								idDemanda={params.idDemanda}
-								grupo={demanda.grupo}
-								obtenerDemanda={obtenerDemanda}
-							/>
-							<SelectEstado
-								idDemanda={params.idDemanda}
-								obtenerDemanda={obtenerDemanda}
-							/>
-						</div>
-					</div>
-
+					<PersonasInvolucradas
+						lstPersonasInvolucradas={demanda.personasInvolucradas}
+					/>
 					<GrupoModal grupo={demanda.grupo} />
-				</div>
+					<Anexos lstAnexos={demanda.data.anexosDemanda} />
+
+					<SelectEstado
+						idDemanda={params.idDemanda}
+						obtenerDemanda={obtenerDemanda}
+					/>
+					<SelectProfesional
+						idDemanda={params.idDemanda}
+						grupo={demanda.grupo}
+						obtenerDemanda={obtenerDemanda}
+					/>
+
+					<Notas lstNotas={demanda.notas} />
+				</>
 			)}
 		</>
 	);
