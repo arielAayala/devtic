@@ -15,7 +15,9 @@ function TableProfesionales() {
 		})
 			.then((res) => {
 				if (!res.ok) {
-					throw new Error("Ocurrio un error al cargar los profesionales");
+					throw new Error("Ocurrio un error al cargar los profesionales", {
+						cause: res,
+					});
 				}
 				return res.json();
 			})
@@ -23,7 +25,7 @@ function TableProfesionales() {
 				setProfesionales(res);
 			})
 			.catch((error) => {
-				console.error(error);
+				console.error(error.error);
 				profesionales([]);
 			});
 	};

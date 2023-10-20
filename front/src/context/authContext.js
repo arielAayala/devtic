@@ -24,12 +24,11 @@ function AuthContextProvider({ children }) {
 			credentials: "include",
 			body: JSON.stringify(inputs),
 		})
-			.then((res) => {
-				if (res.status == 404) {
-					throw new Error("Profesional no encontrado");
-				}
+			.then(async (res) => {
 				if (!res.ok) {
-					throw new Error("ocurrio un error");
+					throw new Error("ocurrio un error", {
+						cause: await res.json(),
+					});
 				}
 				return res.json();
 			})
@@ -38,10 +37,7 @@ function AuthContextProvider({ children }) {
 				setUser(res.data);
 			})
 			.catch((error) => {
-				// Extract the error message
-				const errorMessage = error.message || "Error desconocido";
-
-				// Log the shortened error message
+				const errorMessage = error.cause.error || "Error desconocido";
 				crearAlert({ error: errorMessage });
 			});
 	}, []);
@@ -62,6 +58,7 @@ function AuthContextProvider({ children }) {
 			})
 			.then((res) => {
 				setUser(res.data);
+				crearAlert(res);
 			})
 
 			.catch((error) => {

@@ -2,7 +2,7 @@
 import { useAuthContext } from "@/context/authContext";
 import LoginForm from "../components/loginForm/loginForm";
 import { redirect } from "next/navigation";
-import login from "../../public/loginFoto.png";
+
 import Image from "next/image";
 
 export default function LoginPage() {

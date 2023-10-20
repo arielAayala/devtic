@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 function Loader({ children }) {
 	const [loader, setLoader] = useState(true);
 
-	const { iniciarSesionConCookies } = useAuthContext();
+	const { iniciarSesionConCookies, user } = useAuthContext();
 
 	const getData = async () => {
 		await iniciarSesionConCookies();
@@ -13,7 +13,11 @@ function Loader({ children }) {
 	};
 
 	useEffect(() => {
-		getData();
+		if (!user) {
+			getData();
+		} else {
+			setLoader(false);
+		}
 	}, []);
 
 	if (loader) {

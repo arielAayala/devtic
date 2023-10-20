@@ -17,8 +17,6 @@ switch ($_SERVER["REQUEST_METHOD"]) {
             if ($lstDemandas = $demanda->obtenerDemanda($_COOKIE["token"], $datos->idDemanda)) {            
                 echo json_encode($lstDemandas);
                 http_response_code(200);
-            }else {
-                http_response_code(400);
             }
         }else {
             http_response_code(401);
