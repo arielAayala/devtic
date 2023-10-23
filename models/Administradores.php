@@ -63,16 +63,22 @@ class Administradores extends Profesionales{
         }
     }
 
-    public function verEstadistica($token){
+    public function obtenerEstadisticas($token){
         try {
             if ($datos = Profesionales::validarToken($token)) {
                 if ($datos->prioridadProfesional== 1) {
                     $con = new Conexion();
-                    $query = "SELECT * FROM ";
+                    $currentDate = date("Y-m-d");
+                    $pastDate = date("Y-m-d", strtotime("-30 days"));
+
+                    $query = "SELECT 
+                    (SELECT COUNT(*) FROM demandas WHERE demandas.borrarDemanda = 0 AND demandas.fechaIngresoDemanda BETWEEN '$pastDate' AND '$currentDate') AS demandasIngresadas,
+                    (SELECT COUNT(*) FROM demandas WHERE demandas.borrarDemanda = 0 AND demandas.fechaCierreDemanda BETWEEN '$pastDate' AND '$currentDate') AS demandasCerrada,
+                    (SELECT COUNT(*) FROM notas WHERE notas.fechaCreacionNota BETWEEN '$pastDate' AND '$currentDate') AS notasIngresadas ";
                     if ($resultado = $con->query($query)) {
                         $datos = [];
                         while( $row = $resultado->fetch_assoc() ) {
-                            $datos[] = $row;
+                            $datos = $row;
                         }
                         $con->close();
                         return $datos;
@@ -87,6 +93,15 @@ class Administradores extends Profesionales{
             echo json_encode(["error"=>$e]);
             http_response_code($e->getCode());
         }
+    }
+
+    private function obtenerEstadisticaProfesionales($token){
+        $con = new Conexion();
+        $currentDate = date("Y-m-d");
+        $pastDate = date("Y-m-d", strtotime("-30 days"));
+        $query = "SELECT p.nombrePersona FROM profesionales 
+        LEFT JOIN profesionalesgrupos pg ON  ";
+
     }
 
     public function verAuditoria($token){

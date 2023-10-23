@@ -2,11 +2,10 @@ import { useAlertContext } from "@/context/alertContext";
 import { useAuthContext } from "@/context/authContext";
 import React, { useState } from "react";
 
-function NotasModalForm({ idDemanda }) {
+function NotasModalForm({ idDemanda, obtenerDemanda }) {
 	const [showModal, setShowModal] = useState(false);
 
 	const { crearAlert } = useAlertContext();
-	const { cerrarSesion } = useAuthContext();
 
 	const [input, setInput] = useState({
 		tituloNota: null,
@@ -41,7 +40,6 @@ function NotasModalForm({ idDemanda }) {
 		for (let i = 0; i < inputFile.length; i++) {
 			formData.append("anexosNotas[]", inputFile[i]);
 		}
-		console.log(formData);
 		fetch("http://localhost/devtic/api/CrearNota.php", {
 			method: "POST",
 			body: formData,
@@ -55,6 +53,8 @@ function NotasModalForm({ idDemanda }) {
 			})
 			.then((res) => {
 				crearAlert(res);
+				document.getElementById("formNota").reset();
+				obtenerDemanda();
 			})
 			.catch((error) => {
 				const errorMessage = error.cause?.error || "Ocurrio un Error";
@@ -119,6 +119,7 @@ function NotasModalForm({ idDemanda }) {
 						</h3>
 						<form
 							className="space-y-6 "
+							id="formNota"
 							onSubmit={handleSubmit}
 						>
 							<div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">

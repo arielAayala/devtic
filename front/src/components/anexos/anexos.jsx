@@ -9,8 +9,8 @@ function Anexos(props) {
 
 	return (
 		<section className="bg-white dark:bg-gray-900">
-			<div className="py-8 px-4 mx-auto  ">
-				<div className="grid gap-4 grid-cols-2  mb-6 ">
+			<div className=" mx-auto  ">
+				<div className="grid gap-4 grid-cols-2  my-2 ">
 					{lstAnexos.map((i) => {
 						return (
 							<div
@@ -23,7 +23,7 @@ function Anexos(props) {
 										src="/fileIcon.png"
 									/>
 								</a>
-								<div className="p-5 ">
+								<div>
 									<h3 className="text-sm font-bold  text-gray-900 dark:text-white ">
 										<a
 											href={i.urlAnexoDemanda || i.urlAnexoNota}

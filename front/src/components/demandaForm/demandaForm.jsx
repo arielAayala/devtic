@@ -100,10 +100,6 @@ function DemandaForm() {
 			formData.append("anexosDemanda[]", inputFiles[i]);
 		}
 
-		for (let i of formData.entries()) {
-			console.log(i);
-		}
-
 		fetch("http://localhost/devtic/api/CrearDemanda.php", {
 			method: "POST",
 			credentials: "include",

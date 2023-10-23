@@ -137,7 +137,10 @@ function PageIdDemanda() {
 									className="inline-flex rounded-md shadow-sm"
 									role="group"
 								>
-									<NotasModalForm idDemanda={params.idDemanda} />
+									<NotasModalForm
+										idDemanda={params.idDemanda}
+										obtenerDemanda={obtenerDemanda}
+									/>
 									<DemandaModalUpdate
 										obtenerDemanda={obtenerDemanda}
 										motivoDemanda={demanda.data.motivoDemanda}

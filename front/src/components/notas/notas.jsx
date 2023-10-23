@@ -11,7 +11,7 @@ function Notas(props) {
 	console.log(lstNotas);
 
 	return (
-		<section className="bg-white dark:bg-gray-900 py-8 lg:py-16 antialiased">
+		<section className="bg-white dark:bg-gray-900 py-8  antialiased">
 			<div className="max-w-2xl mx-auto px-4">
 				<div className="flex justify-between items-center mb-6">
 					<h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">
@@ -22,7 +22,7 @@ function Notas(props) {
 					return (
 						<article
 							key={i.idNota}
-							className="p-6 text-base bg-white rounded-lg dark:bg-gray-900 shadow-2xl"
+							className="px-4 py-2 my-4 text-base bg-white rounded-lg dark:bg-gray-900 shadow-2xl"
 						>
 							<footer className="flex justify-between items-center mb-2">
 								<div className="flex items-center">
