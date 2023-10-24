@@ -63,25 +63,28 @@ class Administradores extends Profesionales{
         }
     }
 
-    public function obtenerEstadisticas($token){
+    public function obtenerEstadisticas($token, $fechaInicial = null, $fechaFinal = null){
         try {
             if ($datos = Profesionales::validarToken($token)) {
                 if ($datos->prioridadProfesional== 1) {
                     $con = new Conexion();
-                    $currentDate = date("Y-m-d");
-                    $pastDate = date("Y-m-d", strtotime("-30 days"));
+                    $initialDate =  $fechaInicial ?? date("Y-m-d");
+                    $endDate = $fechaFinal ?? date("Y-m-d", strtotime("-30 days"));
 
                     $query = "SELECT 
-                    (SELECT COUNT(*) FROM demandas WHERE demandas.borrarDemanda = 0 AND demandas.fechaIngresoDemanda BETWEEN '$pastDate' AND '$currentDate') AS demandasIngresadas,
-                    (SELECT COUNT(*) FROM demandas WHERE demandas.borrarDemanda = 0 AND demandas.fechaCierreDemanda BETWEEN '$pastDate' AND '$currentDate') AS demandasCerrada,
-                    (SELECT COUNT(*) FROM notas WHERE notas.fechaCreacionNota BETWEEN '$pastDate' AND '$currentDate') AS notasIngresadas ";
-                    if ($resultado = $con->query($query)) {
+                    (SELECT COUNT(*) FROM demandas WHERE demandas.borrarDemanda = 0 AND demandas.fechaIngresoDemanda BETWEEN ? AND ?) AS demandasIngresadas,
+                    (SELECT COUNT(*) FROM demandas WHERE demandas.borrarDemanda = 0 AND demandas.fechaCierreDemanda BETWEEN ? AND ?) AS demandasCerrada,
+                    (SELECT COUNT(*) FROM notas WHERE notas.fechaCreacionNota BETWEEN ? AND ?) AS notasIngresadas ";
+                    $prepareGlobal = $con->prepare($query); 
+                    $prepareGlobal->bind_param("ssssss",$initialDate, $endDate, $initialDate,$endDate, $initialDate, $endDate );
+                    if($prepareGlobal-> execute()){
+                        $resultado = $prepareGlobal->get_result();
                         $datos = [];
                         while( $row = $resultado->fetch_assoc() ) {
                             $datos = $row;
                         }
                         $con->close();
-                        return $datos;
+                        return ["estadisticaGlobal" =>$datos , "estadisticaProfesionales" => $this->obtenerEstadisticaProfesionales($initialDate, $endDate)];
                     }
                     throw new Exception("Error al cargar las estadisticas", 404);
                 }
@@ -95,12 +98,11 @@ class Administradores extends Profesionales{
         }
     }
 
-    private function obtenerEstadisticaProfesionales($token){
+    private function obtenerEstadisticaProfesionales($initialDate, $endDate){
         $con = new Conexion();
-        $currentDate = date("Y-m-d");
-        $pastDate = date("Y-m-d", strtotime("-30 days"));
-        $query = "SELECT p.nombrePersona FROM profesionales 
-        LEFT JOIN profesionalesgrupos pg ON  ";
+        $query = "SELECT p.nombrePersona, COUNT(pg.idDemanda) AS demandasCreadas FROM profesionales p
+        LEFT JOIN profesionalesgrupos pg ON pg.idProfesional = p.idProfesional 
+        LEFT JOIN demandas d ON d.idDemanda = pg.idDemanda ";
 
     }
 
@@ -128,5 +130,6 @@ class Administradores extends Profesionales{
             http_response_code($e->getCode());
         }
     }
+
 
 }
