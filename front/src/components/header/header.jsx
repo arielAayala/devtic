@@ -3,6 +3,7 @@ import { useAuthContext } from "@/context/authContext";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 function Header() {
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -22,7 +23,7 @@ function Header() {
 	const router = useRouter();
 	const handleRedirectToPerfil = () => {
 		setUserMenuOpen(false);
-		router.push("/perfil");
+		router.push("/perfiles");
 	};
 
 	const toggleSidebar = () => {
@@ -73,8 +74,8 @@ function Header() {
 								></path>
 							</svg>
 						</button>
-						<a
-							href=""
+						<Link
+							href="/demandas"
 							className="flex ml-2 md:mr-24"
 						>
 							<Image
@@ -88,7 +89,7 @@ function Header() {
 							<span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
 								DevTic
 							</span>
-						</a>
+						</Link>
 					</div>
 					<div className="flex items-center">
 						<div className="flex items-center ml-3">
