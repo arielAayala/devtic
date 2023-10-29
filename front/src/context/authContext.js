@@ -37,7 +37,7 @@ function AuthContextProvider({ children }) {
 				setUser(res.data);
 			})
 			.catch((error) => {
-				const errorMessage = error.cause.error || "Error desconocido";
+				const errorMessage = error.cause?.error || "Error desconocido";
 				crearAlert({ error: errorMessage });
 			});
 	}, []);

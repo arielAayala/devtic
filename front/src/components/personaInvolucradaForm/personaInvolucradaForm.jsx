@@ -251,16 +251,12 @@ function PersonaInvolucradaForm(props) {
 						</div>
 					</div>
 					<div className="border-b border-gray-900/10 pb-3">
-						<h2 className="text-base font-semibold leading-7 text-gray-900">
-							El alumno es el demandante ?
-						</h2>
-						<button
-							onClick={handleChangeEsDemandante}
-							type="button"
-							className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 my-6"
-						>
-							{esDemandante ? "Si" : "No"}
-						</button>
+						<br></br>
+						<label className="relative inline-flex items-center cursor-pointer">
+  						<input onClick={handleChangeEsDemandante} type="checkbox" value="" className="sr-only peer"/>
+  						<div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+  						<span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">El alumno no es el demandante</span>
+						</label>
 					</div>
 					<div className="grid md:grid-cols-2 md:gap-6 mt-4">
 						{esDemandante ? null : (

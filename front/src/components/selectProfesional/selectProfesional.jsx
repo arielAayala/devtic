@@ -76,45 +76,15 @@ function SelectProfesional(props) {
 
 	return (
 		<>
-			{/* <section class="flex items-center  bg-gray-50 dark:bg-gray-900">
-				<div class="w-full max-w-screen-xl px-4 mx-auto lg:px-12">
-					<div class="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-						<div class="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
-							<div>
-								<h5 class="mr-3 font-semibold dark:text-white">
-									Flowbite Users
-								</h5>
-								<p class="text-gray-500 dark:text-gray-400">
-									Manage all your existing users or add a new one
-								</p>
-							</div>
-							<button
-								type="button"
-								class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-blue-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-3.5 w-3.5 mr-2 -ml-1"
-									viewBox="0 0 20 20"
-									fill="currentColor"
-									aria-hidden="true"
-								>
-									<path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
-								</svg>
-								Add new user
-							</button>
-						</div>
-					</div>
-				</div>
-			</section>
- */}
 			<form onSubmit={handleSubmitProfesional}>
+				<div className="relative inline-center">
+				<svg className="w-2 h-2 absolute top-0 right-0 m-4 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 412 232"><path d="M206 171.144L42.678 7.822c-9.763-9.763-25.592-9.763-35.355 0-9.763 9.764-9.763 25.592 0 35.355l181 181c4.88 4.882 11.279 7.323 17.677 7.323s12.796-2.441 17.678-7.322l181-181c9.763-9.764 9.763-25.592 0-35.355-9.763-9.763-25.592-9.763-35.355 0L206 171.144z" fill="#648299" fill-rule="nonzero"/></svg>
 				<select
 					id="idProfesional"
 					onChange={handleChange}
-					className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-8px p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					className="border border-gray-300 rounded-full text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
 				>
-					<option>Seleccione un profesionales</option>
+					<option>Seleccione un profesional</option>
 					{loader ? (
 						profesionales.map((i) => {
 							if (grupo.every((g) => i.idProfesional != g.idProfesional)) {
@@ -134,11 +104,12 @@ function SelectProfesional(props) {
 						<option>Cargando profesionales</option>
 					)}
 				</select>
+				</div>
 				<button
 					type="submit"
-					className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+					className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-2"
 				>
-					Agregar Profesional al grupo
+					Agregar profesional
 				</button>
 			</form>
 		</>

@@ -7,7 +7,6 @@ import Link from "next/link";
 
 function Header() {
 	const [userMenuOpen, setUserMenuOpen] = useState(false);
-	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const { user, cerrarSesion } = useAuthContext();
 	const sidebarRef = useRef(null);
 
@@ -23,7 +22,7 @@ function Header() {
 	const router = useRouter();
 	const handleRedirectToPerfil = () => {
 		setUserMenuOpen(false);
-		router.push("/perfiles");
+		router.push(`/perfiles/${user.idProfesional}`);
 	};
 
 	const toggleSidebar = () => {
@@ -138,7 +137,6 @@ function Header() {
 								>
 									<li>
 										<a
-											href="#"
 											className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
 											onClick={handleRedirectToPerfil}
 											role="menuitem"

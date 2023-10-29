@@ -158,19 +158,29 @@ function PageIdDemanda() {
 					<PersonasInvolucradas
 						lstPersonasInvolucradas={demanda.personasInvolucradas}
 					/>
-					<GrupoModal grupo={demanda.grupo} />
+					<div className="item-center">
+						<div>
+							<GrupoModal grupo={demanda.grupo} />
+						</div>
+					</div>
 					<Anexos lstAnexos={demanda.data.anexosDemanda} />
-
-					<SelectEstado
+					<div className="flex justify-end">
+						<div>
+						<SelectEstado
 						idDemanda={params.idDemanda}
 						obtenerDemanda={obtenerDemanda}
-					/>
-					<SelectProfesional
+						/>
+						</div>
+					</div>
+					<div className="flex justify-end mt-10">
+						<div>
+						<SelectProfesional
 						idDemanda={params.idDemanda}
 						grupo={demanda.grupo}
 						obtenerDemanda={obtenerDemanda}
 					/>
-
+						</div>
+					</div>
 					<Notas lstNotas={demanda.notas} />
 				</>
 			)}
