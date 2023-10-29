@@ -5,34 +5,8 @@ import RowTableProfesionales from "./rowTableProfesionales";
 import { useEffect } from "react";
 import ButtonAddProfesional from "./buttonAddProfesional";
 
-function TableProfesionales() {
-	const [profesionales, setProfesionales] = useState([]);
-
-	const obtenerProfesionales = () => {
-		fetch("http://localhost/devtic/api/ListarProfesionales.php", {
-			method: "GET",
-			credentials: "include",
-		})
-			.then((res) => {
-				if (!res.ok) {
-					throw new Error("Ocurrio un error al cargar los profesionales", {
-						cause: res,
-					});
-				}
-				return res.json();
-			})
-			.then((res) => {
-				setProfesionales(res);
-			})
-			.catch((error) => {
-				console.error(error.error);
-				profesionales([]);
-			});
-	};
-
-	useEffect(() => {
-		obtenerProfesionales();
-	}, []);
+function TableProfesionales(props) {
+	const { obtenerProfesionales, profesionales } = props;
 
 	return (
 		<div className="relative overflow-x-auto shadow-md sm:rounded-lg">

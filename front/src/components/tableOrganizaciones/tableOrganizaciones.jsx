@@ -94,26 +94,21 @@ function TableOrganizaciones() {
 						>
 							<span className="sr-only">Actualizar</span>
 						</th>
-
-						<th
-							scope="col"
-							className="px-6 py-3"
-						>
-							<span className="sr-only">Borrar</span>
-						</th>
 					</tr>
 				</thead>
 				<tbody>
 					{Organizaciones.map((i) => (
 						<RowTableOrganizaciones
 							key={i.idOrganizacion}
-							idOrganizaciones={i.dOrganizacion}
+							idOrganizacion={i.idOrganizacion}
 							nombreOrganizacion={i.nombreOrganizacion}
 							nombreLocalidad={i.nombreLocalidad}
+							idLocalidad={i.idLocalidad}
 							nombreDepartamento={i.nombreDepartamento}
 							cueAnexo={i.cueAnexo}
 							numeroTelefonoOrganizacion={i.numeroTelefonoOrganizacion}
 							direccionOrganizacion={i.direccionOrganizacion}
+							obtenerOrganizaciones={obtenerOrganizaciones}
 						/>
 					))}
 				</tbody>

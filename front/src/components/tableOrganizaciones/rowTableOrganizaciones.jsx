@@ -1,5 +1,4 @@
 import React from "react";
-import ButtonDeleteOrganizaciones from "./buttonDeleteOrganizaciones";
 import ButtonUpdateOrganizaciones from "./buttonUpdateOrganizaciones";
 
 function RowTableOrganizaciones(props) {
@@ -12,6 +11,7 @@ function RowTableOrganizaciones(props) {
 		nombreLocalidad,
 		nombreDepartamento,
 		cueAnexo,
+		idLocalidad,
 	} = props;
 
 	return (
@@ -31,12 +31,12 @@ function RowTableOrganizaciones(props) {
 				<ButtonUpdateOrganizaciones
 					idOrganizacion={idOrganizacion}
 					obtenerOrganizaciones={obtenerOrganizaciones}
-				/>
-			</td>
-			<td className="px-6 py-4">
-				<ButtonDeleteOrganizaciones
-					idOrganizacion={idOrganizacion}
-					obtenerOrganizaciones={obtenerOrganizaciones}
+					nombreOrganizacion={nombreOrganizacion}
+					direccionOrganizacion={direccionOrganizacion}
+					numeroTelefonoOrganizacion={numeroTelefonoOrganizacion}
+					nombreLocalidad={nombreLocalidad}
+					cueAnexo={cueAnexo}
+					idLocalidad={idLocalidad}
 				/>
 			</td>
 		</tr>

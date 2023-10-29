@@ -11,6 +11,7 @@ class PersonasInvolucradas {
     public function crearPersonaInvolucrada($idDemanda, $nombre, $dni,$demandante ,$alumno,   $idParentesco ,$telefono, $domicilio,$idLocalidad , $grado, $turno, $docente ){
         try {
             $con = new Conexion();
+            $dni = str_replace(".","", $dni);
             $query = "INSERT INTO personas(nombrePersona, dniPersona) VALUES (?, ?)";
             $prepare = $con->prepare($query);
             $prepare-> bind_param("si",$nombre, $dni);
