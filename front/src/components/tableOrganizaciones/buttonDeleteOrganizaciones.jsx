@@ -13,9 +13,11 @@ function ButtonDeleteOrganizaciones(props) {
 			credentials: "include",
 			method: "POST",
 		})
-			.then((res) => {
+			.then(async (res) => {
 				if (!res.ok) {
-					throw new Error("Ocurrio un error al Borrar la demanda");
+					throw new Error("Ocurrio un error al Borrar la demanda", {
+						cause: await res.json(),
+					});
 				}
 				return res.json();
 			})
@@ -24,7 +26,8 @@ function ButtonDeleteOrganizaciones(props) {
 				obtenerOrganizaciones();
 			})
 			.catch((e) => {
-				crearAlert({ error: e.message });
+				const errorMessage = e.cause?.error || e.message;
+				crearAlert({ error: errorMessage });
 			});
 	};
 

@@ -70,8 +70,6 @@ function DemandaForm() {
 		return () => controller.abort;
 	}, []);
 
-	console.log(input);
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
 

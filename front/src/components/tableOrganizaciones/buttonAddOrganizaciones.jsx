@@ -1,45 +1,80 @@
 "use client";
 import { useAlertContext } from "@/context/alertContext";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function ButtonAddOrganizaciones(props) {
 	const { crearAlert } = useAlertContext();
-	const { obtenerProfesionales } = props;
+	const { obtenerOrganizaciones } = props;
 
 	const [hide, setHide] = useState(true);
+	const [loader, setLoader] = useState(false);
+	const [localidades, setLocalidades] = useState([]);
+
 	const [inputs, setInputs] = useState({
-		nombrePersona: null,
-		dniPersona: null,
-		correoProfesional: null,
-		especialidadProfesional: null,
-		prioridadProfesional: null,
+		nombreOrganizacion: null,
+		idLocalidad: null,
+		direccionOrganizacion: null,
+		numeroTelefonoOrganizacion: null,
+		cueAnexo: null,
 	});
 
 	const handleOnChange = (e) => {
 		setInputs({ ...inputs, [e.target.name]: e.target.value });
 	};
 
-	const submitProfesional = (e) => {
-		e.preventDefault();
-		fetch("http://localhost/devtic/api/CrearOrganizaciones.php", {
-			body: JSON.stringify(inputs),
+	const obtenerLocalidades = () => {
+		fetch("http://localhost/devtic/api/ListarLocalidades.php", {
+			method: "GET",
 			credentials: "include",
-			method: "POST",
 		})
-			.then((res) => {
+			.then(async (res) => {
 				if (!res.ok) {
-					throw new Error("Ocurrio un errror al crear el profesional");
+					throw new Error("Ocurrio un error al listar las organizaciones", {
+						cause: await res.json(),
+					});
 				}
 				return res.json();
 			})
 			.then((res) => {
-				obtenerProfesionales();
-				crearAlert(res);
+				setLocalidades(res);
+				setTimeout(() => setLoader(true), 1500);
 			})
 			.catch((error) => {
-				crearAlert({ error: error.message });
+				const errorMessage = error.cause?.error || error.message;
+				setLocalidades([]);
+				console.error({ error: errorMessage });
 			});
 	};
+
+	const submitOrganizacion = (e) => {
+		e.preventDefault();
+		fetch("http://localhost/devtic/api/CrearOrganizacion.php", {
+			body: JSON.stringify(inputs),
+			credentials: "include",
+			method: "POST",
+		})
+			.then(async (res) => {
+				if (!res.ok) {
+					throw new Error("Ocurrio un errror al crear el Organizacion", {
+						cause: await res.json(),
+					});
+				}
+				return res.json();
+			})
+			.then((res) => {
+				obtenerOrganizaciones();
+				crearAlert(res);
+				document.getElementById("formOrganizacion").reset();
+			})
+			.catch((error) => {
+				const errorMessage = error.cause?.error || error.message;
+				crearAlert({ error: errorMessage });
+			});
+	};
+
+	useEffect(() => {
+		obtenerLocalidades();
+	}, []);
 
 	return (
 		<>
@@ -48,7 +83,7 @@ function ButtonAddOrganizaciones(props) {
 				type="button"
 				onClick={() => setHide(!hide)}
 			>
-				Agregar Profesional
+				Agregar Organizacion
 			</button>
 			{hide ? null : (
 				<div className="fixed top-0 left-0 right-0 z-50 bg-gray-700 bg-opacity-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-full">
@@ -78,14 +113,17 @@ function ButtonAddOrganizaciones(props) {
 							</button>
 							<div className="px-6 py-6 lg:px-8">
 								<h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">
-									Registrar profesional
+									Registrar Organizacion
 								</h3>
 
-								<form onSubmit={submitProfesional}>
+								<form
+									onSubmit={submitOrganizacion}
+									id="formOrganizacion"
+								>
 									<div className="relative z-0 w-full mb-6 group">
 										<input
-											name="nombrePersona"
-											id="nombrePersona"
+											name="nombreOrganizacion"
+											id="nombreOrganizacion"
 											autoComplete="off"
 											className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 											placeholder=" "
@@ -93,89 +131,91 @@ function ButtonAddOrganizaciones(props) {
 											required
 										/>
 										<label
-											htmlFor="nombrePersona"
+											htmlFor="nombreOrganizacion"
 											className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 										>
-											Nombre y Apellido
+											Nombre de la Organización
 										</label>
 									</div>
 									<div className="relative z-0 w-full mb-6 group">
 										<input
-											onChange={handleOnChange}
-											type="numberic"
-											name="dniPersona"
+											name="cueAnexo"
+											id="cueAnexo"
 											autoComplete="off"
-											id="dniPersona"
 											className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 											placeholder=" "
+											onChange={handleOnChange}
+										/>
+										<label
+											htmlFor="cueAnexo"
+											className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+										>
+											cueAnexo
+										</label>
+									</div>
+
+									<div className="relative z-0 w-full mb-6 group">
+										<label
+											htmlFor="idLocalidad"
+											className="block text-sm font-medium leading-6 text-gray-900"
+										>
+											Localidad de la Organización
+										</label>
+										<div className="mt-2">
+											<select
+												onChange={handleOnChange}
+												name="idLocalidad"
+												className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+											>
+												<option>Seleccione una opción</option>
+												{loader ? (
+													localidades.map((i) => (
+														<option
+															key={i.idLocalidad}
+															value={i.idLocalidad}
+														>
+															{i.nombreLocalidad}
+														</option>
+													))
+												) : (
+													<option>Cargando localidades</option>
+												)}
+											</select>
+										</div>
+									</div>
+									<div className="relative z-0 w-full mb-6 group">
+										<input
+											name="direccionOrganizacion"
+											id="direccionOrganizacion"
+											autoComplete="off"
+											className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+											placeholder=" "
+											onChange={handleOnChange}
 											required
 										/>
 										<label
-											htmlFor="dniPersona"
+											htmlFor="direccionOrganizacion"
 											className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 										>
-											Documento
+											Dirrecion de la Organización
 										</label>
 									</div>
-									<div className="grid md:grid-cols-2 md:gap-6">
-										<div className="relative z-0 w-full mb-6 group col-span-2">
-											<input
-												type="email"
-												onChange={handleOnChange}
-												name="correoProfesional"
-												id="correoProfesional"
-												className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-												placeholder=""
-												autoComplete="off"
-												required
-											/>
-											<label
-												htmlFor="correoProfesional"
-												className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-											>
-												Correo
-											</label>
-										</div>
-									</div>
-									<div className="grid md:grid-cols-2 md:gap-6">
-										<div className="relative z-0 w-full mb-6 group col-span-2">
-											<label
-												htmlFor="especialidadProfesional"
-												className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-											>
-												Selecciona una Especialidad
-											</label>
-											<select
-												onChange={handleOnChange}
-												id="especialidadProfesional"
-												name="especialidadProfesional"
-												className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-											>
-												<option>Sin selección</option>
-												<option value={1}>Abogado/a</option>
-												<option value={2}>Psicopedagogo/a</option>
-											</select>
-										</div>
-									</div>
-									<div className="grid md:grid-cols-2 md:gap-6">
-										<div className="relative z-0 w-full mb-6 group col-span-2">
-											<label
-												htmlFor="prioridadProfesional"
-												className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-											>
-												Selecciona la prioridad
-											</label>
-											<select
-												onChange={handleOnChange}
-												id="prioridadProfesional"
-												name="prioridadProfesional"
-												className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-											>
-												<option>Sin selección</option>
-												<option value={0}>Usuario normal</option>
-												<option value={1}>Usuario administrador</option>
-											</select>
-										</div>
+									<div className="relative z-0 w-full mb-6 group">
+										<input
+											name="numeroTelefonoOrganizacion"
+											id="numeroTelefonoOrganizacion"
+											autoComplete="off"
+											className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+											placeholder=" "
+											onChange={handleOnChange}
+											required
+										/>
+										<label
+											htmlFor="numeroTelefonoOrganizacion"
+											className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+										>
+											Teléfono de la Organización
+										</label>
 									</div>
 									<button
 										type="submit"
