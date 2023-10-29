@@ -63,17 +63,16 @@ class Administradores extends Profesionales{
         }
     }
 
-    public function obtenerEstadisticas($token, $fechaInicial = null, $fechaFinal = null){
+    public function obtenerEstadisticas($token, $initialDate, $endDate){
         try {
             if ($datos = Profesionales::validarToken($token)) {
                 if ($datos->prioridadProfesional== 1) {
                     $con = new Conexion();
-                    $initialDate =  $fechaInicial ?? date("Y-m-d");
-                    $endDate = $fechaFinal ?? date("Y-m-d", strtotime("-30 days"));
+                    
 
                     $query = "SELECT 
                     (SELECT COUNT(*) FROM demandas WHERE demandas.borrarDemanda = 0 AND demandas.fechaIngresoDemanda BETWEEN ? AND ?) AS demandasIngresadas,
-                    (SELECT COUNT(*) FROM demandas WHERE demandas.borrarDemanda = 0 AND demandas.fechaCierreDemanda BETWEEN ? AND ?) AS demandasCerrada,
+                    (SELECT COUNT(*) FROM demandas WHERE demandas.borrarDemanda = 0 AND demandas.fechaCierreDemanda BETWEEN ? AND ?) AS demandasCerradas,
                     (SELECT COUNT(*) FROM notas WHERE notas.fechaCreacionNota BETWEEN ? AND ?) AS notasIngresadas ";
                     $prepareGlobal = $con->prepare($query); 
                     $prepareGlobal->bind_param("ssssss",$initialDate, $endDate, $initialDate,$endDate, $initialDate, $endDate );
@@ -84,7 +83,7 @@ class Administradores extends Profesionales{
                             $datos = $row;
                         }
                         $con->close();
-                        return ["estadisticaGlobal" =>$datos , "estadisticaProfesionales" => $this->obtenerEstadisticaProfesionales($initialDate, $endDate)];
+                        return ["estadisticasGlobales" =>$datos , "estadisticaProfesionales" => $this->obtenerEstadisticaProfesionales($initialDate, $endDate)];
                     }
                     throw new Exception("Error al cargar las estadisticas", 404);
                 }
@@ -95,15 +94,30 @@ class Administradores extends Profesionales{
         catch (Exception $e) {
             echo json_encode(["error"=>$e]);
             http_response_code($e->getCode());
+            $con->close();
         }
     }
 
     private function obtenerEstadisticaProfesionales($initialDate, $endDate){
         $con = new Conexion();
-        $query = "SELECT p.nombrePersona, COUNT(pg.idDemanda) AS demandasCreadas FROM profesionales p
-        LEFT JOIN profesionalesgrupos pg ON pg.idProfesional = p.idProfesional 
-        LEFT JOIN demandas d ON d.idDemanda = pg.idDemanda ";
+        $query = "SELECT per.nombrePersona, p.idProfesional, COUNT(d.idDemanda) as Demandas
+        FROM profesionales p
+        INNER JOIN personas per ON per.idPersona = p.idPersona
+        LEFT JOIN profesionalesgrupos pg ON pg.idProfesional = p.idProfesional
+        LEFT JOIN demandas d ON d.idDemanda = pg.idDemanda
+        GROUP BY per.nombrePersona, p.idProfesional
+        ";
+        $prepareGlobal = $con->prepare($query);
 
+        if($prepareGlobal->execute()){
+            $resultado = $prepareGlobal->get_result();
+            $datos = [];
+            while( $row = $resultado->fetch_assoc() ) {
+                $datos[] = $row;
+            }
+            $con->close();
+            return $datos;
+        }
     }
 
     public function verAuditoria($token){
@@ -128,6 +142,7 @@ class Administradores extends Profesionales{
         } catch (Exception $e) {
             echo json_encode(["error"=>$e]);
             http_response_code($e->getCode());
+
         }
     }
 

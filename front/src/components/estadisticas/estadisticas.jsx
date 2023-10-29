@@ -1,8 +1,12 @@
 import React from "react";
 
-function Estadisticas() {
+function Estadisticas(props) {
+	const { demandasIngresadas, demandasCerradas, notasIngresadas } = props;
+
+	console.log(props);
+
 	return (
-		<div className="flex items-center justify-center w-screen h-screen text-gray-800 p-10 bg-gray-200">
+		<div className="flex items-center justify-center  ">
 			<div className="grid lg:grid-cols-3 md:grid-cols-2 gap-6 w-full max-w-6xl">
 				<div className="flex items-center p-4 bg-white rounded">
 					<div className="flex flex-shrink-0 items-center justify-center bg-green-200 h-16 w-16 rounded">
@@ -20,12 +24,9 @@ function Estadisticas() {
 						</svg>
 					</div>
 					<div className="flex-grow flex flex-col ml-4">
-						<span className="text-xl font-bold">$8,430</span>
+						<span className="text-xl font-bold">{demandasIngresadas}</span>
 						<div className="flex items-center justify-between">
-							<span className="text-gray-500">Revenue last 30 days</span>
-							<span className="text-green-500 text-sm font-semibold ml-2">
-								+12.6%
-							</span>
+							<span className="text-gray-500">Demandas Ingresadas </span>
 						</div>
 					</div>
 				</div>
@@ -45,12 +46,9 @@ function Estadisticas() {
 						</svg>
 					</div>
 					<div className="flex-grow flex flex-col ml-4">
-						<span className="text-xl font-bold">211</span>
+						<span className="text-xl font-bold">{demandasCerradas}</span>
 						<div className="flex items-center justify-between">
-							<span className="text-gray-500">Sales last 30 days</span>
-							<span className="text-red-500 text-sm font-semibold ml-2">
-								-8.1%
-							</span>
+							<span className="text-gray-500">Demandas Cerradas</span>
 						</div>
 					</div>
 				</div>
@@ -70,12 +68,9 @@ function Estadisticas() {
 						</svg>
 					</div>
 					<div className="flex-grow flex flex-col ml-4">
-						<span className="text-xl font-bold">140</span>
+						<span className="text-xl font-bold">{notasIngresadas}</span>
 						<div className="flex items-center justify-between">
-							<span className="text-gray-500">Customers last 30 days</span>
-							<span className="text-green-500 text-sm font-semibold ml-2">
-								+28.4%
-							</span>
+							<span className="text-gray-500">Notas Ingresadas</span>
 						</div>
 					</div>
 				</div>
