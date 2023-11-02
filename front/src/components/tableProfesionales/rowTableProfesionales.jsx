@@ -11,6 +11,12 @@ function RowTableProfesionales(props) {
 		nombreEspecialidad,
 		prioridadProfesional,
 		estadistica,
+		demandasEnCurso,
+		demandasDemoradas,
+		demandasIngresadas,
+		demandasPendientes,
+		demandasTerminadas,
+		notasIngresadas,
 	} = props;
 
 	return (
@@ -36,7 +42,14 @@ function RowTableProfesionales(props) {
 					</td>
 				</>
 			) : (
-				<ModalViewStats />
+				<ModalViewStats
+					demandasEnCurso={demandasEnCurso}
+					demandasDemoradas={demandasDemoradas}
+					demandasIngresadas={demandasIngresadas}
+					demandasPendientes={demandasPendientes}
+					demandasTerminadas={demandasTerminadas}
+					notasIngresadas={notasIngresadas}
+				/>
 			)}
 		</tr>
 	);

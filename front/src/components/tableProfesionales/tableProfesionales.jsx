@@ -8,8 +8,6 @@ import ButtonAddProfesional from "./buttonAddProfesional";
 function TableProfesionales(props) {
 	const { obtenerProfesionales, profesionales, estadistica } = props;
 
-	console.log(profesionales);
-
 	return (
 		<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
 			{!estadistica ? (
@@ -74,6 +72,12 @@ function TableProfesionales(props) {
 							nombreEspecialidad={i.nombreEspecialidad}
 							prioridadProfesional={i.prioridadProfesional}
 							estadistica={estadistica}
+							demandasEnCurso={i.demandasEnCurso}
+							demandasDemoradas={i.demandasDemoradas}
+							demandasIngresadas={i.demandasIngresadas}
+							demandasPendientes={i.demandasPendientes}
+							demandasTerminadas={i.demandasTerminadas}
+							notasIngresadas={i.notasIngresadas}
 						/>
 					))}
 				</tbody>

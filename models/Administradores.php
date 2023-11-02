@@ -100,26 +100,67 @@ class Administradores extends Profesionales{
     }
 
     private function obtenerEstadisticaProfesionales($initialDate, $endDate) {
-        $con = new Conexion();
-        $query = "SELECT per.nombrePersona, p.idProfesional, COUNT(d.idDemanda) as Demandas
-        FROM profesionales p
-        INNER JOIN personas per ON per.idPersona = p.idPersona
-        LEFT JOIN profesionalesgrupos pg ON pg.idProfesional = p.idProfesional
-        LEFT JOIN demandas d ON d.idDemanda = pg.idDemanda AND d.fechaIngresoDemanda BETWEEN ? AND ?
-        GROUP BY per.nombrePersona, p.idProfesional
-        ";
-        $prepareGlobal = $con->prepare($query);
-        $prepareGlobal->bind_param("ss", $initialDate, $endDate);
-    
-        if ($prepareGlobal->execute()) {
-            $resultado = $prepareGlobal->get_result();
-            $datos = [];
-            while ($row = $resultado->fetch_assoc()) {
-                $datos[] = $row;
+        try {
+            //code...
+            $con = new Conexion();
+            $query = "SELECT per.nombrePersona, p.idProfesional, 
+            (SELECT COUNT(d.idDemanda) FROM demandas d
+                INNER JOIN profesionalesgrupos pg ON pg.idProfesional = p.idProfesional
+                WHERE d.fechaIngresoDemanda BETWEEN ? AND ? 
+            ) as demandasIngresadas,
+
+            (SELECT COUNT(d.idDemanda) FROM demandas d
+                INNER JOIN profesionalesgrupos pg ON pg.idProfesional = p.idProfesional
+                WHERE d.fechaCierreDemanda BETWEEN ? AND ? 
+            ) as demandasTerminadas,
+
+            (SELECT COUNT(d.idDemanda) FROM demandas d
+                INNER JOIN profesionalesgrupos pg ON pg.idProfesional = p.idProfesional
+                WHERE (d.fechaIngresoDemanda BETWEEN ? AND ?) AND d.idEstado = 1 
+            ) as demandasPendientes,
+
+            (SELECT COUNT(d.idDemanda) FROM demandas d
+                INNER JOIN profesionalesgrupos pg ON pg.idProfesional = p.idProfesional
+                WHERE (d.fechaIngresoDemanda BETWEEN ? AND ?) AND d.idEstado = 2 
+            ) as demandasEnCurso,
+
+            (SELECT COUNT(d.idDemanda) FROM demandas d
+                INNER JOIN profesionalesgrupos pg ON pg.idProfesional = p.idProfesional
+                WHERE (d.fechaIngresoDemanda BETWEEN ? AND ?) AND d.idEstado = 4 
+            ) as demandasDemoradas,
+
+            (SELECT COUNT(n.idNota) FROM notas n
+                WHERE (n.fechaCreacionNota BETWEEN ? AND ?) AND (p.idProfesional = n.idProfesionalCreador)
+            ) as notasIngresadas
+
+            FROM profesionales p
+            INNER JOIN personas per ON per.idPersona = p.idPersona
+            GROUP BY per.nombrePersona, p.idProfesional";
+            if($prepareGlobal = $con->prepare($query)){
+
+                if ($prepareGlobal->bind_param("ssssssssssss", $initialDate, $endDate, $initialDate, $endDate, $initialDate, $endDate, $initialDate, $endDate, $initialDate, $endDate, $initialDate, $endDate)) {
+                    
+                    
+                    
+                    if ($prepareGlobal->execute()) {
+                        $resultado = $prepareGlobal->get_result();
+                        $datos = [];
+                        while ($row = $resultado->fetch_assoc()) {
+                            $datos[] = $row;
+                        }
+                        $con->close();
+                        return $datos;
+                    }
+                } 
+                throw new Exception("Problemas al obtener las estadisticas",404);
             }
-            $con->close();
-            return $datos;
+            throw new Exception("Error al obtener las estadisticas", 404);
+            
+        } catch (Exception $e) {
+            echo json_encode(["error"=>$e->getMessage()]);
+            http_response_code($e->getCode());
         }
+        
     }
     
 
