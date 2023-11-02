@@ -82,7 +82,6 @@ class Administradores extends Profesionales{
                         while( $row = $resultado->fetch_assoc() ) {
                             $datos = $row;
                         }
-                        $con->close();
                         return ["estadisticasGlobales" =>$datos , "estadisticaProfesionales" => $this->obtenerEstadisticaProfesionales($initialDate, $endDate)];
                     }
                     throw new Exception("Error al cargar las estadisticas", 404);
@@ -92,33 +91,43 @@ class Administradores extends Profesionales{
             throw new Exception("Error token no valido",401);
         }
         catch (Exception $e) {
-            echo json_encode(["error"=>$e]);
-            http_response_code($e->getCode());
-            $con->close();
+            echo json_encode(["error"=>$e->getMessage()]);
+            http_response_code($e->getCode());    
+        }
+        finally{
+            $con -> close();
         }
     }
 
-    private function obtenerEstadisticaProfesionales($initialDate, $endDate){
+    private function obtenerEstadisticaProfesionales($initialDate, $endDate) {
         $con = new Conexion();
         $query = "SELECT per.nombrePersona, p.idProfesional, COUNT(d.idDemanda) as Demandas
         FROM profesionales p
         INNER JOIN personas per ON per.idPersona = p.idPersona
         LEFT JOIN profesionalesgrupos pg ON pg.idProfesional = p.idProfesional
-        LEFT JOIN demandas d ON d.idDemanda = pg.idDemanda
+        LEFT JOIN demandas d ON d.idDemanda = pg.idDemanda AND d.fechaIngresoDemanda BETWEEN ? AND ?
         GROUP BY per.nombrePersona, p.idProfesional
         ";
         $prepareGlobal = $con->prepare($query);
-
-        if($prepareGlobal->execute()){
+        $prepareGlobal->bind_param("ss", $initialDate, $endDate);
+    
+        if ($prepareGlobal->execute()) {
             $resultado = $prepareGlobal->get_result();
             $datos = [];
-            while( $row = $resultado->fetch_assoc() ) {
+            while ($row = $resultado->fetch_assoc()) {
                 $datos[] = $row;
             }
             $con->close();
             return $datos;
         }
     }
+    
+
+
+
+
+
+
 
     public function verAuditoria($token){
         try {
@@ -143,7 +152,10 @@ class Administradores extends Profesionales{
             echo json_encode(["error"=>$e]);
             http_response_code($e->getCode());
 
+        }finally {
+            $con -> close();
         }
+
     }
 
 

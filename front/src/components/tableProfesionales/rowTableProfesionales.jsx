@@ -1,6 +1,7 @@
 import React from "react";
 
 import ButtonDeleteProfesional from "./buttonDeleteProfesional";
+import ModalViewStats from "./modalViewStats";
 
 function RowTableProfesionales(props) {
 	const {
@@ -9,6 +10,7 @@ function RowTableProfesionales(props) {
 		nombrePersona,
 		nombreEspecialidad,
 		prioridadProfesional,
+		estadistica,
 	} = props;
 
 	return (
@@ -19,17 +21,23 @@ function RowTableProfesionales(props) {
 			>
 				{nombrePersona}
 			</th>
-			<td className="px-6 py-4">{nombreEspecialidad}</td>
-			<td className="px-6 py-4">
-				{prioridadProfesional == 1 ? "Administrador" : "Usuario normal"}
-			</td>
+			{!estadistica ? (
+				<>
+					<td className="px-6 py-4">{nombreEspecialidad}</td>
+					<td className="px-6 py-4">
+						{prioridadProfesional == 1 ? "Administrador" : "Usuario normal"}
+					</td>
 
-			<td className="px-6 py-4 text-right">
-				<ButtonDeleteProfesional
-					idProfesional={idProfesional}
-					obtenerProfesionales={obtenerProfesionales}
-				/>
-			</td>
+					<td className="px-6 py-4 text-right">
+						<ButtonDeleteProfesional
+							idProfesional={idProfesional}
+							obtenerProfesionales={obtenerProfesionales}
+						/>
+					</td>
+				</>
+			) : (
+				<ModalViewStats />
+			)}
 		</tr>
 	);
 }

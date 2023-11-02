@@ -3,7 +3,7 @@ import Estadisticas from "@/components/estadisticas/estadisticas";
 import TableProfesionales from "@/components/tableProfesionales/tableProfesionales";
 import React, { useState, useEffect } from "react";
 
-function AdministradorPage() {
+function AdministradorEstadisticaPage() {
 	const [estadisticas, setEstadisticas] = useState({});
 	const [loader, setLoader] = useState(false);
 	const [date, setDate] = useState({
@@ -46,6 +46,11 @@ function AdministradorPage() {
 
 	return (
 		<>
+			<h3 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+				{!date.fechaFinal & !date.fechaInicio
+					? "En los ultimos 30 días"
+					: `Desde ${date.fechaInicio} a ${date.fechaFinal}`}
+			</h3>
 			<Estadisticas
 				demandasIngresadas={
 					estadisticas.estadisticasGlobales.demandasIngresadas
@@ -56,10 +61,10 @@ function AdministradorPage() {
 			<TableProfesionales
 				obtenerProfesionales={obtenerEstadisticas}
 				profesionales={estadisticas.estadisticaProfesionales}
+				estadistica={true}
 			/>
-			;
 		</>
 	);
 }
 
-export default AdministradorPage;
+export default AdministradorEstadisticaPage;

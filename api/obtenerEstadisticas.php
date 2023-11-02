@@ -15,16 +15,12 @@ switch ($_SERVER["REQUEST_METHOD"]) {
             $datos = json_decode(file_get_contents("php://input"));
             $administrador = new Administradores();
 
-            if (isset($datos->fechaInicio)) {
+            if (isset($datos->fechaInicio) && isset($datos->fechaFinal)) {
                 $initialDate = $datos->fechaInicio;
-            }else{
-                $initialDate = date("Y-m-d");
-            }
-            
-            if (isset($datos->fechaFinal)) {
                 $endDate = $datos->fechaFinal;
-            }else{
-                $endDate = date("Y-m-d", strtotime("-30 days"));
+            } else {
+                $initialDate = date("Y-m-d", strtotime("-30 days"));
+                $endDate = date("Y-m-d");
             }
 
             if ($lstDemandas = $administrador->obtenerEstadisticas($_COOKIE["token"], $initialDate, $endDate)) {            
