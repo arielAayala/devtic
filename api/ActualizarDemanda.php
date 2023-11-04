@@ -19,9 +19,6 @@ switch ($_SERVER["REQUEST_METHOD"]) {
                 if($demanda -> actualizarDemanda($_COOKIE["token"], $datos->idDemanda,$datos->idTipo, $datos->idOrganizacion, $datos->motivoDemanda, $datos->relatoDemanda, $datos->almacenDemanda)){
                     http_response_code(200); 
                     echo json_encode(["msg" => "Se Actualizo la demanda correctamente"]);
-                }else{
-                    http_response_code(400); 
-                    echo json_encode(["error" => "Ocurrio un error"]);
                 }
             }else{
                 http_response_code(400); 

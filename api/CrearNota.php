@@ -28,10 +28,7 @@ switch ($_SERVER["REQUEST_METHOD"]) {
                 if ($nota->crearNotas($_COOKIE["token"], $idDemanda, $idTipoNota, $tituloNota, $descripcionNota, $anexosNotas)) {
                     http_response_code(200);
                     echo json_encode(["msg" => "Se creó la nota correctamente"]);
-                } else {
-                    http_response_code(500); // Cambié el código de error para reflejar un problema en el servidor
-                    echo json_encode(["error" => "Error al crear la nota"]);
-                }
+                } 
             } else {
                 http_response_code(400);
                 echo json_encode(["error" => "Faltan datos requeridos en el formulario"]);

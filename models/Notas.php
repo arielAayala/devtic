@@ -9,7 +9,6 @@ class Notas {
     public function crearNotas($token, $idDemanda, $idTipoNota, $tituloNota, $descripcionNota, $anexos) {
         try {
             $datosProfesional = Profesionales::validarToken($token);
-            
             if ($datosProfesional) {
                 $con = new Conexion();
                 $query = "SELECT COUNT(*) FROM profesionalesgrupos WHERE idDemanda = ? AND idProfesional = ?";
@@ -19,27 +18,42 @@ class Notas {
                 $prepareValidar->store_result();
                 
                 if ($prepareValidar->num_rows() == 1 || $datosProfesional->prioriodadProfesional == 1) {
-                    $queryCrear = "INSERT INTO notas(idDemanda, idProfesionalCreador, idTipoNota, tituloNota, fechaCreacionNota, descripcionNota) VALUES (?,?,?,?,CURDATE(),?)";
-                    $prepareCrear = $con->prepare($queryCrear);
-                    $prepareCrear->bind_param("iiiss", $idDemanda, $datosProfesional->idProfesional, $idTipoNota, $tituloNota, $descripcionNota);
-                    
-                    if ($prepareCrear->execute()) {
-                        if (!empty($anexos) && $prepareCrear->insert_id) {
-                            $idNota = $prepareCrear->insert_id;
-                            $anexo = new Anexos();
-                            $anexo->agregarAnexosNotas($anexos, $idNota);
+                    $prepareDatosViejos = $con -> prepare ("SELECT idEstado FROM demandas WHERE idDemanda = ?");
+                    $prepareDatosViejos->bind_param("i",$idDemanda);
+                    if($prepareDatosViejos->execute()){
+                        $resultado = $prepareDatosViejos->get_result();
+                        $datosViejos = [];
+                        while ($row = $resultado->fetch_assoc()) {
+                            $datosViejos = $row;   
                         }
-    
-                        return true;
-                    } else {
-                        throw new Exception("Error al crear la nota", 400);
+                        if ($datosViejos["idEstado"] != 3 && $datosViejos["idEstado"] != 4 ){
+                            $queryCrear = "INSERT INTO notas(idDemanda, idProfesionalCreador, idTipoNota, tituloNota, fechaCreacionNota, descripcionNota) VALUES (?,?,?,?,CURDATE(),?)";
+                            $prepareCrear = $con->prepare($queryCrear);
+                            $prepareCrear->bind_param("iiiss", $idDemanda, $datosProfesional->idProfesional, $idTipoNota, $tituloNota, $descripcionNota);
+                            
+                            if ($prepareCrear->execute()) {
+                                if (!empty($anexos) && $prepareCrear->insert_id) {
+                                    $idNota = $prepareCrear->insert_id;
+                                    $anexo = new Anexos();
+                                    $anexo->agregarAnexosNotas($anexos, $idNota);
+                                }
+                                $queryAuditoria = "INSERT INTO auditoriademanda(idDemanda, idProfesional,  idOperacion, fechaAuditoria) VALUES (?, ?,4,CURDATE())";
+                                $prepareAuditoria = $con->prepare($queryAuditoria);
+                                $prepareAuditoria->bind_param("ii", $idDemanda ,$datosProfesional->idProfesional);
+                                if($prepareAuditoria->execute()){
+                                    $con ->close();
+                                    return true;
+                                }
+                            } 
+                            throw new Exception("Error al crear la nota", 400);
+                        }
+                        throw new Exception("No se puede agregar notas si el estado de la demanda es demorado o terminado", 400);
                     }
-                } else {
-                    throw new Exception("Error al validar la existencia del profesional en el grupo", 401);
-                }
-            } else {
-                throw new Exception("Error al validar el token", 401);
-            }
+                    throw new Exception("Error al crear la nota", 400);    
+                } 
+                throw new Exception("Error al validar la existencia del profesional en el grupo", 401);   
+            } 
+            throw new Exception("Error al validar el token", 401);
         } catch (Exception $e) {
             // Manejo de excepciones, por ejemplo, registrar en un archivo de registro o enviar notificaciones.
             echo json_encode(["error" => $e->getMessage()]);

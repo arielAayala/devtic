@@ -34,8 +34,14 @@ class Demandas {
                                 throw new Exception("Ocurrio un error al vincular las personas involucradas con la demanda",400);
                             };
                         }
-                        $con -> close();
-                        return true;
+                        $queryAuditoria = "INSERT INTO auditoriademanda(idDemanda, idProfesional,  idOperacion, fechaAuditoria) VALUES (?, ?,1,CURDATE())";
+                        $prepareAuditoria = $con->prepare($queryAuditoria);
+                        $prepareAuditoria->bind_param("ii", $idDemanda ,$datosProfesional->idProfesional);
+                        if($prepareAuditoria->execute()){
+                            $con -> close();
+                            return true;
+                        }
+                        throw new Exception("Ocurrio un error al registrar la demanda en la auditoria", 400);
                     }
                     throw new Exception("Ocurrio un error al vincular al profesional con la demanda",400);
                 }
@@ -52,55 +58,106 @@ class Demandas {
     }
 
     public function actualizarDemanda($token, $idDemanda,$idTipo, $idOrganizacion, $motivoDemanda, $relatoDemanda, $almacenDemanda){
-        if($datos=Profesionales::validarToken($token)) {
-            $con = new Conexion();
-            $query="SELECT COUNT(*) as cantidad FROM profesionalesgrupos where ? = idProfesional AND ? = idDemanda";
-            $prepareGrupos = $con ->prepare($query);
-            $prepareGrupos->bind_param("ii", $datos->idProfesional, $idDemanda);
-            $prepareGrupos->execute();
-            $prepareGrupos ->store_result();
-            if ($prepareGrupos->num_rows == 1 || $datos->prioridadProfesional==1) {
-                $queryActualizar = "UPDATE demandas SET
-                idTipo = ?,
-                idOrganizacion = ?,
-                motivoDemanda = ?,
-                relatoDemanda = ?,
-                almacenDemanda = ? WHERE idDemanda = ?";
-                $prepareActualizar = $con -> prepare($queryActualizar);
-                $prepareActualizar->bind_param("iisssi",$idTipo,$idOrganizacion,$motivoDemanda,$relatoDemanda,$almacenDemanda,$idDemanda);
-                if ($prepareActualizar->execute()) {
-                    $con-> close();
-                    return true;
+        try {
+            if($datos=Profesionales::validarToken($token)) {
+                $con = new Conexion();
+                $query="SELECT COUNT(*) as cantidad FROM profesionalesgrupos where ? = idProfesional AND ? = idDemanda";
+                $prepareGrupos = $con ->prepare($query);
+                $prepareGrupos->bind_param("ii", $datos->idProfesional, $idDemanda);
+                $prepareGrupos->execute();
+                $prepareGrupos ->store_result();
+                if ($prepareGrupos->num_rows == 1 || $datos->prioridadProfesional==1) {
+                    $prepareDatosViejos = $con -> prepare ("SELECT idEstado,idTipo, idOrganizacion, motivoDemanda, relatoDemanda, almacenDemanda FROM demandas WHERE idDemanda = ?");
+                    $prepareDatosViejos->bind_param("i",$idDemanda);
+                    if($prepareDatosViejos->execute()){
+                        $resultado = $prepareDatosViejos->get_result();
+                        $datosViejos = [];
+                        while ($row = $resultado->fetch_assoc()) {
+                            $datosViejos = $row;   
+                        }
+                        if ($datosViejos["idEstado"] != 3 && $datosViejos["idEstado"] != 4 ){
+
+                            $queryActualizar = "UPDATE demandas SET
+                            idTipo = ?,
+                            idOrganizacion = ?,
+                            motivoDemanda = ?,
+                            relatoDemanda = ?,
+                            almacenDemanda = ? WHERE idDemanda = ?";
+                            $prepareActualizar = $con -> prepare($queryActualizar);
+                            $prepareActualizar->bind_param("iisssi",$idTipo,$idOrganizacion,$motivoDemanda,$relatoDemanda,$almacenDemanda,$idDemanda);
+                            if ($prepareActualizar->execute()) {
+                                $queryAuditoria = "INSERT INTO auditoriademanda(idDemanda, idProfesional,  idOperacion, fechaAuditoria) VALUES (?, ?,3,CURDATE())";
+                                $prepareAuditoria = $con->prepare($queryAuditoria);
+                                $prepareAuditoria->bind_param("ii", $idDemanda ,$datos->idProfesional);
+                                if($prepareAuditoria->execute()){
+                                    $idAuditoriaDemanda = $con -> insert_id;
+                                    $queryAuditoriaDemandaActualizar = "INSERT INTO auditoriademandaactualizar(
+                                        idAuditoriaDemanda,
+                                        motivoDemandaViejo,
+                                        motivoDemandaNuevo,
+                                        relatoDemandaViejo,
+                                        relatoDemandaNuevo,
+                                        idTipoViejo,
+                                        idTipoNuevo,
+                                        idOrganizacionViejo,
+                                        idOrganizacionNuevo,
+                                        almacenDemandaViejo,
+                                        almacenDemandaNuevo
+                                        ) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+                                    $prepareAuditoriaDemandaActualizar = $con -> prepare($queryAuditoriaDemandaActualizar);
+                                    $prepareAuditoriaDemandaActualizar->bind_param("issssiiiiss", $idAuditoriaDemanda, $datosViejos['motivoDemanda'], $motivoDemanda, $datosViejos['relatoDemanda'], $relatoDemanda, $datosViejos['idTipo'], $idTipo, $datosViejos['idOrganizacion'], $idOrganizacion, $datosViejos['almacenDemanda'], $almacenDemanda);
+
+                                    if($prepareAuditoriaDemandaActualizar->execute()){
+                                        $con-> close();
+                                        return true;
+                                    }
+                                    throw new Exception("Error al registrar la actualizacion en la auditoria", 400);
+                                }
+                                throw new Exception("Error al registrar la actualizacion en la auditoria", 400);
+                            }
+                            throw new Exception("Error al registrar la actualizacion en la auditoria", 400);
+                        }
+                        throw new Exception("Las demandas no se pueden editar con estado terminado o demorado", 400);
+                    }
+                    throw new Exception("Error al obtener los valores antiguos de la demanda", 400);
                 }
+                throw new Exception("Error al validar los permisos", 401);
             }
+            throw new Exception("Error al validar el token", 401);
+        }catch(Exception $e){
+            echo json_encode(array("error"=> $e->getMessage()));
+            http_response_code($e->getCode());
         }
-        $con->close();
-        return false;
     }
+
 
     public function eliminarDemanda($token, $idDemanda) {
         try {
             if ($datos = Profesionales::validarToken($token)) {
                 if ($datos->prioridadProfesional == 1) {
                     $con = new Conexion;    
-                        // Prepare and execute the DELETE query for demandas
-                        $prepareDemanda = $con->prepare("UPDATE demandas SET borrarDemanda = 1 WHERE idDemanda = ?");
-                        if ($prepareDemanda === false) {
-                            throw new Exception("Error creating demandas prepared statement: " . $con->error);
-                        }
-                        $prepareDemanda->bind_param("i", $idDemanda);
-                        if ($prepareDemanda->execute()) {
+                    $prepareDemanda = $con->prepare("UPDATE demandas SET borrarDemanda = 1 WHERE idDemanda = ?");
+                    if ($prepareDemanda === false) {
+                        throw new Exception("Error creating demandas prepared statement: " . $con->error);
+                    }
+                    $prepareDemanda->bind_param("i", $idDemanda);
+                    if ($prepareDemanda->execute()) {
+                        $queryAuditoria = "INSERT INTO auditoriademanda(idDemanda, idProfesional,  idOperacion, fechaAuditoria) VALUES (?, ?,2,CURDATE())";
+                        $prepareAuditoria = $con->prepare($queryAuditoria);
+                        $prepareAuditoria->bind_param("ii", $idDemanda ,$datos->idProfesional);
+                        if($prepareAuditoria->execute()){
                             $con->close();
                             return true;
                         }
-                        $con->close();
-                        throw new Exception("Error al eliminar la demanda");
+                    }
+                    throw new Exception("Error al eliminar la demanda",400);
                 }
-                throw new Exception("Error ausencia de permisos");
+                throw new Exception("Error ausencia de permisos",401);
             }
-            throw new Exception("Error token no autorizado");
+            throw new Exception("Error token no autorizado",401);
         } catch (Exception $e) {
             echo json_encode(["error"=>$e->getMessage()]);
+            http_response_code($e->getCode());
             return false;
         }
     }
@@ -115,24 +172,48 @@ class Demandas {
                 $result = $prepareValidar->get_result();
                 $value = $result->fetch_object();
                 if ($value->profesional == 1 || $datos-> idPrioridad == 1) {
-                    if ($idEstado == 3) {
-                        $prepareEstado = $con -> prepare("UPDATE demandas SET idEstado = ? , fechaCierreDemanda = CURDATE() WHERE idDemanda = ?");
-                    }else{
-                        $prepareEstado = $con -> prepare("UPDATE demandas SET idEstado = ? , fechaCierreDemanda = NULL WHERE idDemanda = ?");
+                    $prepareEstadoViejo = $con ->prepare("SELECT idEstado FROM demandas WHERE idDemanda = ?");
+                    $prepareEstadoViejo->bind_param("i",$idDemanda);
+                    if($prepareEstadoViejo->execute()){
+                        $resultado = $prepareEstadoViejo->get_result();
+                        $datosViejos = [];
+                        while($row = $resultado->fetch_assoc()) {
+                            $datosViejos = $row;
+                        }
+                        if ($idEstado == 3) {
+                            $prepareEstado = $con -> prepare("UPDATE demandas SET idEstado = ? , fechaCierreDemanda = CURDATE() WHERE idDemanda = ?");
+                        }else{
+                            $prepareEstado = $con -> prepare("UPDATE demandas SET idEstado = ? , fechaCierreDemanda = NULL WHERE idDemanda = ?");
+                        }
+                        $prepareEstado->bind_param("ii", $idEstado, $idDemanda);
+                        if($prepareEstado->execute()){
+                            $queryAuditoria = "INSERT INTO auditoriademanda(idDemanda, idProfesional,  idOperacion, fechaAuditoria) VALUES (?, ?,5,CURDATE())";
+                            $prepareAuditoria = $con->prepare($queryAuditoria);
+                            $prepareAuditoria->bind_param("ii", $idDemanda ,$datos->idProfesional);
+                            if($prepareAuditoria->execute()){
+                                $idAuditoria = $con -> insert_id;
+                                $queryAuditoriaEstado = "INSERT INTO auditoriademandaestado (idAuditoriaDemanda, idEstadoViejo, idEstadoNuevo) VALUES (?, ?, ?)";
+                                $prepareAuditoriaEstado = $con->prepare($queryAuditoriaEstado);
+                                $prepareAuditoriaEstado->bind_param("iii",$idAuditoria, $datosViejos["idEstado"], $idEstado);
+                                if($prepareAuditoriaEstado->execute()){
+                                    $con ->close();
+                                    return true;
+                                }
+                                throw new Exception("Error El Estado no pudo cambiarse",400);
+                            }
+                            throw new Exception("Error El Estado no pudo cambiarse",400);
+                        }
+                        throw new Exception("Error El Estado no pudo cambiarse",400);
                     }
-                    $prepareEstado->bind_param("ii", $idEstado, $idDemanda);
-                    if($prepareEstado->execute()){
-                        return true;
-                    }
-                    
-                    throw new Exception("Error El Estado no pudo cambiarse");
+                    throw new Exception("Error El Estado no pudo cambiarse",400);
                 } 
-                throw new Exception("Error Profesional sin permiso");     
+                throw new Exception("Error Profesional sin permiso",401);     
             }
-            throw new Exception("Error Token no Valido");
+            throw new Exception("Error Token no Valido",401);
             
         } catch (Exception $e) {
             echo json_encode(["error"=>$e->getMessage()]);
+            http_response_code($e->getCode());
             return false;
         }
 
