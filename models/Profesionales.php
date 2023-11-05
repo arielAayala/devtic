@@ -163,8 +163,91 @@ class Profesionales  {
         } 
     }   
     
+    public function obtenerPerfil($token, $idProfesional){
+        try {
+            if (Profesionales::validarToken($token)) {
+                $con = new Conexion();
+                $query = "SELECT per.nombrePersona, p.idProfesional, p.fotoProfesional, e.nombreEspecialidad  
+                FROM profesionales p 
+                INNER JOIN personas per ON per.idPersona = p.idPersona
+                INNER JOIN especialidades e ON e.idEspecialidad = p.idEspecialidad
+                WHERE p.idProfesional = ? ";
+                $preparePerfil = $con->prepare($query);
+                $preparePerfil->bind_param("i", $idProfesional);
+                if ($preparePerfil->execute()) {
+                    $datos = [];
+                    $resultado = $preparePerfil->get_result();
+                    while($row = $resultado->fetch_assoc()) {
+                        $datos=$row;
+                    }
+                    return json_encode(["datosProfesional" => $datos, "movimientoProfesional" =>$this->obtenerMovimientoProfesional($idProfesional)]);
+                }
+                throw new Exception("Error al obtener el perfil", 400);
+            }
+            throw new Exception("Error al validar el token", 401);
+        } catch (Exception $e) {
+            echo json_encode(["error"=>$e->getMessage()]);
+            http_response_code($e->getCode());        
+        }
+    } 
 
-    
+    private function obtenerMovimientoProfesional ( $idProfesional){
+       $con = new Conexion();
+       $query = "SELECT 
+            p.idProfesional,
+            per.nombrePersona,
+            ad.idAuditoriaDemanda,
+            d.idDemanda,
+            d.idEstado,
+            e.nombreEstado,
+            d.motivoDemanda,
+            ad.idOperacion,
+            o.nombreOperacion,
+            ad.fechaAuditoria,
+            ada.motivoDemandaViejo,
+            ada.motivoDemandaNuevo,
+            ada.relatoDemandaViejo,
+            ada.relatoDemandaNuevo,
+            ada.idTipoViejo,
+            tiposViejos.nombreTipo as nombreTipoViejo,
+            ada.idTipoNuevo,
+            tiposNuevos.nombreTipo as nombreTipoNuevo,
+            ada.idOrganizacionViejo, organizacionesViejos.nombreOrganizacion as nombreOrganizacionViejo,
+            ada.idOrganizacionNuevo, organizacionesNuevos.nombreOrganizacion as nombreOrganizacionNuevo,
+            ada.almacenDemandaViejo,
+            ada.almacenDemandaNuevo,
+            ade.idEstadoViejo,
+            estadosViejos.nombreEstado as nombreEstadoViejo,
+            ade.idEstadoNuevo,
+            estadosNuevos.nombreEstado as nombreEstadoNuevo
+        FROM auditoriaDemanda ad 
+        LEFT JOIN auditoriaDemandaActualizar ada ON ada.idAuditoriaDemanda = ad.idAuditoriaDemanda
+        LEFT JOIN auditoriaDemandaEstado ade ON ade.idAuditoriaDemanda = ad.idAuditoriaDemanda
+        INNER JOIN operaciones o ON ad.idOperacion = o.idOperacion
+        INNER JOIN demandas d ON d.idDemanda = ad.idDemanda
+        INNER JOIN estados e ON d.idEstado = e.idEstado
+        LEFT JOIN estados estadosViejos ON estadosViejos.idEstado = ade.idEstadoViejo
+        LEFT JOIN estados estadosNuevos ON estadosNuevos.idEstado = ade.idEstadoNuevo
+        LEFT JOIN tipos tiposViejos ON tiposViejos.idTipo = ada.idTipoViejo
+        LEFT JOIN tipos tiposNuevos ON tiposNuevos.idTipo = ada.idTipoNuevo
+        LEFT JOIN organizaciones organizacionesViejos ON organizacionesViejos.idOrganizacion = ada.idOrganizacionViejo
+        LEFT JOIN organizaciones organizacionesNuevos ON organizacionesNuevos.idOrganizacion = ada.idOrganizacionNuevo
+        INNER JOIN profesionales p ON ad.idProfesional = p.idProfesional
+        INNER JOIN personas per ON per.idPersona = p.idPersona
+        WHERE p.idProfesional = ?
+        ORDER BY ad.idAuditoriaDemanda DESC
+        LIMIT 3; ";
+        $preparePerfil = $con->prepare($query);
+        $preparePerfil->bind_param("i", $idProfesional);
+        if ($preparePerfil->execute()) {
+            $datos = [];
+            $resultado = $preparePerfil->get_result();
+            while($row = $resultado->fetch_assoc()) {
+                $datos[]=$row;
+            }
+            return $datos;
+        }
+    }
 
 };// end class Profesional
 

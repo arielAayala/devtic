@@ -5,8 +5,6 @@ function EstadoSpan(props) {
 
 	let estadoClass = "";
 
-	console.log(props);
-
 	switch (nombreEstado) {
 		case "En curso":
 			estadoClass =

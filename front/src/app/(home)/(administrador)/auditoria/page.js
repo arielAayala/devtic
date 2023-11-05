@@ -39,8 +39,6 @@ function PageAuditoria() {
 		return <h1>cargando auditoria...</h1>;
 	}
 
-	console.log(auditoria);
-
 	return (
 		<div className="col-span-4 sm:col-span-9">
 			<div className="bg-white shadow rounded-lg p-6">
@@ -51,7 +49,7 @@ function PageAuditoria() {
 							<ul className="-mb-8">
 								{auditoria.map((i) => {
 									return (
-										<li>
+										<li key={i.idAuditoriaDemanda}>
 											<div className="relative pb-8">
 												<span
 													className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
