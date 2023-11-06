@@ -80,7 +80,7 @@ function Perfil() {
 						</div>
 						<div className="col-span-4 sm:col-span-9">
 							<div className="bg-white shadow rounded-lg p-6">
-								<h2 className="text-xl font-bold mb-4">Demandas</h2>
+								<h2 className="text-xl font-bold mb-4"> Historial de movimientos </h2>
 								<div className="bg-white">
 									<div className="max-w-xl mx-auto p-8">
 										<div className="flow-root">

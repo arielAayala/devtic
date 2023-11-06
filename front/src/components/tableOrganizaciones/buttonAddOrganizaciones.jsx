@@ -79,11 +79,14 @@ function ButtonAddOrganizaciones(props) {
 	return (
 		<>
 			<button
-				className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+				className="block ml-5 mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 				type="button"
 				onClick={() => setHide(!hide)}
 			>
-				Agregar Organizacion
+				<svg className="ml-3.5 w-6 h-6 text-white dark:text-white item-center" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+					<path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 15V9m4 6V9m4 6V9m4 6V9M2 16h16M1 19h18M2 7v1h16V7l-8-6-8 6Z"/>
+				</svg>
+				<p className="text-center mt-2"> Agregar</p>
 			</button>
 			{hide ? null : (
 				<div className="fixed top-0 left-0 right-0 z-50 bg-gray-700 bg-opacity-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-full">
