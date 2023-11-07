@@ -120,6 +120,14 @@ function PageAuditoria() {
 																		{i.idTipoViejo != i.idTipoNuevo
 																			? `- El Tipo de demanda '${i.nombreTipoViejo}' fue modificado a '${i.nombreTipoNuevo}'`
 																			: null}
+																		{i.nombreProfesionalAfectado &&
+																		i.idOperacion == 6
+																			? `- El profesional '${i.nombreProfesionalAfectado}' fue agregado`
+																			: null}
+																		{i.nombreProfesionalAfectado &&
+																		i.idOperacion == 7
+																			? `- El profesional '${i.nombreProfesionalAfectado}' fue eliminado`
+																			: null}
 																	</>
 																) : null}
 															</p>

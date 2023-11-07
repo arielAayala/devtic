@@ -201,10 +201,12 @@ class Administradores extends Profesionales{
                     ade.idEstadoViejo,
                     estadosViejos.nombreEstado as nombreEstadoViejo,
                     ade.idEstadoNuevo,
-                    estadosNuevos.nombreEstado as nombreEstadoNuevo
+                    estadosNuevos.nombreEstado as nombreEstadoNuevo,
+                    perAuditoria.nombrePersona as nombreProfesionalAfectado
                 FROM auditoriaDemanda ad 
                 LEFT JOIN auditoriaDemandaActualizar ada ON ada.idAuditoriaDemanda = ad.idAuditoriaDemanda
                 LEFT JOIN auditoriaDemandaEstado ade ON ade.idAuditoriaDemanda = ad.idAuditoriaDemanda
+                LEFT JOIN auditoriaDemandaProfesional adp ON adp.idAuditoriaDemanda = ad.idAuditoriaDemanda
                 INNER JOIN operaciones o ON ad.idOperacion = o.idOperacion
                 INNER JOIN demandas d ON d.idDemanda = ad.idDemanda
                 INNER JOIN estados e ON d.idEstado = e.idEstado
@@ -216,8 +218,9 @@ class Administradores extends Profesionales{
                 LEFT JOIN organizaciones organizacionesNuevos ON organizacionesNuevos.idOrganizacion = ada.idOrganizacionNuevo
                 INNER JOIN profesionales p ON ad.idProfesional = p.idProfesional
                 INNER JOIN personas per ON per.idPersona = p.idPersona
-                ORDER BY ad.idAuditoriaDemanda DESC;
-                ";
+                LEFT JOIN profesionales pAuditoria ON pAuditoria.idProfesional = adp.idProfesional 
+                LEFT JOIN personas perAuditoria ON perAuditoria.idPersona = pAuditoria.idPersona
+                ORDER BY ad.idAuditoriaDemanda DESC;";
                     if($resultado =$con->query($query)){
                         $datos = [];
                         while ($row = $resultado->fetch_assoc()) {

@@ -37,7 +37,21 @@ class Grupos{
                         $prepareAddProfesional = $con ->prepare("INSERT INTO profesionalesgrupos (idDemanda, idProfesional, creadorGrupo) VALUES (?,?, false)");
                         $prepareAddProfesional ->bind_param("ii", $idDemanda, $idProfesional);
                         if ($prepareAddProfesional ->execute()) {
-                            return true;
+                            $queryAuditoria = "INSERT INTO auditoriademanda(idDemanda, idProfesional,  idOperacion, fechaAuditoria) VALUES (?, ?,6,CURDATE())";
+                            $prepareAuditoria = $con->prepare($queryAuditoria);
+                            $prepareAuditoria->bind_param("ii", $idDemanda , $datos->idProfesional);
+                            if($prepareAuditoria->execute()){
+                                $idAuditoria = $con -> insert_id;
+                                $queryAuditoriaEstado = "INSERT INTO auditoriademandaprofesional (idAuditoriaDemanda, idProfesional) VALUES (?, ?)";
+                                $prepareAuditoriaEstado = $con->prepare($queryAuditoriaEstado);
+                                $prepareAuditoriaEstado->bind_param("ii", $idAuditoria, $idProfesional);
+                                if($prepareAuditoriaEstado->execute()){
+                                    $con ->close();
+                                    return true;
+                                }
+                                throw new Exception("Error al eliminar al profesional");
+                            }
+                            throw new Exception("Error al eliminar al profesional");   
                         }
                         throw new Exception("Error al agregar al profesional");
                     }
@@ -71,7 +85,21 @@ class Grupos{
                         $prepareDeleteProfesional = $con ->prepare("DELETE FROM profesionalesgrupos WHERE idDemanda = ? AND idProfesional = ?");
                         $prepareDeleteProfesional ->bind_param("ii", $idDemanda, $idProfesional);
                         if ($prepareDeleteProfesional ->execute()) {
-                            return true;
+                            $queryAuditoria = "INSERT INTO auditoriademanda(idDemanda, idProfesional,  idOperacion, fechaAuditoria) VALUES (?, ?,7,CURDATE())";
+                            $prepareAuditoria = $con->prepare($queryAuditoria);
+                            $prepareAuditoria->bind_param("ii", $idDemanda , $datos->idProfesional);
+                            if($prepareAuditoria->execute()){
+                                $idAuditoria = $con -> insert_id;
+                                $queryAuditoriaEstado = "INSERT INTO auditoriademandaprofesional (idAuditoriaDemanda, idProfesional) VALUES (?, ?)";
+                                $prepareAuditoriaEstado = $con->prepare($queryAuditoriaEstado);
+                                $prepareAuditoriaEstado->bind_param("ii", $idAuditoria, $idProfesional);
+                                if($prepareAuditoriaEstado->execute()){
+                                    $con ->close();
+                                    return true;
+                                }
+                                throw new Exception("Error al eliminar al profesional");
+                            }
+                            throw new Exception("Error al eliminar al profesional");   
                         }
                         throw new Exception("Error al eliminar al profesional");
                     }

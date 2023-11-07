@@ -2,11 +2,13 @@ import Link from "next/link";
 import React, { useState } from "react";
 import SelectProfesional from "@/components/selectProfesional/selectProfesional";
 import { useAlertContext } from "@/context/alertContext";
+import { useAuthContext } from "@/context/authContext";
 
 function GrupoModal(props) {
 	const { idDemanda, grupo, obtenerDemanda } = props;
 
 	const { crearAlert } = useAlertContext();
+	const { user } = useAuthContext();
 
 	const [isModalGrupoOpen, setIsModalOpenGrupo] = useState(false);
 	const handleModalGrupo = () => {
@@ -96,11 +98,17 @@ function GrupoModal(props) {
 								Grupo de la Demanda
 							</h2>
 						</div>
-						<SelectProfesional
-							idDemanda={idDemanda}
-							grupo={grupo}
-							obtenerDemanda={obtenerDemanda}
-						/>
+						{user.prioridadProfesional == 1 ||
+						grupo.some(
+							(i) =>
+								i.creadorGrupo == 1 && i.idProfesional == user.idProfesional
+						) ? (
+							<SelectProfesional
+								idDemanda={idDemanda}
+								grupo={grupo}
+								obtenerDemanda={obtenerDemanda}
+							/>
+						) : null}
 						<div className=" flex flex-row justify-center w-full overflow-x-auto overflow-y-hidden space-x-5">
 							{grupo.map((i) => {
 								return (
@@ -140,14 +148,22 @@ function GrupoModal(props) {
 												>
 													Perfil
 												</Link>
-												<button
-													onClick={() =>
-														handleSacarProfesionalGrupo(i.idProfesional)
-													}
-													className="bg-red-700 text-white p-2 rounded-lg ml-4"
-												>
-													Sacar
-												</button>
+												{i.creadorGrupo != 1 &&
+												(user.prioridadProfesional == 1 ||
+													grupo.some(
+														(i) =>
+															i.creadorGrupo == 1 &&
+															i.idProfesional == user.idProfesional
+													)) ? (
+													<button
+														onClick={() =>
+															handleSacarProfesionalGrupo(i.idProfesional)
+														}
+														className="bg-red-700 text-white p-2 rounded-lg ml-4"
+													>
+														Sacar
+													</button>
+												) : null}
 											</div>
 										</div>
 									</div>
