@@ -41,9 +41,9 @@ function PageAuditoria() {
 
 	return (
 		<div className="col-span-4 sm:col-span-9">
-			<div className="bg-white shadow rounded-lg p-6">
+			<div className=" shadow rounded-lg p-6">
 				<h2 className="text-xl font-bold mb-4">Historial de modificaciones</h2>
-				<div className="bg-white">
+				<div className="">
 					<div className="max-w-xl mx-auto p-8">
 						<div className="flow-root">
 							<ul className="-mb-8">
@@ -98,36 +98,69 @@ function PageAuditoria() {
 																<br />
 																{i.idOperacion != 2 && i.idOperacion != 4 ? (
 																	<>
-																		{i.nombreEstadoViejo && i.nombreEstadoNuevo
-																			? `- El estado '${i.nombreEstadoViejo}' fue modificado a '${i.nombreEstadoNuevo}'`
-																			: null}
+																		{i.nombreEstadoViejo &&
+																		i.nombreEstadoNuevo ? (
+																			<>
+																				{`- El estado '${i.nombreEstadoViejo}'
+																				fue modificado a '${i.nombreEstadoNuevo}
+																				'`}
+																				<br />
+																			</>
+																		) : null}
 																		{i.motivoDemandaViejo !=
-																		i.motivoDemandaNuevo
-																			? `- El Motivo '${i.motivoDemandaViejo}' fue modificado a '${i.motivoDemandaNuevo}'`
-																			: null}
+																		i.motivoDemandaNuevo ? (
+																			<>
+																				{`- El Motivo '${i.motivoDemandaViejo}'
+																				fue modificado a '${i.motivoDemandaNuevo}'`}
+																				<br />
+																			</>
+																		) : null}
 																		{i.relatoDemandaViejo !=
-																		i.relatoDemandaNuevo
-																			? `- El Relato '${i.relatoDemandaViejo}' fue modificado a '${i.relatoDemandaNuevo}'`
-																			: null}
+																		i.relatoDemandaNuevo ? (
+																			<>
+																				{`- El Relato '${i.relatoDemandaViejo}'
+																				fue modificado a '${i.relatoDemandaNuevo}'`}
+																				<br />
+																			</>
+																		) : null}
 																		{i.almacenDemandaViejo !=
-																		i.almacenDemandaNuevo
-																			? `- El Almacen '${i.almacenDemandaViejo}' fue modificado a '${i.almacenDemandaNuevo}'`
-																			: null}
+																		i.almacenDemandaNuevo ? (
+																			<>
+																				{`- El Almacen '${i.almacenDemandaViejo}'
+																				fue modificado a '${i.almacenDemandaNuevo}'`}
+																				<br />
+																			</>
+																		) : null}
 																		{i.idOrganizacionViejo !=
-																		i.idOrganizacionNuevo
-																			? `- La Organización '${i.nombreOrganizacionViejo}' fue modificado a '${i.nombreOrganizacionNuevo}'`
-																			: null}
-																		{i.idTipoViejo != i.idTipoNuevo
-																			? `- El Tipo de demanda '${i.nombreTipoViejo}' fue modificado a '${i.nombreTipoNuevo}'`
-																			: null}
+																		i.idOrganizacionNuevo ? (
+																			<>
+																				{`- La Organización '${i.nombreOrganizacionViejo}' fue
+																				modificado a '${i.nombreOrganizacionNuevo}'`}
+																				<br />
+																			</>
+																		) : null}
+																		{i.idTipoViejo != i.idTipoNuevo ? (
+																			<>
+																				{`- El Tipo de demanda '${i.nombreTipoViejo}' fue modificado a '${i.nombreTipoNuevo}'`}
+																				<br />
+																			</>
+																		) : null}
 																		{i.nombreProfesionalAfectado &&
-																		i.idOperacion == 6
-																			? `- El profesional '${i.nombreProfesionalAfectado}' fue agregado`
-																			: null}
+																		i.idOperacion == 6 ? (
+																			<>
+																				{`- El profesional '${i.nombreProfesionalAfectado}' fue
+																				agregado`}
+																				<br />
+																			</>
+																		) : null}
 																		{i.nombreProfesionalAfectado &&
-																		i.idOperacion == 7
-																			? `- El profesional '${i.nombreProfesionalAfectado}' fue eliminado`
-																			: null}
+																		i.idOperacion == 7 ? (
+																			<>
+																				{`- El profesional '${i.nombreProfesionalAfectado}' fue
+																				eliminado`}
+																				<br />
+																			</>
+																		) : null}
 																	</>
 																) : null}
 															</p>
