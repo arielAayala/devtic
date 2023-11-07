@@ -13,7 +13,7 @@ function ResetPassword() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		fetch("http://localhost/devtic/api/ReestablecerContrasena.php", {
+		fetch("http://localhost/devtic/api/EnviarReestablecerContrasena.php", {
 			method: "POST",
 			body: JSON.stringify(inputs),
 			headers: {
