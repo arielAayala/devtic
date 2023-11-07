@@ -300,7 +300,7 @@ class Profesionales  {
             $mail->SMTPSecure = "tls"; // Habilitar cifrado TLS implícito
             $mail->Port = 587;                        // Puerto TCP al que conectarse; use 587 si ha configurado `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
             $mail->Username = "devtic.ucp.170802@gmail.com";  // Nombre de usuario SMTP
-            $mail->Password = "hmhozkdyixguzvlc";      // Contraseña SMTP
+            $mail->Password = "";      // Contraseña SMTP
     
             // Destinatarios
             // Nombre opcional
