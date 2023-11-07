@@ -15,10 +15,8 @@ export default function RootLayout({ children }) {
 			<body>
 				<AlertContextProvider>
 					<AuthContextProvider>
-						<Loader>
-							{children}
-							<Alert />
-						</Loader>
+						{children}
+						<Alert />
 					</AuthContextProvider>
 				</AlertContextProvider>
 			</body>

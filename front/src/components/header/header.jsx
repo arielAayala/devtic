@@ -1,25 +1,30 @@
 "use client";
 import { useAuthContext } from "@/context/authContext";
 import React, { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
 function Header() {
-	const [userMenuOpen, setUserMenuOpen] = useState(false);
 	const { user, cerrarSesion } = useAuthContext();
+	const router = useRouter();
+
+	const [userMenuOpen, setUserMenuOpen] = useState(false);
 	const sidebarRef = useRef(null);
 
 	const toggleUserMenu = () => {
 		setUserMenuOpen(!userMenuOpen);
 	};
 
+	if (!user) {
+		redirect("/");
+	}
+
 	const handleCerrarSesion = () => {
 		setUserMenuOpen(false);
 		cerrarSesion();
 	};
 
-	const router = useRouter();
 	const handleRedirectToPerfil = () => {
 		setUserMenuOpen(false);
 		router.push(`/perfiles/${user.idProfesional}`);
@@ -45,6 +50,7 @@ function Header() {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, []);
+
 	return (
 		<nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
 			<div className="px-3 py-3 lg:px-5 lg:pl-3">

@@ -1,10 +1,20 @@
 <?php
 
 include_once("../conexion/Conexion.php");
-require_once("../vendor/autoload.php");
+
+$dotenv = Dotenv\Dotenv::createImmutable("../");
+$dotenv->safeLoad();
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+
+require_once("../vendor/autoload.php");
 
 class Profesionales  {
     private $idProfesional;
@@ -192,8 +202,8 @@ class Profesionales  {
     } 
 
     private function obtenerMovimientoProfesional ( $idProfesional){
-       $con = new Conexion();
-       $query = "SELECT 
+        $con = new Conexion();
+        $query = "SELECT 
             p.idProfesional,
             per.nombrePersona,
             ad.idAuditoriaDemanda,
@@ -248,6 +258,71 @@ class Profesionales  {
             return $datos;
         }
     }
+
+    public function reestablecerContrasena($correo) {
+        try {
+            $con = new Conexion();
+            $token = hash("sha256", bin2hex(random_bytes(16)));
+            $date = date("Y-m-d H:i:s", time() + 60 * 30);
+    
+            $query = "UPDATE profesionales 
+            SET 
+            resetToken = ?,
+            resetTokenFecha = ? WHERE correoProfesional = ?";
+            $prepareReset = $con->prepare($query);
+            $prepareReset->bind_param("sss", $token, $date, $correo);
+            $prepareReset->execute();
+            
+            if ($con->affected_rows) {
+                $this->enviarEmail($correo, $token);
+                echo json_encode(array("msg"=> "El correo fue enviado a ".$correo));
+                http_response_code(200);
+            } else {
+                echo json_encode(array("error"=> "No se pudo actualizar la base de datos"));
+                http_response_code(500);
+            }
+        } catch (Exception $e) {
+            echo json_encode(array("error"=> $e->getMessage()));
+            http_response_code(500);
+        }
+    }
+    
+    private function enviarEmail($correo, $token) {
+        // Crear una instancia; pasando `true` habilita excepciones
+        $mail = new PHPMailer;
+    
+        try {
+            
+            // Configuración del servidor                    // Habilitar la salida de depuración detallada
+            $mail->isSMTP();                          // Enviar usando SMTP
+            $mail->Host = 'smtp.gmail.com';           // Establecer el servidor SMTP para enviar
+            $mail->SMTPAuth = true;                   // Habilitar la autenticación SMTP
+            $mail->SMTPSecure = "tls"; // Habilitar cifrado TLS implícito
+            $mail->Port = 587;                        // Puerto TCP al que conectarse; use 587 si ha configurado `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+            $mail->Username = "devtic.ucp.170802@gmail.com";  // Nombre de usuario SMTP
+            $mail->Password = "hmhozkdyixguzvlc";      // Contraseña SMTP
+    
+            // Destinatarios
+            // Nombre opcional
+    
+            // Contenido
+            $mail->setFrom("devtic.ucp.170802@gmail.com");
+            $mail->addAddress($correo);
+            $mail->Subject = "Devtic: Reestablecer contraseña";
+            $mail->Body = <<<END
+            Para restablecer la contraseña, haga clic <a href="http://localhost:3000/reestablecerContrasena?token=$token">aquí</a>.
+            END;
+            $mail->send();
+            
+            // No es necesario llamar a $mail->send() dos veces.
+            
+        } catch (Exception $e) {
+            echo "No se pudo enviar el mensaje. Error del remitente: {$mail->ErrorInfo}";
+        }
+    }
+    
+    
+    
 
 };// end class Profesional
 

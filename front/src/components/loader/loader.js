@@ -1,23 +1,24 @@
 "use client";
 import { useAuthContext } from "@/context/authContext";
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
 function Loader({ children }) {
-	const [loader, setLoader] = useState(true);
-
 	const { iniciarSesionConCookies, user } = useAuthContext();
+	const router = useRouter();
+
+	const [loader, setLoader] = useState(true);
 
 	const getData = async () => {
 		await iniciarSesionConCookies();
+		if (!user) {
+			router.push("/");
+		}
 		setTimeout(() => setLoader(false), 2000);
 	};
 
 	useEffect(() => {
-		if (!user) {
-			getData();
-		} else {
-			setLoader(false);
-		}
+		getData();
 	}, []);
 
 	if (loader) {

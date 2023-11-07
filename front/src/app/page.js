@@ -4,9 +4,13 @@ import LoginForm from "../components/loginForm/loginForm";
 import { redirect } from "next/navigation";
 
 import Image from "next/image";
+import { useState } from "react";
+import ResetPassword from "@/components/resetPassword/resetPassword";
 
 export default function LoginPage() {
 	const { user } = useAuthContext();
+
+	const [resetPassword, setResetPassword] = useState(false);
 
 	if (user) {
 		redirect("/demandas");
@@ -18,6 +22,7 @@ export default function LoginPage() {
 				<div className="sm:mx-auto sm:w-full sm:max-w-sm">
 					<Image
 						className="mx-auto w-auto h-auto "
+						onClick={() => setResetPassword(false)}
 						src={"/loginFoto.png"}
 						alt="Your Company"
 						width={100}
@@ -27,7 +32,11 @@ export default function LoginPage() {
 				</div>
 
 				<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm ">
-					<LoginForm></LoginForm>
+					{resetPassword ? (
+						<ResetPassword />
+					) : (
+						<LoginForm setResetPassword={setResetPassword} />
+					)}
 				</div>
 			</div>
 		</main>

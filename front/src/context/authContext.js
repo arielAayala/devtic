@@ -81,8 +81,8 @@ function AuthContextProvider({ children }) {
 				return res.json();
 			})
 			.then((res) => {
-				setUser(null);
 				crearAlert(res);
+				setUser(null);
 			})
 
 			.catch((error) => {

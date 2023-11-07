@@ -8,10 +8,6 @@ import Loader from "@/components/loader/loader";
 export default function HomeLayout({ children }) {
 	const { user } = useAuthContext();
 
-	if (!user) {
-		redirect("/");
-	}
-
 	return (
 		<Loader>
 			<Header />
