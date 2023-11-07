@@ -2,12 +2,12 @@
 import Anexos from "@/components/anexos/anexos";
 import DemandaModalDelete from "@/components/demandaModalDelete/demandaModalDelete";
 import DemandaModalUpdate from "@/components/demandaModalUpdate/demandaModalUpdate";
+import EstadoSpan from "@/components/estadoSpan/estadoSpan";
 import GrupoModal from "@/components/grupoModal/grupoModal";
 import Notas from "@/components/notas/notas";
 import NotasModalForm from "@/components/notasModalForm/notasModalForm";
 import PersonasInvolucradas from "@/components/personasInvolucradas/personasInvolucradas";
 import SelectEstado from "@/components/selectEstado/selectEstado";
-import SelectProfesional from "@/components/selectProfesional/selectProfesional";
 import { useAlertContext } from "@/context/alertContext";
 import { useAuthContext } from "@/context/authContext";
 import { useParams } from "next/navigation";
@@ -20,6 +20,7 @@ function PageIdDemanda() {
 
 	const [demanda, setDemanda] = useState(null);
 	const [loader, setLoader] = useState(false);
+	const [showEstado, setShowEstado] = useState(false);
 
 	const obtenerDemanda = () => {
 		fetch("http://localhost/devtic/api/ObtenerDemanda.php", {
@@ -44,6 +45,10 @@ function PageIdDemanda() {
 			.catch((error) => {
 				crearAlert({ error: error.message });
 			});
+	};
+
+	const handleChangeModalEstado = () => {
+		setShowEstado(!showEstado);
 	};
 
 	useEffect(() => {
@@ -81,6 +86,8 @@ function PageIdDemanda() {
 		};
 	}, [params.idDemanda]);
 
+	console.log(demanda);
+
 	if (!loader) {
 		return (
 			<div
@@ -114,27 +121,58 @@ function PageIdDemanda() {
 				<h2>No existe estaDemanda</h2>
 			) : (
 				<>
-					<section className="bg-white dark:bg-gray-900">
-						<div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
-							<h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+					<section>
+						<div className=" flex justify-between">
+							<GrupoModal
+								idDemanda={params.idDemanda}
+								grupo={demanda.grupo}
+								obtenerDemanda={obtenerDemanda}
+							/>
+							<EstadoSpan nombreEstado={demanda.data.nombreEstado} />
+						</div>
+						<div className="py-8 px-4 mx-auto  lg:py-16">
+							<h1 className="mb-6 text-4xl font-extrabold tracking-tight text-center leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
 								{demanda.data.motivoDemanda}
 							</h1>
-							<p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400">
-								{demanda.data.nombreOrganizacion}
+							<p className="text-black text-left mb-1 text-base">
+								Aqui se relata los hechos de la demanda:
 							</p>
+							<div className="p-2 border-2 shadow-lg rounded-lg m-6 bg-white">
+								<p className="text-gray-400 text-left">
+									{demanda.data.relatoDemanda}
+								</p>
+							</div>
+							<h2 className="mb-6 text-4xl font-extrabold tracking-tight  leading-none text-gray-600 ">
+								Detalles
+							</h2>
 
-							<p className="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
+							<p className="text-gray-500 dark:text-gray-400 mb-2">
+								<span className="text-black">Tipo de demanda: </span>
 								{demanda.data.nombreTipo}
 							</p>
-							<p className="text-gray-500 dark:text-gray-400">
-								{demanda.data.relatoDemanda}
-							</p>
+
+							<span className="text-black ">Organización: </span>
+							<div className="p-2 border-2 shadow-lg rounded-lg mx-6 my-4 bg-white">
+								<p className="text-gray-400 text-left">
+									Nombre: {demanda.data.nombreOrganizacion}
+									<br />
+									CueAnexo: {demanda.data.cueAnexo}
+									<br />
+									Dirección: {demanda.data.direccionOrganizacion}
+									<br />
+									Departamento: {demanda.data.nombreDepartamento}
+									<br />
+									Localidad: {demanda.data.nombreLocalidad}
+									<br />
+									Tel: {demanda.data.numeroTelefonoOrganizacion}
+								</p>
+							</div>
 						</div>
 						{demanda.grupo.some((i) => i.idProfesional == user.idProfesional) ||
 						user.prioridadProfesional == 1 ? (
 							<div className="text-center">
 								<div
-									className="inline-flex rounded-md shadow-sm"
+									className="inline-flex rounded-md shadow-lg"
 									role="group"
 								>
 									<NotasModalForm
@@ -158,27 +196,19 @@ function PageIdDemanda() {
 					<PersonasInvolucradas
 						lstPersonasInvolucradas={demanda.personasInvolucradas}
 					/>
-					<div className="item-center">
-						<div>
-							<GrupoModal grupo={demanda.grupo} />
-						</div>
-					</div>
+
 					<Anexos lstAnexos={demanda.data.anexosDemanda} />
-					<div className="flex justify-end">
+
+					<div className="flex justify-end mt-10 items-center">
 						<div>
-						<SelectEstado
-						idDemanda={params.idDemanda}
-						obtenerDemanda={obtenerDemanda}
-						/>
-						</div>
-					</div>
-					<div className="flex justify-end mt-10">
-						<div>
-						<SelectProfesional
-						idDemanda={params.idDemanda}
-						grupo={demanda.grupo}
-						obtenerDemanda={obtenerDemanda}
-					/>
+							<span className="text-black text-left mb-4 text-base">
+								Cambiar de estado:
+							</span>
+							<SelectEstado
+								idEstado={demanda.data.idEstado}
+								idDemanda={params.idDemanda}
+								obtenerDemanda={obtenerDemanda}
+							/>
 						</div>
 					</div>
 					<Notas lstNotas={demanda.notas} />

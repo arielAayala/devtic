@@ -4,14 +4,14 @@ function PersonasInvolucradas(props) {
 	const { lstPersonasInvolucradas } = props;
 
 	return (
-		<section className="bg-white dark:bg-gray-900">
+		<section>
 			<div className="py-8 px-4 mx-auto  ">
 				<div className="mx-auto max-w-screen-sm text-center mb-8 lg:mb-16">
 					<p className="font-light text-gray-500 lg:mb-16 sm:text-xl dark:text-gray-400">
 						Personas Involucradas a la demanda
 					</p>
 				</div>
-				<div className="grid gap-2 grid-cols-2  mb-6 ">
+				<div className="grid   mb-6 ">
 					{lstPersonasInvolucradas.map((i) => {
 						return (
 							<div

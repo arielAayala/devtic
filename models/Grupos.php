@@ -51,4 +51,38 @@ class Grupos{
             return false;
         }
     }
+
+    public function EliminarProfesionalDelGrupo($token, $idDemanda, $idProfesional){
+        try { 
+            if ($datos=Profesionales::validarToken($token)) {
+                $con = new Conexion();
+                $prepareRepetido=$con -> prepare("SELECT  creadorGrupo  FROM profesionalesgrupos WHERE idDemanda = ? AND idProfesional = ?");
+                $prepareRepetido ->bind_param("ii", $idDemanda, $idProfesional);
+                $prepareRepetido->execute();
+                $result = $prepareRepetido->get_result();
+                $value= $result-> fetch_object();
+                if ( $value->creadorGrupo == 0 ){
+                    $prepareGrupo=$con -> prepare("SELECT COUNT(*) AS profesional  FROM profesionalesgrupos WHERE idDemanda = ? AND idProfesional = ? AND creadorGrupo = 1");
+                    $prepareGrupo ->bind_param("ii", $idDemanda, $datos->idProfesional);
+                    $prepareGrupo->execute();
+                    $result =$prepareGrupo->get_result();
+                    $value= $result-> fetch_object();
+                    if ($value->profesional == 1 || $datos-> prioridadProfesional == 1) {
+                        $prepareDeleteProfesional = $con ->prepare("DELETE FROM profesionalesgrupos WHERE idDemanda = ? AND idProfesional = ?");
+                        $prepareDeleteProfesional ->bind_param("ii", $idDemanda, $idProfesional);
+                        if ($prepareDeleteProfesional ->execute()) {
+                            return true;
+                        }
+                        throw new Exception("Error al eliminar al profesional");
+                    }
+                    throw new Exception("Error No autorizado a eliminar profesionales al grupo");
+                }
+                throw new Exception("Error No se puede eliminar al creador de la demanda");
+            }
+            throw new Exception("Error validando identidad");
+        } catch (Exception $e) {
+            echo json_encode(["error"=> $e->getMessage() ]);
+            return false;
+        }
+    }    
 }

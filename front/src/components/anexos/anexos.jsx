@@ -8,14 +8,14 @@ function Anexos(props) {
 	}
 
 	return (
-		<section className="bg-white dark:bg-gray-900">
+		<section>
 			<div className=" mx-auto  ">
-				<div className="grid gap-4 grid-cols-2  my-2 ">
+				<div className="grid   m-4 ">
 					{lstAnexos.map((i) => {
 						return (
 							<div
 								key={i.idAnexoDemanda || i.idAnexoNota}
-								className="items-center bg-gray-50 rounded-lg shadow flex dark:bg-gray-800  dark:border-gray-700 "
+								className="items-center bg-gray-50 rounded-lg py-2 flex dark:bg-gray-800  dark:border-gray-700 shadow-lg "
 							>
 								<a href={i.urlAnexoDemanda || i.urlAnexoNota}>
 									<img

@@ -17,7 +17,7 @@ export default function HomeLayout({ children }) {
 			<Header />
 			<Aside />
 			<div className="p-4 sm:ml-64">
-				<div className=" p-4  border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-20">
+				<div className=" p-4  border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-20 bg-gray-100">
 					{children}
 				</div>
 			</div>

@@ -93,12 +93,13 @@ function PersonaInvolucradaForm(props) {
 						placeholder=" "
 						onChange={handleChangeDemandante}
 						required
+						pattern="^\d{8}$"
 					/>
 					<label
 						htmlFor="dniPersona"
 						className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 					>
-						Documento
+						Documento sin puntos
 					</label>
 				</div>
 				<div className="relative z-0 w-full mb-6 group">
@@ -122,9 +123,10 @@ function PersonaInvolucradaForm(props) {
 			<div className="grid md:grid-cols-2 md:gap-6">
 				<div className="relative z-0 w-full mb-6 group">
 					<input
-						type="tel"
+						type="text"
 						autoComplete="off"
 						name="telefono"
+						pattern="(\d{3} \d{3}-\d{4}|\d{3} \d{7})"
 						className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 						placeholder=""
 						onChange={handleChangeDemandante}
@@ -133,7 +135,7 @@ function PersonaInvolucradaForm(props) {
 						htmlFor="telefono"
 						className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
 					>
-						Teléfono +54 (370) 123-4567
+						Teléfono 123 123-4567
 					</label>
 				</div>
 				<div className="relative z-0 w-full mb-6 group">
@@ -149,6 +151,7 @@ function PersonaInvolucradaForm(props) {
 					<label
 						htmlFor="domicilio"
 						className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+						required
 					>
 						Domicilio
 					</label>
@@ -157,12 +160,14 @@ function PersonaInvolucradaForm(props) {
 					<label
 						htmlFor="idLocalidad"
 						className="block text-sm font-medium leading-6 text-gray-900"
+						required
 					>
 						Localidad del domicilio
 					</label>
 					<div className="mt-2">
 						<select
 							onChange={handleChangeDemandante}
+							required
 							name="idLocalidad"
 							className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 						>
@@ -193,6 +198,7 @@ function PersonaInvolucradaForm(props) {
 									value="1"
 									onChange={handleChangeDemandante}
 									className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600"
+									required
 								/>
 								<label
 									htmlFor="country-option-3"

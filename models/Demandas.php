@@ -252,7 +252,19 @@ class Demandas {
             //code...
             if ($datos = Profesionales::validarToken($token)) {
                 $con = new Conexion();
-                $query = "SELECT d.idDemanda, d.borrarDemanda ,d.almacenDemanda,p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado,e.idEstado, t.nombreTipo, t.idTipo, o.nombreOrganizacion, o.idOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN profesionalesgrupos g ON g.idDemanda = d.idDemanda and g.creadorGrupo = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad WHERE d.idDemanda = $id";
+                $query = "SELECT d.idDemanda, d.borrarDemanda ,d.almacenDemanda,p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado,e.idEstado, t.nombreTipo, t.idTipo, o.nombreOrganizacion, o.idOrganizacion, o.cueAnexo, o.direccionOrganizacion, telo.numeroTelefonoOrganizacion ,l.nombreLocalidad, der.nombreDepartamento   
+                FROM demandas d 
+                INNER JOIN estados e ON e.idEstado= d.idEstado 
+                INNER JOIN tipos t ON d.idTipo = t.idTipo 
+                INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion 
+                INNER JOIN localidades l ON o.idLocalidad = l.idLocalidad
+                INNER JOIN departamentos der ON der.idDepartamento = l.idDepartamento
+                INNER JOIN telefonosorganizacion telo ON  telo.idOrganizacion = o.idOrganizacion
+                INNER JOIN profesionalesgrupos g ON g.idDemanda = d.idDemanda and g.creadorGrupo = 1 
+                INNER JOIN profesionales p ON p.idProfesional = g.idProfesional 
+                INNER JOIN personas ON personas.idPersona = p.idPersona 
+                INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad 
+                WHERE d.idDemanda = $id";
                 if ($resultado = $con ->query($query)) {
                     $datos =[];
                     if ($resultado->num_rows > 0) {

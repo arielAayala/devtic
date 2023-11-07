@@ -146,6 +146,7 @@ function DemandaForm() {
 										onChange={handleChange}
 										type="text"
 										name="motivoDemanda"
+										required
 										id="motivoDemanda"
 										autoComplete="off"
 										className="block flex-1 w-full border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
@@ -167,6 +168,7 @@ function DemandaForm() {
 										onChange={handleChange}
 										name="idTipo"
 										id="idTipo"
+										required
 										className="block w-full border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 									>
 										<option value>Seleccione una opción</option>
@@ -198,6 +200,7 @@ function DemandaForm() {
 										type="text"
 										name="idOrganizacion"
 										id="idOrganizacion"
+										required
 										className="block border-0 bg-transparent py-1.5 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 w-full"
 										autoComplete="organization"
 									>
@@ -230,6 +233,7 @@ function DemandaForm() {
 										ref={textbox}
 										name="relatoDemanda"
 										id="relatoDemanda"
+										required
 										rows="3"
 										autoComplete="off"
 										className="block w-full resize-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -253,6 +257,7 @@ function DemandaForm() {
 										type="text"
 										name="almacenDemanda"
 										id="almacenDemanda"
+										required
 										autoComplete="off"
 										className="block w-full resize-none rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 									/>

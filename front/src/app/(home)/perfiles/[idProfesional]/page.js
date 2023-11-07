@@ -41,8 +41,6 @@ function Perfil() {
 		obtenerPerfil();
 	}, []);
 
-	console.log(profesional);
-
 	if (!loader) {
 		return <h1>Cargando...</h1>;
 	}
@@ -51,8 +49,8 @@ function Perfil() {
 		<>
 			<div className="bg-gray-100">
 				<div className="container mx-auto py-8">
-					<div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
-						<div className="col-span-4 sm:col-span-3">
+					<div className="grid grid-cols-4  gap-6 px-4">
+						<div className="col-span-4 sm:col-span-12">
 							<div className="bg-white shadow rounded-lg p-6">
 								<div className="flex flex-col items-center">
 									<img
@@ -78,9 +76,12 @@ function Perfil() {
 								<div className="flex flex-col"></div>
 							</div>
 						</div>
-						<div className="col-span-4 sm:col-span-9">
+						<div className="col-span-4 sm:col-span-12">
 							<div className="bg-white shadow rounded-lg p-6">
-								<h2 className="text-xl font-bold mb-4"> Historial de movimientos </h2>
+								<h2 className="text-xl font-bold mb-4">
+									{" "}
+									Historial de movimientos{" "}
+								</h2>
 								<div className="bg-white">
 									<div className="max-w-xl mx-auto p-8">
 										<div className="flow-root">
