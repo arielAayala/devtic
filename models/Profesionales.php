@@ -5,9 +5,11 @@ include_once("../conexion/Conexion.php");
 $dotenv = Dotenv\Dotenv::createImmutable("../");
 $dotenv->safeLoad();
 
-use PHPMailer\PHPMailer\PHPMailer;
+
 use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
 
 
 
@@ -259,7 +261,7 @@ class Profesionales  {
         }
     }
 
-    public function reestablecerContrasena($correo) {
+    public function enviarReestablecerContrasena($correo) {
         try {
             $con = new Conexion();
             $token = hash("sha256", bin2hex(random_bytes(16)));
@@ -275,10 +277,9 @@ class Profesionales  {
             
             if ($con->affected_rows) {
                 $this->enviarEmail($correo, $token);
-                echo json_encode(array("msg"=> "El correo fue enviado a ".$correo));
-                http_response_code(200);
+                
             } else {
-                echo json_encode(array("error"=> "No se pudo actualizar la base de datos"));
+                echo json_encode(array("error"=> "No existe profesional vinculado a ese correo"));
                 http_response_code(500);
             }
         } catch (Exception $e) {
@@ -289,35 +290,76 @@ class Profesionales  {
     
     private function enviarEmail($correo, $token) {
         // Crear una instancia; pasando `true` habilita excepciones
-        $mail = new PHPMailer;
+        $mail = new PHPMailer(true);
     
         try {
-            
+
+            $mail->SMTPOptions = array(
+                "ssl"=> array(
+                    "verify_peer"=> false,
+                    "verify_peer_name"=> false,
+                    "allow_self_signed"=> true,
+                    )
+                );
+            $mail->SMTPDebug = 0;
+            $mail->CharSet = "UTF-8";                      //Enable verbose debug output 
             // Configuración del servidor                    // Habilitar la salida de depuración detallada
             $mail->isSMTP();                          // Enviar usando SMTP
             $mail->Host = 'smtp.gmail.com';           // Establecer el servidor SMTP para enviar
             $mail->SMTPAuth = true;                   // Habilitar la autenticación SMTP
-            $mail->SMTPSecure = "tls"; // Habilitar cifrado TLS implícito
-            $mail->Port = 587;                        // Puerto TCP al que conectarse; use 587 si ha configurado `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
-            $mail->Username = "devtic.ucp.170802@gmail.com";  // Nombre de usuario SMTP
-            $mail->Password = "";      // Contraseña SMTP
-    
-            // Destinatarios
-            // Nombre opcional
-    
+            $mail->SMTPSecure = "ssl"; // Habilitar cifrado TLS implícito
+            $mail->Port = 465;                        // Puerto TCP al que conectarse; use 587 si ha configurado `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+            $mail->Username = $_ENV["GMAIL"];  
+            $mail->Password = $_ENV["PASSWORDGMAIL"];      
+
             // Contenido
-            $mail->setFrom("devtic.ucp.170802@gmail.com");
+            $mail->setFrom($_ENV["GMAIL"]);
             $mail->addAddress($correo);
+            $mail->isHTML(true);
             $mail->Subject = "Devtic: Reestablecer contraseña";
             $mail->Body = <<<END
-            Para restablecer la contraseña, haga clic <a href="http://localhost:3000/reestablecerContrasena?token=$token">aquí</a>.
+            <h1>Para restablecer la contraseña, haga clic <a href="http://localhost:3000/reestablecerContrasena?token=$token">aquí</a>.</h1>
             END;
             $mail->send();
-            
+            echo json_encode(array("msg"=> "El correo fue enviado a ".$correo));
+            http_response_code(200);
             // No es necesario llamar a $mail->send() dos veces.
             
         } catch (Exception $e) {
-            echo "No se pudo enviar el mensaje. Error del remitente: {$mail->ErrorInfo}";
+            echo json_encode(["error" => "No se pudo enviar el mensaje. Error del remitente: {$mail->ErrorInfo}"]);
+            http_response_code(500);
+        }
+    }
+
+    public function reestablecerContrasena($contrasena, $token){
+        try {
+            $con = new Conexion();
+            
+            $query = "SELECT * FROM profesionales 
+            WHERE resetToken = ?";
+            $prepareReset = $con->prepare($query);
+            $prepareReset->bind_param("s", $token);
+            $prepareReset->execute();
+            $result =$prepareReset->get_result();
+            $user = $result->fetch_assoc();
+            if ($user ) {
+                if (strtotime( $user["resetTokenFecha"]) >= time()) {
+                    $contrasenaEncriptada = password_hash(strval($contrasena), PASSWORD_DEFAULT);
+                    $query = "UPDATE profesionales SET contrasenaProfesional = ?, resetToken = NULL , resetTokenFecha = NULL WHERE idProfesional = ?";
+                    $prepareReset = $con->prepare($query);
+                    $prepareReset->bind_param("si", $contrasenaEncriptada, $user["idProfesional"]);
+                    if($prepareReset->execute()){
+                        $con -> close();
+                        return true;
+                    }
+                }
+                throw new Exception("Error al procesar el cambio de contrasena, tiempo excesido", 404);
+            }
+            throw new Exception("Error al procesar el cambio de contrasena", 404);
+            
+        } catch (Exception $e) {
+            echo json_encode(array("error"=> $e->getMessage()));
+            http_response_code(500);
         }
     }
     

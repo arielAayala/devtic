@@ -332,33 +332,79 @@ class Demandas {
     }
     
 
-    public function obtenerDemandaPorFiltro($token, $pagina, $idTipo = "NULL", $idEstado= "NULL", $idCreador= "NULL", $fechaIngreso = "NULL", $fechaCierre = "NULL"){
-        if ( Profesionales::validarToken($token)) {
+    public function obtenerDemandasPorFiltros($token, $pagina, $idEstado, $idTipo, $idOrganizaciones, $fechaIngreso, $fechaCierre) {
+        if ($datos = Profesionales::validarToken($token)) {
             $con = new Conexion();
-
-            $idTipo = $idTipo  ? $idTipo : "NULL";
-            $idEstado = $idEstado  ? $idEstado : "NULL";
-            $idCreador = $idCreador  ? $idCreador : "NULL";
-            $fechaIngreso = $fechaIngreso  ? "'$fechaIngreso'" : "NULL";
-            $fechaCierre = $fechaCierre  ? "'$fechaCierre'" : "NULL";
-            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad , personas.nombrePersona ,d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion   FROM demandas d INNER JOIN estados e ON e.idEstado= d.idEstado INNER JOIN tipos t ON d.idTipo = t.idTipo INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion INNER JOIN grupos g ON g.idDemanda = d.idDemanda and g.creadorDemanda = 1 INNER JOIN profesionales p ON p.idProfesional = g.idProfesional INNER JOIN personas ON personas.idPersona = p.idPersona INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad WHERE d.idTipo = $idTipo OR d.idEstado = $idEstado OR d.fechaIngresoDemanda > '$fechaIngreso' OR d.fechaCierreDemanda < '$fechaCierre' OR  d.idDemanda = (SELECT grupos.idDemanda FROM grupos WHERE grupos.idProfesional = $idCreador)   ORDER BY d.fechaIngresoDemanda LIMIT 10 OFFSET ". (($pagina - 1)*10) ;
-
-            $datos =[];
-            $resultado = $con ->query($query);
+            $query = "SELECT d.idDemanda, p.fotoProfesional, especialidades.nombreEspecialidad, personas.nombrePersona, d.motivoDemanda, d.fechaIngresoDemanda, d.relatoDemanda, e.nombreEstado, t.nombreTipo, o.nombreOrganizacion
+                    FROM demandas d
+                    INNER JOIN estados e ON e.idEstado = d.idEstado
+                    INNER JOIN tipos t ON d.idTipo = t.idTipo
+                    INNER JOIN organizaciones o ON o.idOrganizacion = d.idOrganizacion
+                    INNER JOIN profesionalesgrupos g ON g.idDemanda = d.idDemanda AND g.creadorGrupo = 1
+                    INNER JOIN profesionales p ON p.idProfesional = g.idProfesional
+                    INNER JOIN personas ON personas.idPersona = p.idPersona
+                    INNER JOIN especialidades ON especialidades.idEspecialidad = p.idEspecialidad
+                    WHERE d.borrarDemanda = 0";
+    
+            // Aplicar filtros
+            if (!empty($idEstado)) {
+                $query .= " AND d.idEstado = $idEstado";
+            }
+    
+            if (!empty($idTipo)) {
+                $query .= " AND d.idTipo = $idTipo";
+            }
+    
+            if (!empty($idOrganizaciones)) {
+                $query .= " AND d.idOrganizacion = $idOrganizaciones";
+            }
+    
+            if (!empty($fechaIngreso)) {
+                $query .= " AND d.fechaIngresoDemanda >= '$fechaIngreso'";
+            }
+    
+            if (!empty($fechaCierre)) {
+                $query .= " AND d.fechacieredemanda <= '$fechaCierre'";
+            }
+    
+            $query .= " ORDER BY d.fechaIngresoDemanda DESC LIMIT 10 OFFSET " . (($pagina - 1) * 10);
+    
+            $datos = [];
+            $resultado = $con->query($query);
             if ($resultado->num_rows > 0) {
                 while ($row = $resultado->fetch_assoc()) {
-                        $datos[]=$row;
+                    $datos[] = $row;
                 }
             }
-            
-            $queryTotal = "SELECT COUNT(idDemanda) AS demandasTotales FROM demandas WHERE d.idTipo = $idTipo OR d.idEstado = $idEstado OR d.fechaIngresoDemanda > '$fechaIngreso' OR d.fechaCierreDemanda < '$fechaCierre' OR  d.idDemanda = (SELECT grupos.idDemanda FROM grupos WHERE grupos.idProfesional = $idCreador) ";
-            if ($resultadoTotal = $con -> query($queryTotal)) {
+    
+            $queryTotal = "SELECT COUNT(idDemanda) AS demandasTotales FROM demandas WHERE borrarDemanda = 0";
+            if (!empty($idEstado)) {
+                $queryTotal .= " AND idEstado = $idEstado";
+            }
+    
+            if (!empty($idTipo)) {
+                $queryTotal .= " AND idTipo = $idTipo";
+            }
+    
+            if (!empty($idOrganizaciones)) {
+                $queryTotal .= " AND idOrganizacion = $idOrganizaciones";
+            }
+    
+            if (!empty($fechaIngreso)) {
+                $queryTotal .= " AND fechaIngresoDemanda >= '$fechaIngreso'";
+            }
+    
+            if (!empty($fechaCierre)) {
+                $queryTotal .= " AND fechaCierredemanda <= '$fechaCierre'";
+            }
+            if ($resultadoTotal = $con->query($queryTotal)) {
                 while ($row = $resultadoTotal->fetch_assoc()) {
                     $total = $row["demandasTotales"];
                 }
             }
-            $con -> close();
-            return ["data"=>$datos, "demandasTotales"=>intval($total), "paginaNumero"=> $pagina];
+    
+            $con->close();
+            return ["data" => $datos, "demandasTotales" => intval($total), "paginaNumero" => $pagina];
         }
         return false;
     }

@@ -12,14 +12,11 @@ switch ($_SERVER["REQUEST_METHOD"]) {
 
     case 'POST':
         $datos = json_decode(file_get_contents("php://input"));
-        if (isset($datos) ) {
+        if (isset($datos)) {
             $profesional = new Profesionales();
-            if($profesional->reestablecerContrasena( $datos->contrasena, $datos->token)){
-                echo json_encode(array("msg"=> "Se cambio la contraseña correctamente"));
-                http_response_code(200);
-            }          
+            $profesional->enviarReestablecerContrasena( $datos->correo);           
         }else {
-            http_response_code(404);
+            http_response_code(401);
             echo json_encode(["error"=> "Faltan Datos"]);
         }
         break;
