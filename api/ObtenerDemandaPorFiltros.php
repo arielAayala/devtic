@@ -14,7 +14,7 @@ switch ($_SERVER["REQUEST_METHOD"]) {
         if ($_COOKIE["token"]) {
             $datos = json_decode(file_get_contents("php://input"));
             $demanda = new Demandas();
-            if ($lstDemandas = $demanda->obtenerDemandaPorFiltro($_COOKIE["token"],$datos->pagina,$datos-> idTipo, $datos->idEstado, $datos->idCreador, $datos->fechaIngresoDemanda, $datos->fechaCierreDemanda)) {            
+            if ($lstDemandas = $demanda->obtenerDemandasPorFiltros($_COOKIE["token"],$datos->pagina,  $datos->idEstado,$datos-> idTipo, $datos->idOrganizacion, $datos->fechaIngresoDemanda, $datos->fechaCierreDemanda)) {            
                 echo json_encode($lstDemandas);
                 http_response_code(200);
             }else {

@@ -10,8 +10,6 @@ function ResetPasswordForm() {
 	const router = useRouter();
 	const pathname = useSearchParams().get("token");
 
-	console.log(pathname);
-
 	const [inputs, setInputs] = useState({
 		contrasena: null,
 		contrasenaRepetida: null,
@@ -24,7 +22,11 @@ function ResetPasswordForm() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (inputs.contrasena == inputs.contrasenaRepetida) {
+		if (
+			(inputs.contrasena == inputs.contrasenaRepetida) &
+			(inputs.contrasena.length >= 8) &
+			(inputs.contrasenaRepetida.length >= 8)
+		) {
 			fetch("http://localhost/devtic/api/ReestablecerContrasena.php", {
 				method: "POST",
 				body: JSON.stringify(inputs),
@@ -39,6 +41,7 @@ function ResetPasswordForm() {
 				})
 				.then((res) => {
 					crearAlert(res);
+					router.push("/");
 				})
 				.catch((e) => {
 					const error = e.cause?.error || e.message;

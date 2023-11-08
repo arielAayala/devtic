@@ -14,15 +14,24 @@ function Demandas() {
 	const [demandas, setDemandas] = useState([]);
 	const [loader, setLoader] = useState(false);
 	const [page, setPage] = useState(1);
+	const [flags, setFlags] = useState(0);
+	const [inputs, setInputs] = useState({
+		idEstado: 0,
+		idTipo: 0,
+		idOrganizacion: 0,
+		fechaCierreDemanda: null,
+		fechaIngresoDemanda: null,
+	});
 
-	const obtenerDemandas = () => {
+	const obtenerDemandas = (pagina = null) => {
+		setFlags(0);
 		fetch("http://localhost/devtic/api/ObtenerTodasDemandas.php", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			credentials: "include",
-			body: JSON.stringify({ pagina: page }),
+			body: JSON.stringify({ pagina: pagina || page }),
 		})
 			.then(async (rest) => {
 				{
@@ -38,26 +47,61 @@ function Demandas() {
 				setDemandas(rest ?? []);
 				setTimeout(() => setLoader(true), 100);
 			})
-			.catch((error) => {
-				const errorMessage = error.cause.error || "Ocurrio un error";
-				crearAlert(errorMessage);
+			.catch((e) => {
+				const error = e.cause?.error || e.message;
+				crearAlert({ error: error });
+			});
+	};
+
+	const obtenerDemandasConFiltros = (body, pagina = null) => {
+		setFlags(1);
+		fetch("http://localhost/devtic/api/ObtenerDemandaPorFiltros.php", {
+			method: "POST",
+			credentials: "include",
+			body: JSON.stringify({ ...body, pagina: pagina || page }),
+		})
+			.then(async (res) => {
+				if (!res.ok) {
+					throw new Error("Ocurrio un error al filtrar las demanda", {
+						cause: await res.json(),
+					});
+				}
+				return res.json();
+			})
+			.then((res) => {
+				console.log(res);
+				setDemandas(res);
+			})
+			.catch((e) => {
+				const error = e.cause?.error || e.message;
+				crearAlert({ error: error });
 			});
 	};
 
 	useEffect(() => {
-		obtenerDemandas();
+		if (flags == 0) {
+			obtenerDemandas();
+		} else {
+			obtenerDemandasConFiltros(inputs);
+		}
 	}, [page]);
 
 	return (
 		<main>
 			<SearchForm />
-			<DemandaFilter />
+			<DemandaFilter
+				inputs={inputs}
+				setInputs={setInputs}
+				obtenerDemandasConFiltros={obtenerDemandasConFiltros}
+				obtenerDemandas={obtenerDemandas}
+				flags={flags}
+			/>
 			<div className="border-b border-gray-200 dark:border-gray-700">
 				<ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
 					<li className="mr-1">
 						<Link
 							href="/crearDemanda"
-							className="inline-flex items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group"
+							className="inline-flex items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-black hover:border-black group  cursor-pointer"
 						>
 							<svg
 								className="w-4 h-4 mr-2 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-300"
