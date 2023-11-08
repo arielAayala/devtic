@@ -4,7 +4,7 @@ function Estadisticas(props) {
 	const { demandasIngresadas, demandasCerradas, notasIngresadas } = props;
 
 	return (
-		<div className="flex items-center justify-center  ">
+		<div className="flex items-center justify-center mb-10">
 			<div className="grid lg:grid-cols-3 md:grid-cols-2 gap-6 w-full max-w-6xl">
 				<div className="flex items-center p-4 bg-white rounded">
 					<div className="flex flex-shrink-0 items-center justify-center bg-green-200 h-16 w-16 rounded">

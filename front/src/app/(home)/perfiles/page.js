@@ -49,7 +49,7 @@ function Colegas() {
 						<div className="rounded-t-lg h-32 overflow-hidden">
 							<img
 								className="object-cover object-top w-full"
-								src="https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ"
+								src="https://static.vecteezy.com/system/resources/previews/007/620/939/non_2x/blue-wave-abstract-background-web-background-blue-texture-banner-design-creative-cover-design-backdrop-minimal-background-illustration-vector.jpg"
 								alt=""
 							/>
 						</div>

@@ -79,8 +79,7 @@ function Perfil() {
 						<div className="col-span-4 sm:col-span-12">
 							<div className="bg-white shadow rounded-lg p-6">
 								<h2 className="text-xl font-bold mb-4">
-									{" "}
-									Historial de movimientos{" "}
+									Historial de movimientos
 								</h2>
 								<div className="bg-white">
 									<div className="max-w-xl mx-auto p-8">
@@ -100,7 +99,7 @@ function Perfil() {
 																			<div className="h-8 w-8 bg-blue-500 rounded-full ring-8 ring-white flex items-center justify-center">
 																				<svg
 																					className="text-white h-5 w-5"
-																					xmlns="http://www.w3.org/2000/svg"
+																					xmlns="https://static.vecteezy.com/system/resources/previews/007/620/939/non_2x/blue-wave-abstract-background-web-background-blue-texture-banner-design-creative-cover-design-backdrop-minimal-background-illustration-vector.jpg"
 																					fill="none"
 																					viewBox="0 0 24 24"
 																					stroke="currentColor"
